@@ -1,0 +1,19 @@
+name: bunkr-${ENV_NAME}
+
+# bunkr (yangjae3dmap) — 정적 프론트 단일 서비스. 백엔드/DB 없음.
+# nginx-proxy(외부 네트워크)로 nginx-ui 리버스 프록시가 컨테이너 이름으로 해석.
+services:
+  web:
+    build:
+      context: ..
+      args:
+        VITE_CESIUM_ION_TOKEN: ${VITE_CESIUM_ION_TOKEN}
+    image: bunkr/web:${ENV_NAME}
+    container_name: bunkr-${ENV_NAME}-web
+    restart: unless-stopped
+    networks:
+      - nginx-proxy
+
+networks:
+  nginx-proxy:
+    external: true

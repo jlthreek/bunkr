@@ -619,3 +619,294 @@ select,
     transition: none !important;
   }
 }
+
+/* ── AI 결심지원(DSO) 패널 ─────────────────────────────────────── */
+#dso {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 60;
+  font-family: var(--font-mono);
+}
+
+/* 런처(접힘) */
+#dso-launch {
+  display: none;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background: var(--panel);
+  backdrop-filter: blur(10px);
+  color: var(--text);
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(53, 224, 230, 0.08);
+  transition: border-color 0.15s, transform 0.15s;
+}
+#dso-launch:hover {
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+#dso-launch .dso-star {
+  color: var(--accent);
+  font-size: 15px;
+  filter: drop-shadow(0 0 6px var(--accent));
+}
+#dso.collapsed #dso-launch {
+  display: inline-flex;
+}
+#dso.collapsed #dso-panel {
+  display: none;
+}
+
+/* 패널(펼침) */
+#dso-panel {
+  display: flex;
+  flex-direction: column;
+  width: 380px;
+  max-width: calc(100vw - 36px);
+  height: 520px;
+  max-height: calc(100vh - 36px);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--panel);
+  backdrop-filter: blur(14px);
+  box-shadow: 0 14px 44px rgba(0, 0, 0, 0.55);
+  overflow: hidden;
+}
+
+.dso-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--line-soft);
+  background: linear-gradient(
+    180deg,
+    rgba(53, 224, 230, 0.08),
+    transparent
+  );
+}
+.dso-badge {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--bg);
+  background: var(--accent);
+  padding: 3px 7px;
+  border-radius: 4px;
+  box-shadow: 0 0 10px rgba(53, 224, 230, 0.4);
+}
+.dso-title {
+  flex: 1;
+  line-height: 1.2;
+}
+.dso-name {
+  font-family: var(--font-display);
+  font-size: 13px;
+  color: var(--text);
+}
+.dso-name b {
+  color: var(--accent);
+}
+.dso-sub {
+  font-size: 9.5px;
+  letter-spacing: 0.12em;
+  color: var(--text-faint);
+}
+#dso-min {
+  border: 1px solid var(--line-soft);
+  border-radius: 5px;
+  background: transparent;
+  color: var(--text-dim);
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  font-size: 15px;
+  line-height: 1;
+}
+#dso-min:hover {
+  color: var(--text);
+  border-color: var(--line);
+}
+
+/* 대화 로그 */
+.dso-log {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  scrollbar-width: thin;
+}
+.dso-log::-webkit-scrollbar {
+  width: 6px;
+}
+.dso-log::-webkit-scrollbar-thumb {
+  background: rgba(140, 170, 180, 0.25);
+  border-radius: 3px;
+}
+.dso-msg {
+  display: flex;
+}
+.dso-msg.user {
+  justify-content: flex-end;
+}
+.dso-bubble {
+  max-width: 88%;
+  padding: 8px 11px;
+  border-radius: 10px;
+  font-size: 12.5px;
+  line-height: 1.5;
+  word-break: break-word;
+}
+.dso-msg.user .dso-bubble {
+  background: rgba(53, 224, 230, 0.13);
+  border: 1px solid rgba(53, 224, 230, 0.28);
+  color: var(--text);
+  border-bottom-right-radius: 3px;
+}
+.dso-msg.assistant .dso-bubble {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--line-soft);
+  border-left: 2px solid var(--accent);
+  color: var(--text);
+  border-bottom-left-radius: 3px;
+}
+.dso-msg.assistant .dso-bubble.error {
+  border-left-color: var(--red);
+  color: #ffb3b8;
+}
+.dso-bubble p {
+  margin: 0 0 4px;
+}
+.dso-bubble p:last-child {
+  margin-bottom: 0;
+}
+.dso-bubble h4 {
+  font-family: var(--font-display);
+  font-size: 12px;
+  color: var(--accent);
+  margin: 7px 0 3px;
+  letter-spacing: 0.03em;
+}
+.dso-bubble ul {
+  margin: 3px 0;
+  padding-left: 16px;
+}
+.dso-bubble li {
+  margin: 1px 0;
+}
+.dso-bubble strong {
+  color: #eafcfd;
+}
+.dso-bubble code {
+  background: rgba(53, 224, 230, 0.12);
+  color: var(--accent);
+  padding: 0 4px;
+  border-radius: 3px;
+  font-size: 11.5px;
+}
+.dso-cursor {
+  color: var(--accent);
+  animation: dso-blink 1s steps(2) infinite;
+}
+@keyframes dso-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+/* 빠른 질의 칩 */
+.dso-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 8px 12px 4px;
+  border-top: 1px solid var(--line-soft);
+}
+.dso-chips button {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-dim);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--line-soft);
+  border-radius: 14px;
+  padding: 4px 10px;
+  cursor: pointer;
+  transition: border-color 0.12s, color 0.12s;
+}
+.dso-chips button:hover {
+  color: var(--accent);
+  border-color: var(--line);
+}
+#dso.busy .dso-chips button {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+/* 입력 */
+.dso-input {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  padding: 10px 12px 12px;
+}
+#dso-text {
+  flex: 1;
+  resize: none;
+  max-height: 120px;
+  padding: 8px 10px;
+  border: 1px solid var(--line-soft);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.28);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  line-height: 1.4;
+  outline: none;
+}
+#dso-text:focus {
+  border-color: var(--accent);
+}
+#dso-text::placeholder {
+  color: var(--text-faint);
+}
+#dso-send {
+  flex: none;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 8px;
+  background: var(--accent);
+  color: var(--bg);
+  font-size: 15px;
+  cursor: pointer;
+  box-shadow: 0 0 12px rgba(53, 224, 230, 0.35);
+  transition: filter 0.12s;
+}
+#dso-send:hover {
+  filter: brightness(1.12);
+}
+#dso-send:disabled {
+  opacity: 0.4;
+  cursor: default;
+  box-shadow: none;
+}
+
+@media (max-width: 640px) {
+  #dso {
+    right: 10px;
+    bottom: 10px;
+  }
+  #dso-panel {
+    width: calc(100vw - 20px);
+    height: 68vh;
+  }
+}

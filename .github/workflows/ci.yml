@@ -1,0 +1,21 @@
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main, develop]
+
+jobs:
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install deps
+        run: npm install
+      - name: Build
+        env:
+          VITE_CESIUM_ION_TOKEN: ${{ secrets.VITE_CESIUM_ION_TOKEN }}
+        run: npm run build

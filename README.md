@@ -13,11 +13,21 @@ CesiumJS 3D 지구본 위에 실제 건물(Cesium OSM Buildings) + Stadia Alidad
 
 ## 실행
 ```bash
-# Node 18+ 필요 (권장 20)
+# Node 18+ 필요 (권장 20 — nvm use 로 전환, .nvmrc 포함)
 npm install
-cp .env.example .env      # Cesium Ion 토큰 입력 (무료: https://ion.cesium.com/tokens)
+cp .env.example .env      # Cesium Ion 토큰 + (선택)Anthropic 키 입력
 npm run dev               # http://localhost:5174
 ```
+
+## AI 결심지원 (DSO 패널)
+우하단 **결심지원 AI** 패널 — 지휘관이 자유 질의하면 실시간 COP 스냅샷(트랙별
+분류·위협도·대응권고·거리, 배치 자산, 인구밀집도, THREAT CONDITION)을 근거로
+탐지→식별→위협평가→대응 결심을 보좌한다. (Anthropic **Claude Haiku** 스트리밍)
+- 키(`ANTHROPIC_API_KEY`)는 `VITE_` 접두사 없이 `.env` 에 저장 → **dev/preview 서버(Node)
+  프로세스에만 로드**, 클라이언트 번들·브라우저로 노출되지 않음. 요청은 `/api/llm/chat`
+  프록시(`vite.config.ts` 미들웨어 → `server/llm.ts`)를 경유.
+- 키 미설정 시 지도·시뮬레이션은 정상, AI 패널만 안내 메시지 표시.
+- 시스템 프롬프트/컨텍스트 로직: `src/llm/{prompt,context,panel}.ts`.
 
 ## 데이터 파이프라인
 canonical store는 위치별 SQLite(`data/<loc>.sqlite`), 산출물은 위치별 네임스페이스.

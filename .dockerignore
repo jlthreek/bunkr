@@ -1,0 +1,11 @@
+.git
+.github
+node_modules
+dist
+.env
+.env.*
+certs
+data/*.sqlite
+data/cache
+*.log
+.DS_Store
