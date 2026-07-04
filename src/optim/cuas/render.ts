@@ -17,10 +17,10 @@ import type { Candidate, Equipment, EqType } from "./types";
 import { angleDeltaDeg, antennaPanMode, coverageBeamwidthDeg } from "./scoring";
 
 const TYPE_COLOR: Record<EqType, string> = {
-  scanner: "#35e0e6",
-  radar: "#39d98a",
-  camera: "#ffd23f",
-  jammer: "#b06bff",
+  scanner: "#8afaa2",
+  radar: "#88f298",
+  camera: "#b89a35",
+  jammer: "#d9b54a",
 };
 const M_PER_DEG_LAT = 111320;
 

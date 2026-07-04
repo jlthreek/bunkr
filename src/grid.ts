@@ -39,7 +39,7 @@ export function setupGrid(
   const ds = new CustomDataSource("tactical-grid");
   viewer.dataSources.add(ds);
   const scene = viewer.scene;
-  const cyan = Color.fromCssColorString("#35e0e6");
+  const cyan = Color.fromCssColorString("#5a6067"); // neutral tactical grid
 
   function metersPerPixel(): number {
     const w = scene.canvas.clientWidth;

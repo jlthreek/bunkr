@@ -37,6 +37,16 @@ export interface SensorProvider {
   isKindActive(kind: "radar" | "scanner" | "jammer" | "counter"): boolean;
 }
 
+// 교전규칙(ROE) + 감사 이벤트 훅. AUTO 면 자동 교전, MANUAL 이면 하드킬 승인 대기.
+export interface SimHooks {
+  roeManual(): boolean;
+  onDetect?(t: Track): void;
+  onEngage?(t: Track): void;
+  onAuthRequest?(t: Track): void;
+}
+
+export type RoeMode = "auto" | "manual";
+
 const DESPAWN_R = 7.0; // 이탈 판정 반경(km)
 const OBS_INTERVAL = 0.5; // 관측·판단 주기(s)
 const TRAIL_INTERVAL = 0.4;
@@ -45,14 +55,14 @@ const GROUND_INTERVAL = 0.5; // 지형고도 샘플 주기(s)
 
 // 색상 캐시 — 매 프레임 Color.fromCssColorString 파싱 방지
 const COL = {
-  undet: Color.fromCssColorString("#8a949c"),
-  soft: Color.fromCssColorString("#b06bff"),
-  hard: Color.fromCssColorString("#ff8c42"),
-  balloon: Color.fromCssColorString("#5eb0ff"),
-  bird: Color.fromCssColorString("#9aa4ad"),
-  low: Color.fromCssColorString("#37d67a"),
-  med: Color.fromCssColorString("#f5a623"),
-  high: Color.fromCssColorString("#ff3b46"),
+  undet: Color.fromCssColorString("#8a929a"),
+  soft: Color.fromCssColorString("#d9b54a"),
+  hard: Color.fromCssColorString("#e0574a"),
+  balloon: Color.fromCssColorString("#d9b54a"),
+  bird: Color.fromCssColorString("#8a929a"),
+  low: Color.fromCssColorString("#88f298"),
+  med: Color.fromCssColorString("#d9b54a"),
+  high: Color.fromCssColorString("#e0574a"),
 };
 
 let SEQ = 0;
@@ -88,6 +98,7 @@ export class Track {
   jud: Judgement | null = null;
   detected = false; // 스캐너로 확인됨 (latch)
   engaged: "soft" | "hard" | null = null; // 재머/대응에 의한 무력화
+  authState: "none" | "pending" | "approved" | "denied" = "none"; // 하드킬 승인 상태
   private engTimer = 0;
   history: Cartesian3[] = [];
   lon = 0;
@@ -105,7 +116,8 @@ export class Track {
     private rng: RNG,
     private popDensity: number,
     private sensors: SensorProvider | null,
-    private obstacles: Obstacle[] | null
+    private obstacles: Obstacle[] | null,
+    private hooks: SimHooks | null = null
   ) {
     this.kind = kind;
     this.prof = sampleProfile(rng, kind);
@@ -144,6 +156,20 @@ export class Track {
 
   updateLabel() {
     this.labelText = trackLabel(this);
+  }
+
+  private beginEngage(mode: "soft" | "hard") {
+    this.engaged = mode;
+    this.engTimer = 1.6;
+    this.updateLabel();
+    this.hooks?.onEngage?.(this);
+  }
+  // 지휘관 승인/거부 (MANUAL ROE)
+  approveAuth() {
+    if (this.authState === "pending") this.authState = "approved";
+  }
+  denyAuth() {
+    if (this.authState === "pending") this.authState = "denied";
   }
 
   step(dt: number) {
@@ -198,19 +224,28 @@ export class Track {
       ) {
         this.detected = true;
         this.updateLabel();
+        this.hooks?.onDetect?.(this);
       }
       if (this.detected) {
-        if (
+        const counterReady =
           this.sensors.covers("counter", this.lon, this.lat) &&
-          (this.pred === "드론" || this.pred === "풍선")
-        ) {
-          this.engaged = "hard";
-          this.engTimer = 1.6;
-          this.updateLabel();
-        } else if (this.sensors.covers("jammer", this.lon, this.lat) && this.pred === "드론") {
-          this.engaged = "soft";
-          this.engTimer = 1.6;
-          this.updateLabel();
+          (this.pred === "드론" || this.pred === "풍선");
+        const jammerReady =
+          this.sensors.covers("jammer", this.lon, this.lat) && this.pred === "드론";
+        if (counterReady) {
+          // 하드킬: MANUAL ROE 면 지휘관 승인 대기, AUTO 면 즉시 교전
+          if (this.hooks?.roeManual?.()) {
+            if (this.authState === "approved") this.beginEngage("hard");
+            else if (this.authState === "none") {
+              this.authState = "pending";
+              this.hooks?.onAuthRequest?.(this);
+            }
+            // pending → 승인 대기 / denied → 교전 보류
+          } else {
+            this.beginEngage("hard");
+          }
+        } else if (jammerReady) {
+          this.beginEngage("soft"); // 소프트킬(재밍)은 승인 게이트 없이 자동
         }
       }
     }
@@ -295,17 +330,15 @@ function buildEntities(viewer: Viewer, t: Track) {
     },
     label: {
       text: new CallbackProperty(() => t.labelText, false) as any,
-      font: "600 11px 'IBM Plex Mono', monospace",
+      font: "500 11px 'IBM Plex Mono', monospace",
       fillColor: new CallbackProperty(() => t.color(), false) as any,
-      style: LabelStyle.FILL_AND_OUTLINE,
-      outlineColor: Color.BLACK,
-      outlineWidth: 3,
+      style: LabelStyle.FILL,
       horizontalOrigin: HorizontalOrigin.LEFT,
       verticalOrigin: VerticalOrigin.BOTTOM,
       pixelOffset: new Cartesian2(20, -8),
       disableDepthTestDistance: Number.POSITIVE_INFINITY,
       showBackground: true,
-      backgroundColor: Color.fromCssColorString("#060e14").withAlpha(0.72),
+      backgroundColor: Color.fromCssColorString("#0a0a0a").withAlpha(0.72),
       backgroundPadding: new Cartesian2(6, 4),
       translucencyByDistance: new NearFarScalar(6000, 1.0, 16000, 0.0),
     },
@@ -475,6 +508,16 @@ export interface DroneSim {
   getTracks(): Track[];
   getAssets(): Asset[];
   getFrame(): Frame;
+  // 교전규칙(ROE) + 감사 이벤트
+  setROE(mode: RoeMode): void;
+  getROE(): RoeMode;
+  onDetection(cb: (t: Track) => void): void;
+  onEngagement(cb: (t: Track) => void): void;
+  onEngagementRequest(cb: (t: Track) => void): void;
+  onSpawn(cb: (t: Track) => void): void;
+  authorize(trackId: string): void;
+  deny(trackId: string): void;
+  pendingAuth(): Track[];
   destroy(): void;
 }
 
@@ -505,6 +548,21 @@ export async function startDroneSim(
   let lastMs: number | undefined;
   let spawnMode: Kind | null = null;
 
+  // ── 교전규칙(ROE) + 감사 이벤트 디스패치 ──
+  let roeManual = false;
+  const listeners = {
+    detect: [] as Array<(t: Track) => void>,
+    engage: [] as Array<(t: Track) => void>,
+    authreq: [] as Array<(t: Track) => void>,
+    spawn: [] as Array<(t: Track) => void>,
+  };
+  const hooks: SimHooks = {
+    roeManual: () => roeManual,
+    onDetect: (t) => listeners.detect.forEach((f) => f(t)),
+    onEngage: (t) => listeners.engage.forEach((f) => f(t)),
+    onAuthRequest: (t) => listeners.authreq.forEach((f) => f(t)),
+  };
+
   function spawnAt(kind: Kind, lon: number, lat: number): Track {
     const { x, y } = toKm(frame, lon, lat);
     const t = new Track(
@@ -515,11 +573,13 @@ export async function startDroneSim(
       rng,
       popDensity,
       opts.sensors ?? null,
-      obstacles
+      obstacles,
+      hooks
     );
     buildEntities(viewer, t);
     for (const e of t.entities) e.show = visible;
     tracks.push(t);
+    listeners.spawn.forEach((f) => f(t));
     return t;
   }
   function removeTrack(t: Track) {
@@ -603,6 +663,29 @@ export async function startDroneSim(
     getTracks: () => tracks,
     getAssets: () => assets,
     getFrame: () => frame,
+    setROE(mode) {
+      roeManual = mode === "manual";
+    },
+    getROE: () => (roeManual ? "manual" : "auto"),
+    onDetection(cb) {
+      listeners.detect.push(cb);
+    },
+    onEngagement(cb) {
+      listeners.engage.push(cb);
+    },
+    onEngagementRequest(cb) {
+      listeners.authreq.push(cb);
+    },
+    onSpawn(cb) {
+      listeners.spawn.push(cb);
+    },
+    authorize(trackId) {
+      tracks.find((t) => t.id === trackId)?.approveAuth();
+    },
+    deny(trackId) {
+      tracks.find((t) => t.id === trackId)?.denyAuth();
+    },
+    pendingAuth: () => tracks.filter((t) => t.authState === "pending"),
     destroy() {
       viewer.scene.preUpdate.removeEventListener(onTick as any);
       clickHandler.destroy();
