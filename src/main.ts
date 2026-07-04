@@ -61,6 +61,7 @@ import {
 } from "./plans";
 import { logEvent, renderEventLog, onLog } from "./ops/eventlog";
 import { tr, getLang, setLang, onLangChange, initI18n } from "./i18n";
+import { setupDsoPanel } from "./llm/panel";
 import locationsCfg from "../locations.json";
 
 // ── 기준 위치 레지스트리 ───────────────────────────────────────
@@ -70,7 +71,12 @@ interface Loc {
   name_en?: string;
   center: { lon: number; lat: number };
   radius_m: number;
-  pop_density?: number;
+  pop_density?: number; // 실시간 인구밀집 (부수피해 → 대응결심)
+  population?: {
+    congest_lvl?: string;
+    population_max?: number;
+    ppltn_time?: string;
+  };
 }
 const LOCS = locationsCfg.locations as Record<string, Loc>;
 const DEFAULT_LOC = locationsCfg.default as string;
@@ -81,6 +87,7 @@ if (ION_TOKEN) Ion.defaultAccessToken = ION_TOKEN;
 else console.warn("[bunkr] VITE_CESIUM_ION_TOKEN 미설정");
 
 // ── 베이스맵(이미저리) 스타일 ─────────────────────────────────
+// 모두 API 키 불필요(배포 도메인 무관). 기본 = Ion Satellite(위성).
 // 위성(항공사진)은 타일당 메모리가 큼 → 다크/라이트 벡터맵은 경량. 상단 드롭다운으로 전환.
 function carto(style: string) {
   return new UrlTemplateImageryProvider({
@@ -97,6 +104,8 @@ function esri(path: string) {
     maximumLevel: 19,
   });
 }
+// origin/main 은 Cesium 네이티브 피커(baseLayerPicker)를 썼으나, 여기서는 상단 바
+// 커스텀 드롭다운(#basemap-select) + applyBasemap() 방식을 유지한다.
 interface BasemapStyle {
   id: string;
   label: string;
@@ -373,7 +382,7 @@ async function main() {
 
   const viewer = new Viewer("cesiumContainer", {
     terrain: Terrain.fromWorldTerrain(),
-    baseLayerPicker: false, // 크롬 정리 (기본 베이스맵 직접 지정)
+    baseLayerPicker: false, // 크롬 정리 (커스텀 드롭다운 #basemap-select 로 전환)
     animation: false,
     timeline: false,
     geocoder: false, // 고정 AO — 검색 불필요
@@ -624,6 +633,22 @@ async function main() {
   }
 
   setMode("deploy");
+
+  // AI 결심지원(DSO) 패널 — 매 질의 시 라이브 COP 스냅샷을 주입해 지휘관 보좌.
+  setupDsoPanel(() => {
+    const loc = LOCS[currentLocId];
+    return {
+      locName: loc.name,
+      popDensity: loc.pop_density ?? 0.5,
+      population: loc.population,
+      threatCondition:
+        document.getElementById("threat-cond-level")?.textContent?.trim() ??
+        "LOW",
+      tracks: currentSim?.getTracks() ?? [],
+      assets: assetLayer?.list() ?? [],
+    };
+  });
+
   await loadLocation(viewer, DEFAULT_LOC, true);
 }
 
