@@ -1,0 +1,1377 @@
+{
+  "locId": "gwanghwamun",
+  "seed": 5,
+  "count": 40,
+  "assets": [
+    "정부서울청사",
+    "주한미국대사관",
+    "경복궁",
+    "세종문화회관·외교부"
+  ],
+  "tracks": [
+    {
+      "id": "T00",
+      "truth": "drone",
+      "subtype": "회전익(헬기형)",
+      "pred": "드론",
+      "p_uav": 0.95,
+      "spawn": {
+        "lon": 126.935696,
+        "lat": 37.555278,
+        "km": [
+          -3.635,
+          -1.928
+        ]
+      },
+      "target": "경복궁",
+      "target_lonlat": {
+        "lon": 126.976456,
+        "lat": 37.578905
+      },
+      "alt_m": 217,
+      "speed_mps": 10.1,
+      "rcs_dbsm": -4.9,
+      "mdop": true,
+      "rf_class": "commercial",
+      "dist_to_asset_km": 3.99,
+      "waypoints_km": [
+        [
+          -0.039,
+          0.702
+        ]
+      ]
+    },
+    {
+      "id": "T01",
+      "truth": "drone",
+      "subtype": "자폭형(FPV)",
+      "pred": "드론",
+      "p_uav": 0.95,
+      "spawn": {
+        "lon": 126.977128,
+        "lat": 37.608309,
+        "km": [
+          0.02,
+          3.975
+        ]
+      },
+      "target": "경복궁",
+      "target_lonlat": {
+        "lon": 126.976456,
+        "lat": 37.578905
+      },
+      "alt_m": 95,
+      "speed_mps": 25.2,
+      "rcs_dbsm": -14.6,
+      "mdop": true,
+      "rf_class": "commercial",
+      "dist_to_asset_km": 3.27,
+      "waypoints_km": [
+        [
+          -0.039,
+          0.702
+        ]
+      ]
+    },
+    {
+      "id": "T02",
+      "truth": "drone",
+      "subtype": "고정익",
+      "pred": "드론",
+      "p_uav": 0.95,
+      "spawn": {
+        "lon": 126.953533,
+        "lat": 37.543107,
+        "km": [
+          -2.062,
+          -3.283
+        ]
+      },
+      "target": "정부서울청사",
+      "target_lonlat": {
+        "lon": 126.975415,
+        "lat": 37.575095
+      },
+      "alt_m": 122,
+      "speed_mps": 26,
+      "rcs_dbsm": -17.6,
+      "mdop": true,
+      "rf_class": "custom/encrypted",
+      "dist_to_asset_km": 3.45,
+      "waypoints_km": [
+        [
+          -0.187,
+          0.242
+        ],
+        [
+          -0.131,
+          0.278
+        ]
+      ]
+    },
+    {
+      "id": "T03",
+      "truth": "drone",
+      "subtype": "자폭형(FPV)",
+      "pred": "드론",
+      "p_uav": 0.95,
+      "spawn": {
+        "lon": 127.021271,
+        "lat": 37.562112,
+        "km": [
+          3.915,
+          -1.167
+        ]
+      },
+      "target": "주한미국대사관",
+      "target_lonlat": {
+        "lon": 126.979783,
+        "lat": 37.566048
+      },
+      "alt_m": 48,
+      "speed_mps": 35.5,
+      "rcs_dbsm": -11.4,
+      "mdop": true,
+      "rf_class": "commercial",
+      "dist_to_asset_km": 3.69,
+      "waypoints_km": [
+        [
+          0.254,
+          -0.729
+        ]
+      ]
+    },
+    {
+      "id": "T04",
+      "truth": "drone",
+      "subtype": "회전익(헬기형)",
+      "pred": "드론",
+      "p_uav": 0.95,
+      "spawn": {
+        "lon": 127.012671,
+        "lat": 37.596026,
+        "km": [
+          3.156,
+          2.608
+        ]
+      },
+      "target": "주한미국대사관",
+      "target_lonlat": {
+        "lon": 126.979783,
+        "lat": 37.566048
+      },
+      "alt_m": 178,
+      "speed_mps": 13.5,
+      "rcs_dbsm": -6.9,
+      "mdop": true,
+      "rf_class": "custom/encrypted",
+      "dist_to_asset_km": 3.72,
+      "waypoints_km": [
+        [
+          0.254,
+          -0.729
+        ]
+      ]
+    },
+    {
+      "id": "T05",
+      "truth": "drone",
+      "subtype": "쿼드콥터",
+      "pred": "드론",
+      "p_uav": 0.95,
+      "spawn": {
+        "lon": 126.994144,
+        "lat": 37.535099,
+        "km": [
+          1.521,
+          -4.175
+        ]
+      },
+      "target": "주한미국대사관",
+      "target_lonlat": {
+        "lon": 126.979783,
+        "lat": 37.566048
+      },
+      "alt_m": 129,
+      "speed_mps": 12,
+      "rcs_dbsm": -9.2,
+      "mdop": true,
+      "rf_class": "custom/encrypted",
+      "dist_to_asset_km": 3.67,
+      "waypoints_km": [
+        [
+          0.222,
+          -0.85
+        ],
+        [
+          0.222,
+          -0.8
+        ],
+        [
+          0.254,
+          -0.729
+        ]
+      ]
+    },
+    {
+      "id": "T06",
+      "truth": "drone",
+      "subtype": "쿼드콥터",
+      "pred": "드론",
+      "p_uav": 0.95,
+      "spawn": {
+        "lon": 127.018499,
+        "lat": 37.597262,
+        "km": [
+          3.67,
+          2.745
+        ]
+      },
+      "target": "세종문화회관·외교부",
+      "target_lonlat": {
+        "lon": 126.97516,
+        "lat": 37.572848
+      },
+      "alt_m": 146,
+      "speed_mps": 12.3,
+      "rcs_dbsm": -10.1,
+      "mdop": true,
+      "rf_class": "commercial",
+      "dist_to_asset_km": 4.24,
+      "waypoints_km": [
+        [
+          -0.154,
+          0.028
+        ]
+      ]
+    },
+    {
+      "id": "T07",
+      "truth": "drone",
+      "subtype": "자폭형(FPV)",
+      "pred": "드론",
+      "p_uav": 0.95,
+      "spawn": {
+        "lon": 127.01742,
+        "lat": 37.554363,
+        "km": [
+          3.575,
+          -2.03
+        ]
+      },
+      "target": "경복궁",
+      "target_lonlat": {
+        "lon": 126.976456,
+        "lat": 37.578905
+      },
+      "alt_m": 55,
+      "speed_mps": 27.2,
+      "rcs_dbsm": -12.8,
+      "mdop": true,
+      "rf_class": "custom/encrypted",
+      "dist_to_asset_km": 3.57,
+      "waypoints_km": [
+        [
+          0.596,
+          0.445
+        ],
+        [
+          -0.039,
+          0.702
+        ]
+      ]
+    },
+    {
+      "id": "T08",
+      "truth": "drone",
+      "subtype": "쿼드콥터",
+      "pred": "드론",
+      "p_uav": 0.95,
+      "spawn": {
+        "lon": 126.940565,
+        "lat": 37.552634,
+        "km": [
+          -3.206,
+          -2.223
+        ]
+      },
+      "target": "주한미국대사관",
+      "target_lonlat": {
+        "lon": 126.979783,
+        "lat": 37.566048
+      },
+      "alt_m": 69,
+      "speed_mps": 16.5,
+      "rcs_dbsm": -9.1,
+      "mdop": true,
+      "rf_class": "custom/encrypted",
+      "dist_to_asset_km": 3.77,
+      "waypoints_km": [
+        [
+          0.219,
+          -0.698
+        ],
+        [
+          0.254,
+          -0.729
+        ]
+      ]
+    },
+    {
+      "id": "T09",
+      "truth": "drone",
+      "subtype": "자폭형(FPV)",
+      "pred": "드론",
+      "p_uav": 0.95,
+      "spawn": {
+        "lon": 126.94691,
+        "lat": 37.54269,
+        "km": [
+          -2.646,
+          -3.33
+        ]
+      },
+      "target": "경복궁",
+      "target_lonlat": {
+        "lon": 126.976456,
+        "lat": 37.578905
+      },
+      "alt_m": 78,
+      "speed_mps": 30.1,
+      "rcs_dbsm": -14,
+      "mdop": true,
+      "rf_class": "commercial",
+      "dist_to_asset_km": 3.9,
+      "waypoints_km": [
+        [
+          -1.021,
+          -0.405
+        ],
+        [
+          -0.039,
+          0.702
+        ]
+      ]
+    },
+    {
+      "id": "T10",
+      "truth": "drone",
+      "subtype": "쿼드콥터",
+      "pred": "드론",
+      "p_uav": 0.95,
+      "spawn": {
+        "lon": 126.951294,
+        "lat": 37.606961,
+        "km": [
+          -2.259,
+          3.825
+        ]
+      },
+      "target": "세종문화회관·외교부",
+      "target_lonlat": {
+        "lon": 126.97516,
+        "lat": 37.572848
+      },
+      "alt_m": 119,
+      "speed_mps": 14.9,
+      "rcs_dbsm": -9.6,
+      "mdop": true,
+      "rf_class": "custom/encrypted",
+      "dist_to_asset_km": 3.83,
+      "waypoints_km": [
+        [
+          -0.154,
+          0.028
+        ]
+      ]
+    },
+    {
+      "id": "T11",
+      "truth": "drone",
+      "subtype": "자폭형(FPV)",
+      "pred": "드론",
+      "p_uav": 0.95,
+      "spawn": {
+        "lon": 127.020994,
+        "lat": 37.581944,
+        "km": [
+          3.89,
+          1.04
+        ]
+      },
+      "target": "세종문화회관·외교부",
+      "target_lonlat": {
+        "lon": 126.97516,
+        "lat": 37.572848
+      },
+      "alt_m": 84,
+      "speed_mps": 42.4,
+      "rcs_dbsm": -13.1,
+      "mdop": true,
+      "rf_class": "custom/encrypted",
+      "dist_to_asset_km": 3.94,
+      "waypoints_km": [
+        [
+          0.347,
+          0.286
+        ],
+        [
+          -0.154,
+          0.028
+        ]
+      ]
+    },
+    {
+      "id": "T12",
+      "truth": "drone",
+      "subtype": "고정익",
+      "pred": "드론",
+      "p_uav": 0.95,
+      "spawn": {
+        "lon": 126.985212,
+        "lat": 37.530257,
+        "km": [
+          0.733,
+          -4.714
+        ]
+      },
+      "target": "정부서울청사",
+      "target_lonlat": {
+        "lon": 126.975415,
+        "lat": 37.575095
+      },
+      "alt_m": 260,
+      "speed_mps": 16.4,
+      "rcs_dbsm": -18,
+      "mdop": true,
+      "rf_class": "commercial",
+      "dist_to_asset_km": 4.01,
+      "waypoints_km": [
+        [
+          -0.131,
+          0.278
+        ]
+      ]
+    },
+    {
+      "id": "T13",
+      "truth": "drone",
+      "subtype": "고정익",
+      "pred": "드론",
+      "p_uav": 0.95,
+      "spawn": {
+        "lon": 126.950169,
+        "lat": 37.539976,
+        "km": [
+          -2.359,
+          -3.632
+        ]
+      },
+      "target": "정부서울청사",
+      "target_lonlat": {
+        "lon": 126.975415,
+        "lat": 37.575095
+      },
+      "alt_m": 169,
+      "speed_mps": 24,
+      "rcs_dbsm": -17.5,
+      "mdop": true,
+      "rf_class": "custom/encrypted",
+      "dist_to_asset_km": 3.91,
+      "waypoints_km": [
+        [
+          -0.131,
+          0.278
+        ]
+      ]
+    },
+    {
+      "id": "T14",
+      "truth": "drone",
+      "subtype": "쿼드콥터",
+      "pred": "드론",
+      "p_uav": 0.95,
+      "spawn": {
+        "lon": 126.932608,
+        "lat": 37.590148,
+        "km": [
+          -3.908,
+          1.953
+        ]
+      },
+      "target": "정부서울청사",
+      "target_lonlat": {
+        "lon": 126.975415,
+        "lat": 37.575095
+      },
+      "alt_m": 133,
+      "speed_mps": 15.3,
+      "rcs_dbsm": -11,
+      "mdop": true,
+      "rf_class": "commercial",
+      "dist_to_asset_km": 4.07,
+      "waypoints_km": [
+        [
+          -0.131,
+          0.278
+        ]
+      ]
+    },
+    {
+      "id": "T15",
+      "truth": "drone",
+      "subtype": "쿼드콥터",
+      "pred": "드론",
+      "p_uav": 0.95,
+      "spawn": {
+        "lon": 126.930605,
+        "lat": 37.580747,
+        "km": [
+          -4.085,
+          0.907
+        ]
+      },
+      "target": "주한미국대사관",
+      "target_lonlat": {
+        "lon": 126.979783,
+        "lat": 37.566048
+      },
+      "alt_m": 105,
+      "speed_mps": 13,
+      "rcs_dbsm": -10.1,
+      "mdop": true,
+      "rf_class": "custom/encrypted",
+      "dist_to_asset_km": 4,
+      "waypoints_km": [
+        [
+          0.254,
+          -0.729
+        ]
+      ]
+    },
+    {
+      "id": "T16",
+      "truth": "drone",
+      "subtype": "고정익",
+      "pred": "드론",
+      "p_uav": 0.95,
+      "spawn": {
+        "lon": 126.978459,
+        "lat": 37.613814,
+        "km": [
+          0.138,
+          4.588
+        ]
+      },
+      "target": "정부서울청사",
+      "target_lonlat": {
+        "lon": 126.975415,
+        "lat": 37.575095
+      },
+      "alt_m": 198,
+      "speed_mps": 18.5,
+      "rcs_dbsm": -18.4,
+      "mdop": true,
+      "rf_class": "custom/encrypted",
+      "dist_to_asset_km": 3.89,
+      "waypoints_km": [
+        [
+          -0.131,
+          0.278
+        ]
+      ]
+    },
+    {
+      "id": "T17",
+      "truth": "drone",
+      "subtype": "고정익",
+      "pred": "드론",
+      "p_uav": 0.95,
+      "spawn": {
+        "lon": 126.929663,
+        "lat": 37.568586,
+        "km": [
+          -4.168,
+          -0.447
+        ]
+      },
+      "target": "정부서울청사",
+      "target_lonlat": {
+        "lon": 126.975415,
+        "lat": 37.575095
+      },
+      "alt_m": 143,
+      "speed_mps": 22.9,
+      "rcs_dbsm": -17,
+      "mdop": true,
+      "rf_class": "custom/encrypted",
+      "dist_to_asset_km": 4.04,
+      "waypoints_km": [
+        [
+          -0.131,
+          0.278
+        ]
+      ]
+    },
+    {
+      "id": "T18",
+      "truth": "drone",
+      "subtype": "쿼드콥터",
+      "pred": "드론",
+      "p_uav": 0.95,
+      "spawn": {
+        "lon": 126.982483,
+        "lat": 37.534062,
+        "km": [
+          0.493,
+          -4.29
+        ]
+      },
+      "target": "정부서울청사",
+      "target_lonlat": {
+        "lon": 126.975415,
+        "lat": 37.575095
+      },
+      "alt_m": 95,
+      "speed_mps": 17.9,
+      "rcs_dbsm": -10,
+      "mdop": true,
+      "rf_class": "commercial",
+      "dist_to_asset_km": 3.57,
+      "waypoints_km": [
+        [
+          0.23,
+          -0.915
+        ],
+        [
+          0.18,
+          -0.865
+        ],
+        [
+          0.13,
+          -0.815
+        ],
+        [
+          -0.12,
+          0.235
+        ],
+        [
+          -0.131,
+          0.278
+        ]
+      ]
+    },
+    {
+      "id": "T19",
+      "truth": "drone",
+      "subtype": "쿼드콥터",
+      "pred": "드론",
+      "p_uav": 0.95,
+      "spawn": {
+        "lon": 126.930348,
+        "lat": 37.573861,
+        "km": [
+          -4.107,
+          0.14
+        ]
+      },
+      "target": "정부서울청사",
+      "target_lonlat": {
+        "lon": 126.975415,
+        "lat": 37.575095
+      },
+      "alt_m": 146,
+      "speed_mps": 16.9,
+      "rcs_dbsm": -8.6,
+      "mdop": true,
+      "rf_class": "commercial",
+      "dist_to_asset_km": 3.96,
+      "waypoints_km": [
+        [
+          -0.131,
+          0.278
+        ]
+      ]
+    },
+    {
+      "id": "T20",
+      "truth": "drone",
+      "subtype": "고정익",
+      "pred": "드론",
+      "p_uav": 0.95,
+      "spawn": {
+        "lon": 126.991976,
+        "lat": 37.612049,
+        "km": [
+          1.33,
+          4.391
+        ]
+      },
+      "target": "경복궁",
+      "target_lonlat": {
+        "lon": 126.976456,
+        "lat": 37.578905
+      },
+      "alt_m": 213,
+      "speed_mps": 25.9,
+      "rcs_dbsm": -17.5,
+      "mdop": true,
+      "rf_class": "commercial",
+      "dist_to_asset_km": 3.94,
+      "waypoints_km": [
+        [
+          -0.039,
+          0.702
+        ]
+      ]
+    },
+    {
+      "id": "T21",
+      "truth": "drone",
+      "subtype": "자폭형(FPV)",
+      "pred": "드론",
+      "p_uav": 0.95,
+      "spawn": {
+        "lon": 126.927538,
+        "lat": 37.573508,
+        "km": [
+          -4.355,
+          0.101
+        ]
+      },
+      "target": "주한미국대사관",
+      "target_lonlat": {
+        "lon": 126.979783,
+        "lat": 37.566048
+      },
+      "alt_m": 60,
+      "speed_mps": 25.1,
+      "rcs_dbsm": -11.3,
+      "mdop": true,
+      "rf_class": "commercial",
+      "dist_to_asset_km": 4.2,
+      "waypoints_km": [
+        [
+          -0.78,
+          -0.419
+        ],
+        [
+          -0.68,
+          -0.519
+        ],
+        [
+          -0.63,
+          -0.569
+        ],
+        [
+          -0.58,
+          -0.619
+        ],
+        [
+          0.17,
+          -0.669
+        ],
+        [
+          0.22,
+          -0.619
+        ],
+        [
+          0.254,
+          -0.729
+        ]
+      ]
+    },
+    {
+      "id": "T22",
+      "truth": "drone",
+      "subtype": "고정익",
+      "pred": "드론",
+      "p_uav": 0.95,
+      "spawn": {
+        "lon": 126.966875,
+        "lat": 37.613286,
+        "km": [
+          -0.884,
+          4.529
+        ]
+      },
+      "target": "주한미국대사관",
+      "target_lonlat": {
+        "lon": 126.979783,
+        "lat": 37.566048
+      },
+      "alt_m": 275,
+      "speed_mps": 22.6,
+      "rcs_dbsm": -18.2,
+      "mdop": true,
+      "rf_class": "custom/encrypted",
+      "dist_to_asset_km": 3.92,
+      "waypoints_km": [
+        [
+          0.254,
+          -0.729
+        ]
+      ]
+    },
+    {
+      "id": "T23",
+      "truth": "drone",
+      "subtype": "회전익(헬기형)",
+      "pred": "드론",
+      "p_uav": 0.95,
+      "spawn": {
+        "lon": 126.928065,
+        "lat": 37.57194,
+        "km": [
+          -4.309,
+          -0.074
+        ]
+      },
+      "target": "주한미국대사관",
+      "target_lonlat": {
+        "lon": 126.979783,
+        "lat": 37.566048
+      },
+      "alt_m": 166,
+      "speed_mps": 14.8,
+      "rcs_dbsm": -4.5,
+      "mdop": true,
+      "rf_class": "custom/encrypted",
+      "dist_to_asset_km": 4.16,
+      "waypoints_km": [
+        [
+          0.254,
+          -0.729
+        ]
+      ]
+    },
+    {
+      "id": "T24",
+      "truth": "drone",
+      "subtype": "자폭형(FPV)",
+      "pred": "드론",
+      "p_uav": 0.95,
+      "spawn": {
+        "lon": 127.004151,
+        "lat": 37.603098,
+        "km": [
+          2.404,
+          3.395
+        ]
+      },
+      "target": "세종문화회관·외교부",
+      "target_lonlat": {
+        "lon": 126.97516,
+        "lat": 37.572848
+      },
+      "alt_m": 30,
+      "speed_mps": 33.4,
+      "rcs_dbsm": -12.5,
+      "mdop": true,
+      "rf_class": "custom/encrypted",
+      "dist_to_asset_km": 3.64,
+      "waypoints_km": [
+        [
+          -0.104,
+          0.057
+        ],
+        [
+          -0.154,
+          0.028
+        ]
+      ]
+    },
+    {
+      "id": "T25",
+      "truth": "drone",
+      "subtype": "회전익(헬기형)",
+      "pred": "드론",
+      "p_uav": 0.95,
+      "spawn": {
+        "lon": 127.012446,
+        "lat": 37.543675,
+        "km": [
+          3.136,
+          -3.22
+        ]
+      },
+      "target": "정부서울청사",
+      "target_lonlat": {
+        "lon": 126.975415,
+        "lat": 37.575095
+      },
+      "alt_m": 159,
+      "speed_mps": 13.8,
+      "rcs_dbsm": -6,
+      "mdop": true,
+      "rf_class": "custom/encrypted",
+      "dist_to_asset_km": 3.81,
+      "waypoints_km": [
+        [
+          0.394,
+          -0.445
+        ],
+        [
+          0.394,
+          -0.295
+        ],
+        [
+          -0.131,
+          0.278
+        ]
+      ]
+    },
+    {
+      "id": "T26",
+      "truth": "drone",
+      "subtype": "자폭형(FPV)",
+      "pred": "드론",
+      "p_uav": 0.95,
+      "spawn": {
+        "lon": 126.930399,
+        "lat": 37.554124,
+        "km": [
+          -4.103,
+          -2.057
+        ]
+      },
+      "target": "정부서울청사",
+      "target_lonlat": {
+        "lon": 126.975415,
+        "lat": 37.575095
+      },
+      "alt_m": 98,
+      "speed_mps": 42.2,
+      "rcs_dbsm": -12.8,
+      "mdop": true,
+      "rf_class": "commercial",
+      "dist_to_asset_km": 4.47,
+      "waypoints_km": [
+        [
+          -0.131,
+          0.278
+        ]
+      ]
+    },
+    {
+      "id": "T27",
+      "truth": "drone",
+      "subtype": "자폭형(FPV)",
+      "pred": "드론",
+      "p_uav": 0.95,
+      "spawn": {
+        "lon": 126.940092,
+        "lat": 37.596372,
+        "km": [
+          -3.248,
+          2.646
+        ]
+      },
+      "target": "정부서울청사",
+      "target_lonlat": {
+        "lon": 126.975415,
+        "lat": 37.575095
+      },
+      "alt_m": 73,
+      "speed_mps": 32.4,
+      "rcs_dbsm": -15.1,
+      "mdop": true,
+      "rf_class": "custom/encrypted",
+      "dist_to_asset_km": 3.75,
+      "waypoints_km": [
+        [
+          -0.131,
+          0.278
+        ]
+      ]
+    },
+    {
+      "id": "T28",
+      "truth": "drone",
+      "subtype": "고정익",
+      "pred": "드론",
+      "p_uav": 0.95,
+      "spawn": {
+        "lon": 126.960406,
+        "lat": 37.538257,
+        "km": [
+          -1.455,
+          -3.823
+        ]
+      },
+      "target": "경복궁",
+      "target_lonlat": {
+        "lon": 126.976456,
+        "lat": 37.578905
+      },
+      "alt_m": 259,
+      "speed_mps": 19.9,
+      "rcs_dbsm": -17.4,
+      "mdop": true,
+      "rf_class": "custom/encrypted",
+      "dist_to_asset_km": 3.53,
+      "waypoints_km": [
+        [
+          -0.039,
+          0.702
+        ]
+      ]
+    },
+    {
+      "id": "T29",
+      "truth": "drone",
+      "subtype": "고정익",
+      "pred": "드론",
+      "p_uav": 0.95,
+      "spawn": {
+        "lon": 126.928926,
+        "lat": 37.558045,
+        "km": [
+          -4.233,
+          -1.62
+        ]
+      },
+      "target": "주한미국대사관",
+      "target_lonlat": {
+        "lon": 126.979783,
+        "lat": 37.566048
+      },
+      "alt_m": 225,
+      "speed_mps": 17.2,
+      "rcs_dbsm": -16,
+      "mdop": true,
+      "rf_class": "commercial",
+      "dist_to_asset_km": 4.4,
+      "waypoints_km": [
+        [
+          0.254,
+          -0.729
+        ]
+      ]
+    },
+    {
+      "id": "T30",
+      "truth": "drone",
+      "subtype": "고정익",
+      "pred": "드론",
+      "p_uav": 0.95,
+      "spawn": {
+        "lon": 126.96401,
+        "lat": 37.612808,
+        "km": [
+          -1.137,
+          4.476
+        ]
+      },
+      "target": "주한미국대사관",
+      "target_lonlat": {
+        "lon": 126.979783,
+        "lat": 37.566048
+      },
+      "alt_m": 209,
+      "speed_mps": 24.6,
+      "rcs_dbsm": -17,
+      "mdop": true,
+      "rf_class": "custom/encrypted",
+      "dist_to_asset_km": 3.93,
+      "waypoints_km": [
+        [
+          0.254,
+          -0.729
+        ]
+      ]
+    },
+    {
+      "id": "T31",
+      "truth": "drone",
+      "subtype": "자폭형(FPV)",
+      "pred": "드론",
+      "p_uav": 0.95,
+      "spawn": {
+        "lon": 126.939562,
+        "lat": 37.593585,
+        "km": [
+          -3.294,
+          2.336
+        ]
+      },
+      "target": "정부서울청사",
+      "target_lonlat": {
+        "lon": 126.975415,
+        "lat": 37.575095
+      },
+      "alt_m": 88,
+      "speed_mps": 25.6,
+      "rcs_dbsm": -14.5,
+      "mdop": true,
+      "rf_class": "custom/encrypted",
+      "dist_to_asset_km": 3.64,
+      "waypoints_km": [
+        [
+          -0.131,
+          0.278
+        ]
+      ]
+    },
+    {
+      "id": "T32",
+      "truth": "drone",
+      "subtype": "자폭형(FPV)",
+      "pred": "드론",
+      "p_uav": 0.95,
+      "spawn": {
+        "lon": 126.934022,
+        "lat": 37.597446,
+        "km": [
+          -3.783,
+          2.766
+        ]
+      },
+      "target": "경복궁",
+      "target_lonlat": {
+        "lon": 126.976456,
+        "lat": 37.578905
+      },
+      "alt_m": 74,
+      "speed_mps": 32.6,
+      "rcs_dbsm": -14.5,
+      "mdop": true,
+      "rf_class": "custom/encrypted",
+      "dist_to_asset_km": 4.28,
+      "waypoints_km": [
+        [
+          -0.039,
+          0.702
+        ]
+      ]
+    },
+    {
+      "id": "T33",
+      "truth": "drone",
+      "subtype": "고정익",
+      "pred": "드론",
+      "p_uav": 0.95,
+      "spawn": {
+        "lon": 127.026155,
+        "lat": 37.576813,
+        "km": [
+          4.346,
+          0.469
+        ]
+      },
+      "target": "정부서울청사",
+      "target_lonlat": {
+        "lon": 126.975415,
+        "lat": 37.575095
+      },
+      "alt_m": 277,
+      "speed_mps": 22.3,
+      "rcs_dbsm": -18.3,
+      "mdop": true,
+      "rf_class": "custom/encrypted",
+      "dist_to_asset_km": 4.26,
+      "waypoints_km": [
+        [
+          -0.131,
+          0.278
+        ]
+      ]
+    },
+    {
+      "id": "T34",
+      "truth": "drone",
+      "subtype": "쿼드콥터",
+      "pred": "드론",
+      "p_uav": 0.95,
+      "spawn": {
+        "lon": 126.981102,
+        "lat": 37.60851,
+        "km": [
+          0.371,
+          3.998
+        ]
+      },
+      "target": "경복궁",
+      "target_lonlat": {
+        "lon": 126.976456,
+        "lat": 37.578905
+      },
+      "alt_m": 144,
+      "speed_mps": 16.8,
+      "rcs_dbsm": -10.9,
+      "mdop": true,
+      "rf_class": "commercial",
+      "dist_to_asset_km": 3.32,
+      "waypoints_km": [
+        [
+          -0.039,
+          0.702
+        ]
+      ]
+    },
+    {
+      "id": "T35",
+      "truth": "drone",
+      "subtype": "고정익",
+      "pred": "드론",
+      "p_uav": 0.95,
+      "spawn": {
+        "lon": 126.989207,
+        "lat": 37.532623,
+        "km": [
+          1.086,
+          -4.45
+        ]
+      },
+      "target": "주한미국대사관",
+      "target_lonlat": {
+        "lon": 126.979783,
+        "lat": 37.566048
+      },
+      "alt_m": 184,
+      "speed_mps": 23.1,
+      "rcs_dbsm": -17.2,
+      "mdop": true,
+      "rf_class": "commercial",
+      "dist_to_asset_km": 3.81,
+      "waypoints_km": [
+        [
+          0.254,
+          -0.729
+        ]
+      ]
+    },
+    {
+      "id": "T36",
+      "truth": "drone",
+      "subtype": "자폭형(FPV)",
+      "pred": "드론",
+      "p_uav": 0.95,
+      "spawn": {
+        "lon": 127.004779,
+        "lat": 37.607192,
+        "km": [
+          2.46,
+          3.851
+        ]
+      },
+      "target": "정부서울청사",
+      "target_lonlat": {
+        "lon": 126.975415,
+        "lat": 37.575095
+      },
+      "alt_m": 54,
+      "speed_mps": 32.3,
+      "rcs_dbsm": -12.2,
+      "mdop": true,
+      "rf_class": "commercial",
+      "dist_to_asset_km": 4.02,
+      "waypoints_km": [
+        [
+          -0.131,
+          0.278
+        ]
+      ]
+    },
+    {
+      "id": "T37",
+      "truth": "drone",
+      "subtype": "쿼드콥터",
+      "pred": "드론",
+      "p_uav": 0.95,
+      "spawn": {
+        "lon": 126.939641,
+        "lat": 37.598063,
+        "km": [
+          -3.287,
+          2.834
+        ]
+      },
+      "target": "세종문화회관·외교부",
+      "target_lonlat": {
+        "lon": 126.97516,
+        "lat": 37.572848
+      },
+      "alt_m": 147,
+      "speed_mps": 16.7,
+      "rcs_dbsm": -11.5,
+      "mdop": true,
+      "rf_class": "custom/encrypted",
+      "dist_to_asset_km": 3.89,
+      "waypoints_km": [
+        [
+          -0.154,
+          0.028
+        ]
+      ]
+    },
+    {
+      "id": "T38",
+      "truth": "drone",
+      "subtype": "쿼드콥터",
+      "pred": "드론",
+      "p_uav": 0.95,
+      "spawn": {
+        "lon": 127.009617,
+        "lat": 37.549777,
+        "km": [
+          2.887,
+          -2.541
+        ]
+      },
+      "target": "경복궁",
+      "target_lonlat": {
+        "lon": 126.976456,
+        "lat": 37.578905
+      },
+      "alt_m": 115,
+      "speed_mps": 11.2,
+      "rcs_dbsm": -8.8,
+      "mdop": true,
+      "rf_class": "commercial",
+      "dist_to_asset_km": 3.2,
+      "waypoints_km": [
+        [
+          0.53,
+          0.084
+        ],
+        [
+          -0.039,
+          0.702
+        ]
+      ]
+    },
+    {
+      "id": "T39",
+      "truth": "drone",
+      "subtype": "회전익(헬기형)",
+      "pred": "드론",
+      "p_uav": 0.95,
+      "spawn": {
+        "lon": 126.963911,
+        "lat": 37.609785,
+        "km": [
+          -1.146,
+          4.139
+        ]
+      },
+      "target": "경복궁",
+      "target_lonlat": {
+        "lon": 126.976456,
+        "lat": 37.578905
+      },
+      "alt_m": 155,
+      "speed_mps": 13.4,
+      "rcs_dbsm": -5.4,
+      "mdop": true,
+      "rf_class": "custom/encrypted",
+      "dist_to_asset_km": 3.61,
+      "waypoints_km": [
+        [
+          -0.039,
+          0.702
+        ]
+      ]
+    }
+  ]
+}

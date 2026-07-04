@@ -61,7 +61,13 @@ async function loadZones(viewer: Viewer, base: string): Promise<GeoJsonDataSourc
     const type = e.properties?.zone_type?.getValue() as string;
     const name = e.properties?.name?.getValue() as string;
     const weight = e.properties?.weight?.getValue() as number;
+    const popMax = e.properties?.population_max?.getValue() as number | undefined;
+    const congest = e.properties?.congest_lvl?.getValue() as string | undefined;
     const s = ZONE_STYLE[type] ?? ZONE_STYLE.sensitive;
+    // 실시간 인구밀집 구역: 실제 인구·혼잡도 라벨 병기
+    const popLine = popMax
+      ? `\nPOP ${(popMax / 1000).toFixed(popMax >= 1000 ? 0 : 1)}k · ${congest ?? ""}`
+      : "";
     if (e.polygon) {
       e.polygon.material = Color.fromCssColorString(s.fill).withAlpha(0.2) as any;
       e.polygon.outline = true as any;
@@ -72,7 +78,7 @@ async function loadZones(viewer: Viewer, base: string): Promise<GeoJsonDataSourc
     if (c) {
       e.position = new ConstantPositionProperty(c);
       e.label = new LabelGraphics({
-        text: `${name}\n${weight > 0 ? "+" : ""}${weight}`,
+        text: `${name}\n${weight > 0 ? "+" : ""}${weight}${popLine}`,
         font: "600 12px 'SF Mono', monospace",
         fillColor: Color.fromCssColorString(s.line),
         style: LabelStyle.FILL_AND_OUTLINE,

@@ -1,6 +1,6 @@
 // 위협체 유형별 아이콘을 캔버스로 생성 (오프라인, 외부 에셋 불필요).
 // 흰색으로 그려 billboard.color 로 위협도 색을 곱해 틴트한다. 기본 진행방향 = 위쪽(북).
-export type DroneType = "quad" | "fixedwing" | "balloon" | "bird";
+export type DroneType = "quad" | "fixedwing" | "balloon" | "bird" | "unknown";
 
 const cache = new Map<DroneType, HTMLCanvasElement>();
 
@@ -30,9 +30,22 @@ export function iconFor(type: DroneType): HTMLCanvasElement {
     case "bird":
       drawBird(g);
       break;
+    case "unknown":
+      drawUnknown(g);
+      break;
   }
   cache.set(type, c);
   return c;
+}
+
+// 미탐지: 물음표 박스 (스캐너 미확인 표적)
+function drawUnknown(g: CanvasRenderingContext2D) {
+  g.lineWidth = 2.4;
+  g.strokeRect(-14, -14, 28, 28);
+  g.font = "bold 26px sans-serif";
+  g.textAlign = "center";
+  g.textBaseline = "middle";
+  g.fillText("?", 0, 1);
 }
 
 // 쿼드콥터: X자 암 + 4로터

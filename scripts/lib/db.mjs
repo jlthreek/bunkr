@@ -9,6 +9,12 @@ export function openDb() {
   const db = new Database(DB_PATH);
   db.pragma("journal_mode = WAL");
   db.exec(SCHEMA);
+  // 마이그레이션: 기존 DB 에 priority_zones.meta 컬럼 추가(인구밀집 등 부가 속성 JSON)
+  try {
+    db.exec("ALTER TABLE priority_zones ADD COLUMN meta TEXT");
+  } catch {
+    /* 이미 존재 */
+  }
   return db;
 }
 
@@ -60,7 +66,8 @@ CREATE TABLE IF NOT EXISTS priority_zones (
   name      TEXT NOT NULL,
   zone_type TEXT NOT NULL,          -- protected | approach | sensitive
   weight    REAL NOT NULL,          -- 보호/접근 +, 민감 -
-  geom      TEXT NOT NULL           -- GeoJSON Polygon/MultiPolygon (WGS84)
+  geom      TEXT NOT NULL,          -- GeoJSON Polygon/MultiPolygon (WGS84)
+  meta      TEXT                    -- 부가 속성 JSON (인구밀집·자산 태그 등)
 );
 `;
 
