@@ -65,25 +65,28 @@ const ION_TOKEN = import.meta.env.VITE_CESIUM_ION_TOKEN as string | undefined;
 if (ION_TOKEN) Ion.defaultAccessToken = ION_TOKEN;
 else console.warn("[yangjae3dmap] VITE_CESIUM_ION_TOKEN 미설정");
 
-// ── Stadia Maps 베이스맵 (Alidade) ───────────────────────────
-function stadia(style: string) {
+// ── CartoDB 베이스맵 (키리스 · 배포 도메인 무관) ───────────────
+// Stadia 는 localhost 외 도메인에서 API 키를 요구(배포 시 401)하므로,
+// 키 없이 어디서나 뜨는 CartoDB 다크/라이트 벡터 래스터 타일로 교체.
+function carto(style: string) {
   return new UrlTemplateImageryProvider({
-    url: `https://tiles.stadiamaps.com/tiles/${style}/{z}/{x}/{y}.png`,
-    credit: "© Stadia Maps · © OpenMapTiles · © OpenStreetMap",
+    url: `https://{s}.basemaps.cartocdn.com/${style}/{z}/{x}/{y}.png`,
+    subdomains: ["a", "b", "c", "d"],
+    credit: "© CARTO · © OpenStreetMap contributors",
     maximumLevel: 20,
   });
 }
 const alidadeDark = new ProviderViewModel({
-  name: "Alidade Smooth Dark",
-  tooltip: "Stadia Alidade Smooth Dark (기본)",
+  name: "Dark Matter",
+  tooltip: "CartoDB Dark (기본)",
   iconUrl: "",
-  creationFunction: () => stadia("alidade_smooth_dark"),
+  creationFunction: () => carto("dark_all"),
 });
 const alidadeLight = new ProviderViewModel({
-  name: "Alidade Smooth",
-  tooltip: "Stadia Alidade Smooth (라이트)",
+  name: "Positron",
+  tooltip: "CartoDB Light (라이트)",
   iconUrl: "",
-  creationFunction: () => stadia("alidade_smooth"),
+  creationFunction: () => carto("light_all"),
 });
 const satellite = new ProviderViewModel({
   name: "Satellite",
