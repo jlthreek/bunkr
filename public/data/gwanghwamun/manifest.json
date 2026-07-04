@@ -1,0 +1,21 @@
+{
+  "crs": "EPSG:4326",
+  "layers": [
+    {
+      "layer": "area_boundary",
+      "count": 1
+    },
+    {
+      "layer": "buildings",
+      "count": 5087
+    },
+    {
+      "layer": "install_sites",
+      "count": 285
+    },
+    {
+      "layer": "priority_zones",
+      "count": 4
+    }
+  ]
+}

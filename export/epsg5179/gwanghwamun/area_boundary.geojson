@@ -1,0 +1,1 @@
+{"type":"FeatureCollection","crs":{"type":"name","properties":{"name":"urn:ogc:def:crs:EPSG::5179"}},"features":[{"type":"Feature","properties":{"area_id":"AR_GWANGHWAMUN","name":"Gwanghwamun Sq. AO"},"geometry":{"type":"Polygon","coordinates":[[[952801.268,1951718.386],[954803.214,1951707.243],[954814.07,1953700.508],[952812.605,1953711.653],[952801.268,1951718.386]]]}}]}
