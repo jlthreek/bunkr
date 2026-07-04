@@ -87,7 +87,36 @@
       }
       #navlinks a:hover { color: var(--text); background: rgba(255, 255, 255, 0.06); }
       #navlinks a.active { color: var(--on-primary); background: var(--green); }
-      @media (max-width: 960px) { #navlinks { display: none; } }
+      .lang-toggle {
+        display: flex;
+        gap: 2px;
+        height: 30px;
+        padding: 3px;
+        margin-left: 14px;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: var(--r-pill);
+        flex: none;
+      }
+      .lang-seg {
+        padding: 0 11px;
+        font-family: var(--font-mono);
+        font-size: 10px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        border: none;
+        border-radius: var(--r-pill);
+        background: transparent;
+        color: var(--text-2);
+        cursor: pointer;
+        transition: background 0.15s var(--ease), color 0.15s var(--ease);
+      }
+      .lang-seg.active { background: var(--green); color: var(--on-primary); }
+      .lang-seg:not(.active):hover { color: var(--text); }
+      @media (max-width: 960px) {
+        #navlinks { display: none; }
+        .lang-toggle { margin-left: auto; }
+      }
 
       /* ══ layout ══ */
       .wrap { max-width: 1180px; margin: 0 auto; padding: 0 clamp(20px, 4vw, 32px); }
@@ -467,12 +496,8 @@
       }
       .demo-tag .rec { width: 7px; height: 7px; border-radius: 50%; background: var(--green); animation: pulse 1.6s ease-in-out infinite; }
       .demo-head .demo-desc { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); letter-spacing: 0.5px; }
-      .demo-shot img {
-        width: 100%;
-        border-radius: var(--r-card);
-        border: 1px solid var(--line-strong);
-        box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
-      }
+      /* 스크린샷 원본에 창 그림자·라운드가 포함되어 있어 별도 프레임 없음 */
+      .demo-shot img { width: 100%; }
 
       /* ══ insight ══ */
       #insight { background: radial-gradient(52% 40% at 78% 12%, rgba(136, 242, 152, 0.05), transparent 65%); }
@@ -711,12 +736,16 @@
         <span class="brand-sub">TRACK 01 · C-UAS · D4D 2026</span>
       </div>
       <div id="navlinks">
-        <a href="#threat" data-nav>위협</a>
-        <a href="#counter-uas" data-nav>Counter UAS</a>
-        <a href="#insight" data-nav>인사이트</a>
-        <a href="#placement" data-nav>배치 최적화</a>
-        <a href="#loop" data-nav>방어 사이클</a>
-        <a href="#persona" data-nav>페르소나</a>
+        <a href="#threat" data-nav data-en="Threat">위협</a>
+        <a href="#counter-uas" data-nav data-en="Counter UAS">Counter UAS</a>
+        <a href="#insight" data-nav data-en="Insight">인사이트</a>
+        <a href="#placement" data-nav data-en="Placement">배치 최적화</a>
+        <a href="#loop" data-nav data-en="One Loop">방어 사이클</a>
+        <a href="#persona" data-nav data-en="Persona">페르소나</a>
+      </div>
+      <div class="lang-toggle" title="언어 전환 · Switch language">
+        <button class="lang-seg active" data-lang-btn="ko">KO</button>
+        <button class="lang-seg" data-lang-btn="en">EN</button>
       </div>
     </nav>
 
@@ -728,11 +757,11 @@
           <span class="hero-chip">TEAM BUNKR</span>
           <span class="hero-chip">D4D 2026 · TRACK 01</span>
         </div>
-        <h1 class="hero-title reveal d1">
+        <h1 class="hero-title reveal d1" data-en='Guarding urban skies with<br /><span class="accent">decision</span> and <span class="accent">deployment</span>'>
           도심 상공을 지키는<br />
           <span class="accent">결심</span>과 <span class="accent">배치</span>의 시스템
         </h1>
-        <p class="hero-sub reveal d2">
+        <p class="hero-sub reveal d2" data-en="<b>Urban Counter-UAS Decision &amp; Deployment System</b> — one defense cycle that assesses drone and balloon threats in real time, and designs the optimal defense network before the incident.">
           <b>Urban Counter-UAS Decision &amp; Deployment System</b> —
           드론·풍선 위협을 실시간으로 판단하고, 사건 이전에 최적의 방어망을 설계하는
           하나의 방어 사이클.
@@ -742,18 +771,18 @@
           <a class="hero-sys r" href="#counter-uas">
             <div class="hs-tag">SYSTEM 01 · REACTIVE</div>
             <div class="hs-name">Counter UAS</div>
-            <div class="hs-desc">실시간 탐지 → 식별 → 위협평가 → 대응 의사결정 지원</div>
-            <div class="hs-arrow">자세히 보기 →</div>
+            <div class="hs-desc" data-en="Real-time detect → classify → assess → engagement decision support">실시간 탐지 → 식별 → 위협평가 → 대응 의사결정 지원</div>
+            <div class="hs-arrow" data-en="Learn more →">자세히 보기 →</div>
           </a>
           <a class="hero-sys p" href="#placement">
             <div class="hs-tag">SYSTEM 02 · PROACTIVE</div>
-            <div class="hs-name">배치 최적화</div>
-            <div class="hs-desc">센서·대응 자산의 최적 계층 배치로 선제 방어망 설계</div>
-            <div class="hs-arrow">자세히 보기 →</div>
+            <div class="hs-name" data-en="Placement Optimization">배치 최적화</div>
+            <div class="hs-desc" data-en="Layered optimal placement of sensors &amp; effectors for a preemptive defense network">센서·대응 자산의 최적 계층 배치로 선제 방어망 설계</div>
+            <div class="hs-arrow" data-en="Learn more →">자세히 보기 →</div>
           </a>
         </div>
 
-        <div class="hero-names reveal d3">정찬희 · 김예주 · 김재현 · 이민혁</div>
+        <div class="hero-names reveal d3" data-en="Jeong Chanhee · Kim Yeju · Kim Jaehyun · Lee Minhyuk">정찬희 · 김예주 · 김재현 · 이민혁</div>
       </div>
       <div class="scroll-cue"><span>SCROLL</span><span class="bar"></span></div>
     </section>
@@ -761,9 +790,9 @@
     <!-- ══ 01 THREAT ══ -->
     <section id="threat">
       <div class="wrap">
-        <div class="eyebrow reveal"><span class="no">01</span> THREAT · 위협 정의</div>
-        <h2 class="reveal">도심 상공의 드론·풍선,<br /><span class="accent-red">안 보이고, 못 쏘고, 시간이 없다.</span></h2>
-        <p class="lede reveal d1">
+        <div class="eyebrow reveal"><span class="no">01</span> <span data-en="THREAT · DEFINITION">THREAT · 위협 정의</span></div>
+        <h2 class="reveal" data-en='Drones &amp; balloons over the city —<br /><span class="accent-red">unseen, unshootable, out of time.</span>'>도심 상공의 드론·풍선,<br /><span class="accent-red">안 보이고, 못 쏘고, 시간이 없다.</span></h2>
+        <p class="lede reveal d1" data-en="Small threats slipping in at low altitude sit in the blind spot of existing air defense. Three barriers exist at once.">
           저고도로 스며드는 소형 위협체는 기존 방공망의 사각지대에 있다.
           세 가지 벽이 동시에 존재한다.
         </p>
@@ -771,18 +800,18 @@
         <div class="threat-cards">
           <div class="tcard reveal">
             <div class="no">BARRIER 01</div>
-            <h3>LSS 저신호</h3>
-            <p>저고도·저속·저RCS. 광역 레이더로는 탐지·식별이 제한되고, 도심 클러터로 오탐이 다발한다.</p>
+            <h3 data-en="LSS Low Signature">LSS 저신호</h3>
+            <p data-en="Low altitude, low speed, low RCS. Wide-area radar struggles to detect and classify, and urban clutter causes frequent false alarms.">저고도·저속·저RCS. 광역 레이더로는 탐지·식별이 제한되고, 도심 클러터로 오탐이 다발한다.</p>
           </div>
           <div class="tcard reveal d1">
             <div class="no">BARRIER 02</div>
-            <h3>도심 부수피해</h3>
-            <p>인구 밀집지에서의 물리 타격은 심각한 2차 피해로 이어진다. 아무거나 쏠 수 없다.</p>
+            <h3 data-en="Urban Collateral">도심 부수피해</h3>
+            <p data-en="A physical strike in a dense urban area causes severe secondary damage. You can't just shoot anything.">인구 밀집지에서의 물리 타격은 심각한 2차 피해로 이어진다. 아무거나 쏠 수 없다.</p>
           </div>
           <div class="tcard reveal d2">
             <div class="no">BARRIER 03</div>
-            <h3>골든타임의 벽</h3>
-            <p>극히 짧은 시간 안에 대상을 완벽히 판단하는 것은 물리적으로 불가능하다.</p>
+            <h3 data-en="The Golden-Time Wall">골든타임의 벽</h3>
+            <p data-en="Perfectly judging a target within an extremely short window is physically impossible.">극히 짧은 시간 안에 대상을 완벽히 판단하는 것은 물리적으로 불가능하다.</p>
           </div>
         </div>
 
@@ -790,30 +819,30 @@
           <div class="photo-stack reveal">
             <div class="alert-bar">
               <span class="dot"></span>
-              <p>단순 탐지 고도화로는 부족하다 — <b>저위험 대응을 결심할 수 있는 지능형 지휘통제시스템</b>이 필요하다.</p>
+              <p data-en="Better detection alone is not enough — we need an <b>intelligent command &amp; control system that can commit to low-risk responses</b>.">단순 탐지 고도화로는 부족하다 — <b>저위험 대응을 결심할 수 있는 지능형 지휘통제시스템</b>이 필요하다.</p>
             </div>
             <div class="photo-row">
               <div class="photo-item">
                 <img src="pitchdeck/img/photo-quad.jpg" alt="소형드론(쿼드롭터)" />
-                <span class="tag">소형드론 · 쿼드콥터</span>
+                <span class="tag" data-en="Small drone · Quadcopter">소형드론 · 쿼드콥터</span>
               </div>
               <div class="photo-item">
                 <img src="pitchdeck/img/photo-fpv.jpg" alt="자폭드론 (자폭 FPV)" />
-                <span class="tag">자폭 FPV</span>
+                <span class="tag" data-en="Suicide FPV">자폭 FPV</span>
               </div>
               <div class="photo-item">
                 <img src="pitchdeck/img/photo-balloon.jpg" alt="고고도 풍선" />
-                <span class="tag">고고도 풍선</span>
+                <span class="tag" data-en="High-altitude balloon">고고도 풍선</span>
               </div>
             </div>
-            <div class="caption">PHOTO: WIKIMEDIA COMMONS (CC) · 실사례 — 2024 오물풍선(ko.wikipedia) · 2023 정찰풍선(en.wikipedia)</div>
+            <div class="caption" data-en="PHOTO: WIKIMEDIA COMMONS (CC) · Real cases — 2024 trash balloons (ko.wikipedia) · 2023 spy balloon (en.wikipedia)">PHOTO: WIKIMEDIA COMMONS (CC) · 실사례 — 2024 오물풍선(ko.wikipedia) · 2023 정찰풍선(en.wikipedia)</div>
           </div>
 
           <div class="reveal d1">
             <div class="chartcard">
-              <div class="chart-title">위협체 분포 — RCS × 고도 · 실측 문헌 기반</div>
+              <div class="chart-title" data-en="Threat distribution — RCS × altitude · measured literature">위협체 분포 — RCS × 고도 · 실측 문헌 기반</div>
               <img src="pitchdeck/img/rcs-chart.png" alt="위협체 분포 RCS x 고도 산점도 — LSS RCS GATE -10dBsm 아래 광역 레이더 탐지 제한 구역" />
-              <div class="caption">
+              <div class="caption" data-en="SRC — measured RCS: doi.org/10.3390/drones7010039 · LSS classification: doi.org/10.3390/s19225048">
                 SRC — RCS 실측: doi.org/10.3390/drones7010039 · LSS 분류: doi.org/10.3390/s19225048
               </div>
             </div>
@@ -826,9 +855,9 @@
     <section id="counter-uas">
       <div class="wrap">
         <div class="eyebrow reveal"><span class="no">02</span> SYSTEM 01 · COUNTER UAS</div>
-        <div class="reveal"><span class="sys-badge reactive"><span class="dot"></span>REACTIVE · 대응</span></div>
-        <h2 class="reveal">실시간 <span class="accent">탐지 → 식별 → 대응</span>을<br />하나의 파이프라인으로</h2>
-        <p class="lede reveal d1">
+        <div class="reveal"><span class="sys-badge reactive"><span class="dot"></span><span data-en="REACTIVE · RESPONSE">REACTIVE · 대응</span></span></div>
+        <h2 class="reveal" data-en='Real-time <span class="accent">detect → classify → respond</span>,<br />in a single pipeline'>실시간 <span class="accent">탐지 → 식별 → 대응</span>을<br />하나의 파이프라인으로</h2>
+        <p class="lede reveal d1" data-en="Fuses RADAR, RF, and EO sensors to catch threats, scores threat levels, and recommends soft/hard response options. Simulator and live hardware share the <b>same interface</b>.">
           RADAR·RF·EO 센서를 융합해 위협을 잡아내고, 위협도를 점수화해
           soft/hard 대응 옵션까지 제시한다. 시뮬레이터와 실측 장비가 <b>동일 인터페이스</b>를 사용한다.
         </p>
@@ -837,44 +866,44 @@
           <span class="schip"><span class="sdot"></span>RADAR</span>
           <span class="schip"><span class="sdot"></span>RF</span>
           <span class="schip dim"><span class="sdot"></span>EO</span>
-          <span class="schip dim">시뮬레이터 · UAS GENERATOR 모듈</span>
-          <span class="schip dim">실측 데이터 INPUT</span>
+          <span class="schip dim" data-en="Simulator · UAS GENERATOR module">시뮬레이터 · UAS GENERATOR 모듈</span>
+          <span class="schip dim" data-en="Live measured data input">실측 데이터 INPUT</span>
         </div>
 
         <div class="pipeline">
           <div class="stage reveal">
             <div class="st-no">STAGE 01</div>
-            <h3>융합탐지</h3>
+            <h3 data-en="Fusion Detection">융합탐지</h3>
             <ul>
-              <li>RF·레이더 시공간 융합</li>
-              <li>LSS 게이트: RCS·속도</li>
+              <li data-en="RF·radar spatio-temporal fusion">RF·레이더 시공간 융합</li>
+              <li data-en="LSS gate: RCS·speed">LSS 게이트: RCS·속도</li>
             </ul>
             <div class="st-src">pipeline.py · Drones 7(1):39</div>
           </div>
           <div class="stage reveal d1">
             <div class="st-no">STAGE 02</div>
-            <h3>유형분류</h3>
+            <h3 data-en="Classification">유형분류</h3>
             <ul>
-              <li>드론 / 풍선 / 조류 판별</li>
-              <li>마이크로도플러 → RF → RCS·고도</li>
+              <li data-en="Drone / balloon / bird discrimination">드론 / 풍선 / 조류 판별</li>
+              <li data-en="Micro-Doppler → RF → RCS·altitude">마이크로도플러 → RF → RCS·고도</li>
             </ul>
             <div class="st-src">engine.py · Sensors 19(22)</div>
           </div>
           <div class="stage reveal d2">
             <div class="st-no">STAGE 03</div>
-            <h3>위협평가</h3>
+            <h3 data-en="Threat Assessment">위협평가</h3>
             <ul>
-              <li>위협도 0–100 점수화</li>
-              <li>AHP 가중 · CR=0.004</li>
+              <li data-en="Threat score 0–100">위협도 0–100 점수화</li>
+              <li data-en="AHP weights · CR=0.004">AHP 가중 · CR=0.004</li>
             </ul>
             <div class="st-src">engine.assess_threat()</div>
           </div>
           <div class="stage final reveal d3">
             <div class="st-no">STAGE 04</div>
-            <h3>대응 의사결정 지원</h3>
+            <h3 data-en="Decision Support">대응 의사결정 지원</h3>
             <ul>
-              <li>soft / hard 옵션 추천</li>
-              <li>TOPSIS · 부수피해 반영</li>
+              <li data-en="soft / hard option recommendation">soft / hard 옵션 추천</li>
+              <li data-en="TOPSIS · collateral-aware">TOPSIS · 부수피해 반영</li>
             </ul>
             <div class="st-src">engine.recommend()</div>
           </div>
@@ -882,8 +911,8 @@
 
         <div class="pipe-out reveal">
           <div>
-            <div class="po-main">실시간 COP 대시보드 · 경보 시각화 · 다중 트랙 동시 추적 · LLM 질의 지원</div>
-            <div class="po-sub">+ threat_ml 사전분류 LOW / MED / HIGH (RADAR·RF 기반 ML)</div>
+            <div class="po-main" data-en="Real-time COP dashboard · alert visualization · simultaneous multi-track tracking · LLM query support">실시간 COP 대시보드 · 경보 시각화 · 다중 트랙 동시 추적 · LLM 질의 지원</div>
+            <div class="po-sub" data-en="+ threat_ml pre-classification LOW / MED / HIGH (RADAR·RF-based ML)">+ threat_ml 사전분류 LOW / MED / HIGH (RADAR·RF 기반 ML)</div>
           </div>
           <div class="po-chips">
             <span class="kill-chip soft">SOFT</span>
@@ -894,9 +923,9 @@
         <div class="demo-shot reveal">
           <div class="demo-head">
             <span class="demo-tag"><span class="rec"></span>LIVE DEMO</span>
-            <span class="demo-desc">OPERATE 모드 — 실시간 트랙 · 교전 승인 큐 · 위협 강도 · 이벤트 로그</span>
+            <span class="demo-desc" data-en="OPERATE mode — live tracks · engagement approval queue · threat level · event log">OPERATE 모드 — 실시간 트랙 · 교전 승인 큐 · 위협 강도 · 이벤트 로그</span>
           </div>
-          <img src="pitchdeck/img/demo-operate.jpg" alt="bunkr OPERATE 모드 — 광화문광장 AO에서 드론·조류 트랙을 실시간 추적하고 THREAT CRITICAL 경보와 이벤트 로그를 표시하는 작전 콘솔" loading="lazy" />
+          <img src="pitchdeck/img/demo-operate.png" alt="bunkr OPERATE 모드 — 광화문광장 AO에서 드론·조류 트랙을 실시간 추적하고 THREAT CRITICAL 경보와 이벤트 로그를 표시하는 작전 콘솔" loading="lazy" />
         </div>
       </div>
     </section>
@@ -904,29 +933,29 @@
     <!-- ══ 03 INSIGHT ══ -->
     <section id="insight">
       <div class="wrap">
-        <div class="eyebrow reveal"><span class="no">03</span> INSIGHT · 그런데</div>
-        <h2 class="reveal">이 실시간 판단은, 레이더·재머가<br /><span class="accent">이미 좋은 위치</span>에 있어야 한다.</h2>
-        <p class="lede reveal d1">
+        <div class="eyebrow reveal"><span class="no">03</span> <span data-en="INSIGHT · BUT">INSIGHT · 그런데</span></div>
+        <h2 class="reveal" data-en='This real-time judgment only works if radars &amp; jammers are<br /><span class="accent">already in the right place</span>.'>이 실시간 판단은, 레이더·재머가<br /><span class="accent">이미 좋은 위치</span>에 있어야 한다.</h2>
+        <p class="lede reveal d1" data-en="Perfect judgment within the golden time has physical limits.<br /><b>A bad position wastes even the best decision logic.</b>">
           골든타임 안의 완벽한 판단은 물리적으로 한계가 있다.<br />
           <b>위치가 나쁘면 아무리 좋은 판단 로직도 사용하지 못한다.</b>
         </p>
 
         <div class="timeline-card reveal d1">
           <div class="chartcard">
-            <div class="chart-title">침투 시작 T+0 → 목표 도달 T+60S — 배치에 따른 결심 여유 비교</div>
+            <div class="chart-title" data-en="Incursion T+0 → target T+60S — decision margin by placement">침투 시작 T+0 → 목표 도달 T+60S — 배치에 따른 결심 여유 비교</div>
             <img src="pitchdeck/img/goldentime-timeline.png" alt="임의 배치는 탐지 후 결심 여유 08S, 최적 배치는 조기 탐지로 결심 여유 45S" />
           </div>
         </div>
 
         <div class="reveal">
-          <div class="verdict"><span class="check">✓</span> 같은 판단 엔진이더라도, 배치가 결심 시간을 결정한다</div>
+          <div class="verdict"><span class="check">✓</span> <span data-en="Same decision engine — placement decides the decision time">같은 판단 엔진이더라도, 배치가 결심 시간을 결정한다</span></div>
         </div>
       </div>
     </section>
 
     <!-- ══ QUOTE ══ -->
     <div id="quote">
-      <blockquote class="reveal">
+      <blockquote class="reveal" data-en='<span class="qmark open">&ldquo;</span>Before the incident,<br /><span class="hl">what must be deployed where</span><br />to block the threat at its maximum?<span class="qmark close">&rdquo;</span>'>
         <span class="qmark open">&ldquo;</span>
         사건 발생 이전에,<br />
         <span class="hl">무엇을 어디에 배치해야</span><br />
@@ -939,10 +968,10 @@
     <!-- ══ 04 SYSTEM 02 · PLACEMENT ══ -->
     <section id="placement">
       <div class="wrap">
-        <div class="eyebrow reveal"><span class="no">04</span> SYSTEM 02 · 배치 최적화</div>
-        <div class="reveal"><span class="sys-badge proactive"><span class="dot"></span>PROACTIVE · 선제</span></div>
-        <h2 class="reveal">선제적 방어를 위한<br /><span class="accent">센서·대응 자산 배치 최적화</span></h2>
-        <p class="lede reveal d1">
+        <div class="eyebrow reveal"><span class="no">04</span> <span data-en="SYSTEM 02 · PLACEMENT">SYSTEM 02 · 배치 최적화</span></div>
+        <div class="reveal"><span class="sys-badge proactive"><span class="dot"></span><span data-en="PROACTIVE · PREEMPTIVE">PROACTIVE · 선제</span></span></div>
+        <h2 class="reveal" data-en='<span class="accent">Sensor &amp; effector placement optimization</span><br />for preemptive defense'>선제적 방어를 위한<br /><span class="accent">센서·대응 자산 배치 최적화</span></h2>
+        <p class="lede reveal d1" data-en="A layered optimal placement of radars, cameras, and jammers against drones, UAS, and balloons. From public data to the <b>optimal placement plan</b> — in the order the data flows.">
           레이더·카메라·재머의 최적 계층 배치를 통한 드론·UAS·풍선 선제 대응 체계.
           공공데이터에서 시작해 <b>최적의 배치안</b>까지, 데이터가 흐르는 순서 그대로.
         </p>
@@ -951,55 +980,55 @@
           <div class="frow reveal">
             <div>
               <div class="fl-tag">STEP 1 · INPUT</div>
-              <div class="fl-name">데이터</div>
+              <div class="fl-name" data-en="Data">데이터</div>
             </div>
             <div class="in-grid">
-              <div class="in-cell"><b>정부·주요시설</b><span>국가 중요시설 위치</span></div>
-              <div class="in-cell"><b>유동인구 밀도</b><span>시간대별 인구 분포</span></div>
-              <div class="in-cell"><b>기타 공공데이터</b><span>지형·도로·공역</span></div>
-              <div class="in-cell"><b>장비 특성</b><span>반경 R · 성능</span></div>
-              <div class="in-cell"><b>보호·민감구역</b><span>우선순위 가중 W</span></div>
-              <div class="in-cell"><b>건물·건물높이</b><span>가시선 LOS 계산</span></div>
+              <div class="in-cell"><b data-en="Gov · key facilities">정부·주요시설</b><span data-en="national critical facility locations">국가 중요시설 위치</span></div>
+              <div class="in-cell"><b data-en="Foot-traffic density">유동인구 밀도</b><span data-en="hourly population distribution">시간대별 인구 분포</span></div>
+              <div class="in-cell"><b data-en="Other public data">기타 공공데이터</b><span data-en="terrain · roads · airspace">지형·도로·공역</span></div>
+              <div class="in-cell"><b data-en="Equipment specs">장비 특성</b><span data-en="radius R · performance">반경 R · 성능</span></div>
+              <div class="in-cell"><b data-en="Protected · sensitive zones">보호·민감구역</b><span data-en="priority weight W">우선순위 가중 W</span></div>
+              <div class="in-cell"><b data-en="Buildings · heights">건물·건물높이</b><span data-en="line-of-sight (LOS) calc">가시선 LOS 계산</span></div>
             </div>
           </div>
 
           <div class="frow reveal">
             <div>
               <div class="fl-tag">STEP 2 · MODELING</div>
-              <div class="fl-name">모델링</div>
+              <div class="fl-name" data-en="Modeling">모델링</div>
             </div>
             <div class="formula">
-              <code><b>w_d</b> = α·보호/민감 + β·유동인구 + γ·시설 근접</code>
-              <code><b>cover_k(s,d)</b> = [ dist ≤ R_k ] ∧ [ LOS | 건물 높이 ]</code>
-              <code>후보지 s ∈ 옥상 install_sites · EPSG:5179 미터 좌표</code>
+              <code data-en="<b>w_d</b> = α·protection + β·population + γ·facility proximity"><b>w_d</b> = α·보호/민감 + β·유동인구 + γ·시설 근접</code>
+              <code data-en="<b>cover_k(s,d)</b> = [ dist ≤ R_k ] ∧ [ LOS | building height ]"><b>cover_k(s,d)</b> = [ dist ≤ R_k ] ∧ [ LOS | 건물 높이 ]</code>
+              <code data-en="candidate s ∈ rooftop install_sites · EPSG:5179 meter grid">후보지 s ∈ 옥상 install_sites · EPSG:5179 미터 좌표</code>
             </div>
           </div>
 
           <div class="frow reveal">
             <div>
               <div class="fl-tag">STEP 3 · KILL-CHAIN</div>
-              <div class="fl-name">장비 체인</div>
+              <div class="fl-name" data-en="Kill Chain">장비 체인</div>
             </div>
             <div class="chain-grid">
               <div class="chain-cell">
                 <svg viewBox="0 0 100 100" fill="currentColor" style="color: var(--green)" xmlns="http://www.w3.org/2000/svg"><path d="M50.0005 41.6667C51.3899 41.6663 52.7574 42.0134 53.9785 42.6764C55.1996 43.3393 56.2356 44.2971 56.9921 45.4625L57.213 45.8333H87.5005L87.988 45.8625C89.0015 45.9819 89.936 46.4691 90.6142 47.2318C91.2923 47.9944 91.667 48.9794 91.6671 50C91.6671 73.0125 73.013 91.6667 50.0005 91.6667C48.8954 91.6667 47.8356 91.2277 47.0542 90.4463C46.2728 89.6649 45.8338 88.6051 45.8338 87.5V57.2125L45.463 56.9917C44.3853 56.2926 43.4838 55.3537 42.8289 54.2486C42.1741 53.1434 41.7836 51.9019 41.688 50.6208L41.6671 50C41.6671 47.7899 42.5451 45.6702 44.1079 44.1074C45.6707 42.5446 47.7903 41.6667 50.0005 41.6667ZM89.2838 36.1083C89.6115 37.1388 89.5257 38.2564 89.0446 39.2248C88.5634 40.1932 87.7247 40.9367 86.7055 41.2981C85.6863 41.6594 84.5665 41.6104 83.5828 41.1614C82.5991 40.7123 81.8285 39.8984 81.4338 38.8917C79.551 33.587 76.3555 28.8455 72.1453 25.1094C67.9352 21.3733 62.8474 18.7641 57.3565 17.5253C51.8657 16.2865 46.1505 16.4584 40.744 18.0249C35.3375 19.5914 30.4157 22.5015 26.4376 26.4838C22.4595 30.4662 19.5547 35.3911 17.994 40.7993C16.4334 46.2075 16.2677 51.9229 17.5124 57.4124C18.7571 62.9019 21.3717 67.9869 25.1124 72.193C28.8531 76.3992 33.598 79.5896 38.9046 81.4667C39.9337 81.8309 40.7772 82.5905 41.2468 83.5772C41.7164 84.5638 41.7737 85.6961 41.4063 86.725C41.0389 87.7538 40.2771 88.5949 39.2892 89.0618C38.3014 89.5288 37.169 89.583 36.1296 89.2125C29.4951 86.8674 23.5626 82.8803 18.8853 77.623C14.2081 72.3657 10.9384 66.0095 9.38143 59.1472C7.82442 52.2848 8.03072 45.14 9.9811 38.3789C11.9315 31.6178 15.5624 25.4608 20.5352 20.4822C25.508 15.5035 31.6607 11.8654 38.4195 9.90697C45.1783 7.94854 52.3229 7.73385 59.1871 9.2828C66.0512 10.8318 72.4113 14.0939 77.6741 18.765C82.9369 23.436 86.931 29.3641 89.2838 35.9958V36.1083ZM70.0005 35C70.6635 35.884 70.9482 36.9953 70.7919 38.0892C70.6357 39.1832 70.0512 40.1703 69.1671 40.8333C68.2831 41.4964 67.1718 41.7811 66.0779 41.6248C64.9839 41.4685 63.9968 40.884 63.3338 40C61.9011 38.0897 60.0746 36.5096 57.978 35.3666C55.8815 34.2236 53.5638 33.5445 51.182 33.3753C48.8001 33.206 46.4097 33.5505 44.1725 34.3855C41.9354 35.2205 39.9038 36.5264 38.2154 38.2149C36.5269 39.9034 35.2209 41.9349 34.386 44.1721C33.551 46.4092 33.2065 48.7996 33.3757 51.1815C33.545 53.5633 34.2241 55.881 35.3671 57.9776C36.5101 60.0741 38.0902 61.9006 40.0005 63.3333C40.8845 63.9964 41.469 64.9834 41.6253 66.0774C41.7815 67.1714 41.4968 68.2826 40.8338 69.1667C40.1708 70.0507 39.1837 70.6352 38.0897 70.7915C36.9958 70.9477 35.8845 70.663 35.0005 70C32.135 67.8509 29.7648 65.1112 28.0504 61.9664C26.3359 58.8215 25.3173 55.345 25.0634 51.7722C24.8095 48.1994 25.3262 44.6138 26.5787 41.2581C27.8312 37.9024 29.7901 34.855 32.3228 32.3223C34.8555 29.7896 37.9029 27.8307 41.2586 26.5782C44.6143 25.3258 48.1999 24.809 51.7727 25.0629C55.3455 25.3168 58.822 26.3355 61.9668 28.0499C65.1117 29.7644 67.8514 32.1345 70.0005 35Z"/></svg>
                 <span class="cn-name">RADAR</span>
-                <span class="cn-role">탐지</span>
+                <span class="cn-role" data-en="Detect">탐지</span>
               </div>
               <div class="chain-cell">
                 <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="6.88" stroke-linecap="round" stroke-linejoin="round" style="color: var(--green)" xmlns="http://www.w3.org/2000/svg"><path d="M83.3337 16.6667V50M66.667 18.75V47.9167M50.0003 20.8333V87.5M33.3337 22.9167V43.75M16.667 25V41.6667M83.3337 33.3333H16.667"/></svg>
                 <span class="cn-name">RF SCANNER</span>
-                <span class="cn-role">RF 탐지·식별</span>
+                <span class="cn-role" data-en="RF detect · classify">RF 탐지·식별</span>
               </div>
               <div class="chain-cell">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="color: var(--green)" xmlns="http://www.w3.org/2000/svg"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
                 <span class="cn-name">CAMERA</span>
-                <span class="cn-role">식별 (EO)</span>
+                <span class="cn-role" data-en="Identify (EO)">식별 (EO)</span>
               </div>
               <div class="chain-cell">
                 <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="5.54" stroke-linecap="round" stroke-linejoin="round" style="color: var(--gold)" xmlns="http://www.w3.org/2000/svg"><path d="M50.001 60C55.5238 60 60.001 55.5228 60.001 50C60.001 44.4772 55.5238 40 50.001 40C44.4781 40 40.001 44.4772 40.001 50C40.001 55.5228 44.4781 60 50.001 60Z" fill="currentColor" stroke-width="3.7"/><path d="M21.7152 78.2838C14.2141 70.7824 10 60.6085 10 50.0001C10 39.3917 14.2141 29.2177 21.7152 21.7163M78.2827 78.2838C85.7838 70.7824 89.9979 60.6085 89.9979 50.0001C89.9979 39.3917 85.7838 29.2177 78.2827 21.7163M32.3215 67.6776C27.6332 62.9892 24.9993 56.6304 24.9993 50.0001C24.9993 43.3697 27.6332 37.011 32.3215 32.3226M67.6765 67.6776C72.3648 62.9892 74.9986 56.6304 74.9986 50.0001C74.9986 43.3697 72.3648 37.011 67.6765 32.3226"/></svg>
                 <span class="cn-name">JAMMER</span>
-                <span class="cn-role">무력화 soft-kill</span>
+                <span class="cn-role" data-en="Neutralize soft-kill">무력화 soft-kill</span>
               </div>
             </div>
           </div>
@@ -1007,14 +1036,14 @@
           <div class="frow hl-row reveal">
             <div>
               <div class="fl-tag">STEP 4 · ALGORITHM</div>
-              <div class="fl-name">최적화 알고리즘</div>
+              <div class="fl-name" data-en="Optimization">최적화 알고리즘</div>
             </div>
             <div>
               <div class="formula">
-                <code><b>max Σ_d w_d</b> · [ 탐지 ∧ 식별 ∧ 무력화 ]</code>
-                <code>s.t. 설치 ≤ N · NP-hard → <b>Greedy 근사 (1−1/e ≈ 63% 보장)</b></code>
+                <code data-en="<b>max Σ_d w_d</b> · [ detect ∧ identify ∧ neutralize ]"><b>max Σ_d w_d</b> · [ 탐지 ∧ 식별 ∧ 무력화 ]</code>
+                <code data-en="s.t. installs ≤ N · NP-hard → <b>Greedy approx (1−1/e ≈ 63% guarantee)</b>">s.t. 설치 ≤ N · NP-hard → <b>Greedy 근사 (1−1/e ≈ 63% 보장)</b></code>
               </div>
-              <div class="algo-out">→ 최적의 배치안 옵션 제안</div>
+              <div class="algo-out" data-en="→ proposes optimal placement options">→ 최적의 배치안 옵션 제안</div>
             </div>
           </div>
         </div>
@@ -1022,9 +1051,9 @@
         <div class="demo-shot reveal">
           <div class="demo-head">
             <span class="demo-tag"><span class="rec"></span>LIVE DEMO</span>
-            <span class="demo-desc">DEPLOY 모드 — 최적 배치 실행 · 보호커버 100% · 배치 커버리지 KPI</span>
+            <span class="demo-desc" data-en="DEPLOY mode — run optimal placement · 100% protection cover · coverage KPIs">DEPLOY 모드 — 최적 배치 실행 · 보호커버 100% · 배치 커버리지 KPI</span>
           </div>
-          <img src="pitchdeck/img/demo-deploy.jpg" alt="bunkr DEPLOY 모드 — 광화문광장 AO 3D 지도 위 레이더·스캐너·재머 최적 배치와 보호커버 100%, 종합점수 25.0 커버리지 패널" loading="lazy" />
+          <img src="pitchdeck/img/demo-deploy.png" alt="bunkr DEPLOY 모드 — 광화문광장 AO 3D 지도 위 레이더·스캐너·재머 최적 배치와 보호커버 100%, 종합점수 25.0 커버리지 패널" loading="lazy" />
         </div>
       </div>
     </section>
@@ -1032,34 +1061,34 @@
     <!-- ══ 05 ONE LOOP ══ -->
     <section id="loop">
       <div class="wrap">
-        <div class="eyebrow reveal"><span class="no">05</span> SYSTEM · 하나의 방어 사이클</div>
-        <h2 class="reveal">두 개의 시스템을 하나로</h2>
-        <p class="lede reveal d1">사후 대응 체계에서 <b>사전+사후 완결 방어 사이클</b>로.</p>
+        <div class="eyebrow reveal"><span class="no">05</span> <span data-en="SYSTEM · ONE DEFENSE CYCLE">SYSTEM · 하나의 방어 사이클</span></div>
+        <h2 class="reveal" data-en="Two systems, one cycle">두 개의 시스템을 하나로</h2>
+        <p class="lede reveal d1" data-en="From reactive-only response to a <b>complete pre+post defense cycle</b>.">사후 대응 체계에서 <b>사전+사후 완결 방어 사이클</b>로.</p>
 
         <div class="loop-wrap">
           <div class="loop-box p reveal">
-            <div class="lb-tag">PROACTIVE · 선제</div>
-            <h3>센서·대응 자산 배치 최적화</h3>
-            <p>재머·레이더 어디 둘지</p>
-            <p>장치·시설·인구 데이터 기반</p>
+            <div class="lb-tag" data-en="PROACTIVE · PREEMPTIVE">PROACTIVE · 선제</div>
+            <h3 data-en="Sensor &amp; effector placement optimization">센서·대응 자산 배치 최적화</h3>
+            <p data-en="Where to put jammers &amp; radars">재머·레이더 어디 둘지</p>
+            <p data-en="Based on equipment, facility &amp; population data">장치·시설·인구 데이터 기반</p>
           </div>
           <div class="loop-mid reveal d1">
             <div class="loop-arrow to-r">
-              <div class="la-label">최적 배치안</div>
-              <div class="la-sub">데이터기반 알고리즘</div>
+              <div class="la-label" data-en="Optimal placement plan">최적 배치안</div>
+              <div class="la-sub" data-en="data-driven algorithm">데이터기반 알고리즘</div>
               <div class="la-line"></div>
             </div>
             <div class="loop-arrow to-l">
-              <div class="la-label">Coverage · 방어율 예측</div>
-              <div class="la-sub">센서/대응 자산 배치의 실효성<br />검증 시뮬레이션 실행</div>
+              <div class="la-label" data-en="Coverage · defense-rate prediction">Coverage · 방어율 예측</div>
+              <div class="la-sub" data-en="simulation validating the<br />effectiveness of the placement">센서/대응 자산 배치의 실효성<br />검증 시뮬레이션 실행</div>
               <div class="la-line"></div>
             </div>
           </div>
           <div class="loop-box r reveal d2">
-            <div class="lb-tag">REACTIVE · 대응</div>
+            <div class="lb-tag" data-en="REACTIVE · RESPONSE">REACTIVE · 대응</div>
             <h3>Counter UAS</h3>
-            <p>탐지 → 식별 → 위협평가</p>
-            <p>→ soft/hard 대응 의사결정 지원</p>
+            <p data-en="Detect → classify → assess">탐지 → 식별 → 위협평가</p>
+            <p data-en="→ soft/hard decision support">→ soft/hard 대응 의사결정 지원</p>
           </div>
         </div>
       </div>
@@ -1069,8 +1098,8 @@
     <section id="persona">
       <div class="wrap">
         <div class="eyebrow reveal"><span class="no">06</span> PERSONA · STAKEHOLDERS</div>
-        <h2 class="reveal">bunkr는 다양한 이해관계자의<br />니즈를 반영합니다.</h2>
-        <p class="lede reveal d1">
+        <h2 class="reveal" data-en="bunkr reflects the needs<br />of every stakeholder.">bunkr는 다양한 이해관계자의<br />니즈를 반영합니다.</h2>
+        <p class="lede reveal d1" data-en="Not a dashboard for one person — it <b>connects procurement, command, and operations into a single operational picture</b>.">
           한 명을 위한 대시보드가 아닌, <b>구매·지휘·운용을 하나의 작전 화면으로 연결</b>합니다.
         </p>
 
@@ -1080,19 +1109,19 @@
           </div>
           <div class="persona-roles">
             <div class="prole reveal">
-              <div class="pr-q">"도입할 가치가 있는가?"</div>
+              <div class="pr-q" data-en='"Is it worth adopting?"'>"도입할 가치가 있는가?"</div>
               <div class="pr-name">PRODUCE</div>
-              <div class="pr-act">예산 승인 — 최적배치 · ROI · 예산 방어</div>
+              <div class="pr-act" data-en="Budget approval — optimal placement · ROI · budget defense">예산 승인 — 최적배치 · ROI · 예산 방어</div>
             </div>
             <div class="prole reveal d1">
-              <div class="pr-q">"승인해도 되는가?"</div>
+              <div class="pr-q" data-en='"Can I approve this?"'>"승인해도 되는가?"</div>
               <div class="pr-name">COMMAND</div>
-              <div class="pr-act">교전 승인 — 위협인식 · 오판 리스크</div>
+              <div class="pr-act" data-en="Engagement approval — threat awareness · misjudgment risk">교전 승인 — 위협인식 · 오판 리스크</div>
             </div>
             <div class="prole reveal d2">
-              <div class="pr-q">"쓰기 편한가?"</div>
+              <div class="pr-q" data-en='"Is it easy to operate?"'>"쓰기 편한가?"</div>
               <div class="pr-name">OPERATE</div>
-              <div class="pr-act">현장 운용 — 판독성 · 오조작 방지</div>
+              <div class="pr-act" data-en="Field operation — readability · error prevention">현장 운용 — 판독성 · 오조작 방지</div>
             </div>
           </div>
         </div>
@@ -1102,8 +1131,8 @@
     <footer>
       <div class="f-brand"><span class="mark">◈</span>bunkr</div>
       <div class="f-line">GRAY-ZONE COUNTER-UAS · D4D 2026 · TRACK 01</div>
-      <div class="f-names">정찬희 · 김예주 · 김재현 · 이민혁</div>
-      <a class="top-link" href="#cover">↑ 처음으로</a>
+      <div class="f-names" data-en="Jeong Chanhee · Kim Yeju · Kim Jaehyun · Lee Minhyuk">정찬희 · 김예주 · 김재현 · 이민혁</div>
+      <a class="top-link" href="#cover" data-en="↑ Back to top">↑ 처음으로</a>
     </footer>
 
     <script>
@@ -1139,6 +1168,24 @@
       window.addEventListener("scroll", onScroll, { passive: true });
       window.addEventListener("resize", onScroll, { passive: true });
       update();
+
+      // KO/EN 전환 — data-en 속성에 영문, 한국어는 초기 HTML에서 캡처
+      const i18nEls = [...document.querySelectorAll("[data-en]")];
+      i18nEls.forEach((el) => (el.dataset.koHtml = el.innerHTML));
+      const langBtns = [...document.querySelectorAll("[data-lang-btn]")];
+      function setLang(lang) {
+        for (const el of i18nEls) {
+          el.innerHTML = lang === "en" ? el.dataset.en : el.dataset.koHtml;
+        }
+        document.documentElement.lang = lang;
+        langBtns.forEach((b) => b.classList.toggle("active", b.dataset.langBtn === lang));
+        try { localStorage.setItem("pitchdeck-lang", lang); } catch (e) {}
+      }
+      langBtns.forEach((b) => b.addEventListener("click", () => setLang(b.dataset.langBtn)));
+      try {
+        const saved = localStorage.getItem("pitchdeck-lang");
+        if (saved === "en") setLang("en");
+      } catch (e) {}
     </script>
   </body>
 </html>
