@@ -332,8 +332,12 @@
         </div>
       </div>
 
-      <!-- ══ 맵 크롬: 줌 pill + 나침반 (Apple 지도 스타일) ══ -->
+      <!-- ══ 맵 크롬: 스케일바 + 줌 pill + 나침반 (Apple 지도 스타일) ══ -->
       <div id="map-controls">
+        <div id="scalebar">
+          <div id="scalebar-track"><div id="scalebar-inner"></div></div>
+          <div id="scalebar-label">—</div>
+        </div>
         <div class="mapc-zoom">
           <button class="mapc-btn" id="zoom-in" title="확대">+</button>
           <button class="mapc-btn" id="zoom-out" title="축소">−</button>
@@ -345,15 +349,11 @@
           <span class="compass-n">N</span>
         </button>
       </div>
-      <!-- 좌표 · 축척 HUD (맵 우상단) -->
+      <!-- 좌표 · 축척(GRID) HUD (맵 좌상단) -->
       <div id="map-hud">
         <span class="mono" id="hud-coord">—</span>
         <span class="mono" id="hud-scale">—</span>
         <span id="hud-title" hidden></span>
-        <div id="scalebar">
-          <div id="scalebar-track"><div id="scalebar-inner"></div></div>
-          <div id="scalebar-label">—</div>
-        </div>
       </div>
 
       <!-- ══ 센서 미배치 안내 오버레이 (탐지 자산 0 상태에서 위협 생성 시) ══ -->

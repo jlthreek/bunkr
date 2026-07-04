@@ -533,11 +533,11 @@ body {
 #map-hud {
   position: absolute;
   top: calc(var(--topbar-h) + 14px);
-  right: calc(var(--right-w) + 16px);
+  left: calc(var(--left-w) + 16px);
   z-index: 9;
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
+  align-items: flex-start;
   gap: 2px;
   font-family: var(--font-mono);
   font-size: 10.5px;
@@ -546,7 +546,7 @@ body {
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.85);
   pointer-events: none;
   transition: top var(--ds-t-content) var(--ds-ease),
-    right var(--ds-t-content) var(--ds-ease);
+    left var(--ds-t-content) var(--ds-ease);
 }
 #left-rail::-webkit-scrollbar,
 #right-rail::-webkit-scrollbar,
@@ -1542,11 +1542,11 @@ select {
 #map-controls {
   position: absolute;
   right: calc(var(--right-w) + 16px);
-  top: calc(var(--topbar-h) + 78px);
+  top: calc(var(--topbar-h) + 14px);
   z-index: 9;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-end;
   gap: 10px;
   transition: right var(--ds-t-content) var(--ds-ease),
     top var(--ds-t-content) var(--ds-ease);
@@ -1631,7 +1631,6 @@ select {
   pointer-events: none;
 }
 #scalebar {
-  margin-top: 6px;
   display: flex;
   align-items: center;
   gap: 10px;
