@@ -1,0 +1,846 @@
+{
+  "type": "FeatureCollection",
+  "name": "threats_sample_spawn",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "T00",
+        "truth": "drone",
+        "subtype": "회전익(헬기형)",
+        "pred": "드론",
+        "p_uav": 0.95,
+        "alt_m": 217,
+        "speed_mps": 10.1,
+        "rcs_dbsm": -4.9,
+        "target": "경복궁"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          126.935696,
+          37.555278
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "T01",
+        "truth": "drone",
+        "subtype": "자폭형(FPV)",
+        "pred": "드론",
+        "p_uav": 0.95,
+        "alt_m": 95,
+        "speed_mps": 25.2,
+        "rcs_dbsm": -14.6,
+        "target": "경복궁"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          126.977128,
+          37.608309
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "T02",
+        "truth": "drone",
+        "subtype": "고정익",
+        "pred": "드론",
+        "p_uav": 0.95,
+        "alt_m": 122,
+        "speed_mps": 26,
+        "rcs_dbsm": -17.6,
+        "target": "정부서울청사"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          126.953533,
+          37.543107
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "T03",
+        "truth": "drone",
+        "subtype": "자폭형(FPV)",
+        "pred": "드론",
+        "p_uav": 0.95,
+        "alt_m": 48,
+        "speed_mps": 35.5,
+        "rcs_dbsm": -11.4,
+        "target": "주한미국대사관"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          127.021271,
+          37.562112
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "T04",
+        "truth": "drone",
+        "subtype": "회전익(헬기형)",
+        "pred": "드론",
+        "p_uav": 0.95,
+        "alt_m": 178,
+        "speed_mps": 13.5,
+        "rcs_dbsm": -6.9,
+        "target": "주한미국대사관"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          127.012671,
+          37.596026
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "T05",
+        "truth": "drone",
+        "subtype": "쿼드콥터",
+        "pred": "드론",
+        "p_uav": 0.95,
+        "alt_m": 129,
+        "speed_mps": 12,
+        "rcs_dbsm": -9.2,
+        "target": "주한미국대사관"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          126.994144,
+          37.535099
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "T06",
+        "truth": "drone",
+        "subtype": "쿼드콥터",
+        "pred": "드론",
+        "p_uav": 0.95,
+        "alt_m": 146,
+        "speed_mps": 12.3,
+        "rcs_dbsm": -10.1,
+        "target": "세종문화회관·외교부"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          127.018499,
+          37.597262
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "T07",
+        "truth": "drone",
+        "subtype": "자폭형(FPV)",
+        "pred": "드론",
+        "p_uav": 0.95,
+        "alt_m": 55,
+        "speed_mps": 27.2,
+        "rcs_dbsm": -12.8,
+        "target": "경복궁"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          127.01742,
+          37.554363
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "T08",
+        "truth": "drone",
+        "subtype": "쿼드콥터",
+        "pred": "드론",
+        "p_uav": 0.95,
+        "alt_m": 69,
+        "speed_mps": 16.5,
+        "rcs_dbsm": -9.1,
+        "target": "주한미국대사관"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          126.940565,
+          37.552634
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "T09",
+        "truth": "drone",
+        "subtype": "자폭형(FPV)",
+        "pred": "드론",
+        "p_uav": 0.95,
+        "alt_m": 78,
+        "speed_mps": 30.1,
+        "rcs_dbsm": -14,
+        "target": "경복궁"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          126.94691,
+          37.54269
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "T10",
+        "truth": "drone",
+        "subtype": "쿼드콥터",
+        "pred": "드론",
+        "p_uav": 0.95,
+        "alt_m": 119,
+        "speed_mps": 14.9,
+        "rcs_dbsm": -9.6,
+        "target": "세종문화회관·외교부"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          126.951294,
+          37.606961
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "T11",
+        "truth": "drone",
+        "subtype": "자폭형(FPV)",
+        "pred": "드론",
+        "p_uav": 0.95,
+        "alt_m": 84,
+        "speed_mps": 42.4,
+        "rcs_dbsm": -13.1,
+        "target": "세종문화회관·외교부"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          127.020994,
+          37.581944
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "T12",
+        "truth": "drone",
+        "subtype": "고정익",
+        "pred": "드론",
+        "p_uav": 0.95,
+        "alt_m": 260,
+        "speed_mps": 16.4,
+        "rcs_dbsm": -18,
+        "target": "정부서울청사"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          126.985212,
+          37.530257
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "T13",
+        "truth": "drone",
+        "subtype": "고정익",
+        "pred": "드론",
+        "p_uav": 0.95,
+        "alt_m": 169,
+        "speed_mps": 24,
+        "rcs_dbsm": -17.5,
+        "target": "정부서울청사"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          126.950169,
+          37.539976
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "T14",
+        "truth": "drone",
+        "subtype": "쿼드콥터",
+        "pred": "드론",
+        "p_uav": 0.95,
+        "alt_m": 133,
+        "speed_mps": 15.3,
+        "rcs_dbsm": -11,
+        "target": "정부서울청사"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          126.932608,
+          37.590148
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "T15",
+        "truth": "drone",
+        "subtype": "쿼드콥터",
+        "pred": "드론",
+        "p_uav": 0.95,
+        "alt_m": 105,
+        "speed_mps": 13,
+        "rcs_dbsm": -10.1,
+        "target": "주한미국대사관"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          126.930605,
+          37.580747
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "T16",
+        "truth": "drone",
+        "subtype": "고정익",
+        "pred": "드론",
+        "p_uav": 0.95,
+        "alt_m": 198,
+        "speed_mps": 18.5,
+        "rcs_dbsm": -18.4,
+        "target": "정부서울청사"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          126.978459,
+          37.613814
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "T17",
+        "truth": "drone",
+        "subtype": "고정익",
+        "pred": "드론",
+        "p_uav": 0.95,
+        "alt_m": 143,
+        "speed_mps": 22.9,
+        "rcs_dbsm": -17,
+        "target": "정부서울청사"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          126.929663,
+          37.568586
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "T18",
+        "truth": "drone",
+        "subtype": "쿼드콥터",
+        "pred": "드론",
+        "p_uav": 0.95,
+        "alt_m": 95,
+        "speed_mps": 17.9,
+        "rcs_dbsm": -10,
+        "target": "정부서울청사"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          126.982483,
+          37.534062
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "T19",
+        "truth": "drone",
+        "subtype": "쿼드콥터",
+        "pred": "드론",
+        "p_uav": 0.95,
+        "alt_m": 146,
+        "speed_mps": 16.9,
+        "rcs_dbsm": -8.6,
+        "target": "정부서울청사"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          126.930348,
+          37.573861
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "T20",
+        "truth": "drone",
+        "subtype": "고정익",
+        "pred": "드론",
+        "p_uav": 0.95,
+        "alt_m": 213,
+        "speed_mps": 25.9,
+        "rcs_dbsm": -17.5,
+        "target": "경복궁"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          126.991976,
+          37.612049
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "T21",
+        "truth": "drone",
+        "subtype": "자폭형(FPV)",
+        "pred": "드론",
+        "p_uav": 0.95,
+        "alt_m": 60,
+        "speed_mps": 25.1,
+        "rcs_dbsm": -11.3,
+        "target": "주한미국대사관"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          126.927538,
+          37.573508
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "T22",
+        "truth": "drone",
+        "subtype": "고정익",
+        "pred": "드론",
+        "p_uav": 0.95,
+        "alt_m": 275,
+        "speed_mps": 22.6,
+        "rcs_dbsm": -18.2,
+        "target": "주한미국대사관"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          126.966875,
+          37.613286
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "T23",
+        "truth": "drone",
+        "subtype": "회전익(헬기형)",
+        "pred": "드론",
+        "p_uav": 0.95,
+        "alt_m": 166,
+        "speed_mps": 14.8,
+        "rcs_dbsm": -4.5,
+        "target": "주한미국대사관"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          126.928065,
+          37.57194
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "T24",
+        "truth": "drone",
+        "subtype": "자폭형(FPV)",
+        "pred": "드론",
+        "p_uav": 0.95,
+        "alt_m": 30,
+        "speed_mps": 33.4,
+        "rcs_dbsm": -12.5,
+        "target": "세종문화회관·외교부"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          127.004151,
+          37.603098
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "T25",
+        "truth": "drone",
+        "subtype": "회전익(헬기형)",
+        "pred": "드론",
+        "p_uav": 0.95,
+        "alt_m": 159,
+        "speed_mps": 13.8,
+        "rcs_dbsm": -6,
+        "target": "정부서울청사"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          127.012446,
+          37.543675
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "T26",
+        "truth": "drone",
+        "subtype": "자폭형(FPV)",
+        "pred": "드론",
+        "p_uav": 0.95,
+        "alt_m": 98,
+        "speed_mps": 42.2,
+        "rcs_dbsm": -12.8,
+        "target": "정부서울청사"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          126.930399,
+          37.554124
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "T27",
+        "truth": "drone",
+        "subtype": "자폭형(FPV)",
+        "pred": "드론",
+        "p_uav": 0.95,
+        "alt_m": 73,
+        "speed_mps": 32.4,
+        "rcs_dbsm": -15.1,
+        "target": "정부서울청사"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          126.940092,
+          37.596372
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "T28",
+        "truth": "drone",
+        "subtype": "고정익",
+        "pred": "드론",
+        "p_uav": 0.95,
+        "alt_m": 259,
+        "speed_mps": 19.9,
+        "rcs_dbsm": -17.4,
+        "target": "경복궁"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          126.960406,
+          37.538257
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "T29",
+        "truth": "drone",
+        "subtype": "고정익",
+        "pred": "드론",
+        "p_uav": 0.95,
+        "alt_m": 225,
+        "speed_mps": 17.2,
+        "rcs_dbsm": -16,
+        "target": "주한미국대사관"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          126.928926,
+          37.558045
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "T30",
+        "truth": "drone",
+        "subtype": "고정익",
+        "pred": "드론",
+        "p_uav": 0.95,
+        "alt_m": 209,
+        "speed_mps": 24.6,
+        "rcs_dbsm": -17,
+        "target": "주한미국대사관"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          126.96401,
+          37.612808
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "T31",
+        "truth": "drone",
+        "subtype": "자폭형(FPV)",
+        "pred": "드론",
+        "p_uav": 0.95,
+        "alt_m": 88,
+        "speed_mps": 25.6,
+        "rcs_dbsm": -14.5,
+        "target": "정부서울청사"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          126.939562,
+          37.593585
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "T32",
+        "truth": "drone",
+        "subtype": "자폭형(FPV)",
+        "pred": "드론",
+        "p_uav": 0.95,
+        "alt_m": 74,
+        "speed_mps": 32.6,
+        "rcs_dbsm": -14.5,
+        "target": "경복궁"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          126.934022,
+          37.597446
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "T33",
+        "truth": "drone",
+        "subtype": "고정익",
+        "pred": "드론",
+        "p_uav": 0.95,
+        "alt_m": 277,
+        "speed_mps": 22.3,
+        "rcs_dbsm": -18.3,
+        "target": "정부서울청사"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          127.026155,
+          37.576813
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "T34",
+        "truth": "drone",
+        "subtype": "쿼드콥터",
+        "pred": "드론",
+        "p_uav": 0.95,
+        "alt_m": 144,
+        "speed_mps": 16.8,
+        "rcs_dbsm": -10.9,
+        "target": "경복궁"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          126.981102,
+          37.60851
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "T35",
+        "truth": "drone",
+        "subtype": "고정익",
+        "pred": "드론",
+        "p_uav": 0.95,
+        "alt_m": 184,
+        "speed_mps": 23.1,
+        "rcs_dbsm": -17.2,
+        "target": "주한미국대사관"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          126.989207,
+          37.532623
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "T36",
+        "truth": "drone",
+        "subtype": "자폭형(FPV)",
+        "pred": "드론",
+        "p_uav": 0.95,
+        "alt_m": 54,
+        "speed_mps": 32.3,
+        "rcs_dbsm": -12.2,
+        "target": "정부서울청사"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          127.004779,
+          37.607192
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "T37",
+        "truth": "drone",
+        "subtype": "쿼드콥터",
+        "pred": "드론",
+        "p_uav": 0.95,
+        "alt_m": 147,
+        "speed_mps": 16.7,
+        "rcs_dbsm": -11.5,
+        "target": "세종문화회관·외교부"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          126.939641,
+          37.598063
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "T38",
+        "truth": "drone",
+        "subtype": "쿼드콥터",
+        "pred": "드론",
+        "p_uav": 0.95,
+        "alt_m": 115,
+        "speed_mps": 11.2,
+        "rcs_dbsm": -8.8,
+        "target": "경복궁"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          127.009617,
+          37.549777
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "T39",
+        "truth": "drone",
+        "subtype": "회전익(헬기형)",
+        "pred": "드론",
+        "p_uav": 0.95,
+        "alt_m": 155,
+        "speed_mps": 13.4,
+        "rcs_dbsm": -5.4,
+        "target": "경복궁"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          126.963911,
+          37.609785
+        ]
+      }
+    }
+  ]
+}
