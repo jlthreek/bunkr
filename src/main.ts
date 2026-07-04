@@ -65,9 +65,9 @@ const ION_TOKEN = import.meta.env.VITE_CESIUM_ION_TOKEN as string | undefined;
 if (ION_TOKEN) Ion.defaultAccessToken = ION_TOKEN;
 else console.warn("[yangjae3dmap] VITE_CESIUM_ION_TOKEN 미설정");
 
-// ── CartoDB 베이스맵 (키리스 · 배포 도메인 무관) ───────────────
-// Stadia 는 localhost 외 도메인에서 API 키를 요구(배포 시 401)하므로,
-// 키 없이 어디서나 뜨는 CartoDB 다크/라이트 벡터 래스터 타일로 교체.
+// ── 베이스맵 (모두 API 키 불필요 · 배포 도메인 무관) ───────────
+// Stadia 는 배포 도메인에서 키를 요구하므로 제외. 기본 = Ion Satellite(위성).
+// 나머지는 피커(우상단 지구본 아이콘)로 전환 가능한 대체 테마.
 function carto(style: string) {
   return new UrlTemplateImageryProvider({
     url: `https://{s}.basemaps.cartocdn.com/${style}/{z}/{x}/{y}.png`,
@@ -76,24 +76,39 @@ function carto(style: string) {
     maximumLevel: 20,
   });
 }
-const alidadeDark = new ProviderViewModel({
-  name: "Dark Matter",
-  tooltip: "CartoDB Dark (기본)",
-  iconUrl: "",
-  creationFunction: () => carto("dark_all"),
-});
-const alidadeLight = new ProviderViewModel({
-  name: "Positron",
-  tooltip: "CartoDB Light (라이트)",
-  iconUrl: "",
-  creationFunction: () => carto("light_all"),
-});
-const satellite = new ProviderViewModel({
-  name: "Satellite",
-  tooltip: "위성 영상 (Bing / Cesium Ion)",
-  iconUrl: "",
-  creationFunction: () => createWorldImageryAsync(),
-});
+function esri(path: string) {
+  return new UrlTemplateImageryProvider({
+    url: `https://server.arcgisonline.com/ArcGIS/rest/services/${path}/MapServer/tile/{z}/{y}/{x}`,
+    credit: "© Esri",
+    maximumLevel: 19,
+  });
+}
+function tiles(url: string, credit: string, sub?: string[], maxL = 19) {
+  return new UrlTemplateImageryProvider({
+    url,
+    ...(sub ? { subdomains: sub } : {}),
+    credit,
+    maximumLevel: maxL,
+  });
+}
+const vm = (name: string, tooltip: string, fn: () => any) =>
+  new ProviderViewModel({ name, tooltip, iconUrl: "", creationFunction: fn });
+
+// [0]=기본 = Ion Satellite(위성). 이후 위성 → 다크 → 라이트 → 지형 순.
+const BASEMAPS = [
+  vm("Ion Satellite", "Cesium Ion 위성 (기본)", () => createWorldImageryAsync()),
+  vm("Esri Imagery", "Esri 위성", () => esri("World_Imagery")),
+  vm("Dark Matter", "CartoDB Dark", () => carto("dark_all")),
+  vm("Dark (라벨없음)", "CartoDB Dark no-labels", () => carto("dark_nolabels")),
+  vm("Esri Dark Gray", "Esri Dark Gray Canvas", () => esri("Canvas/World_Dark_Gray_Base")),
+  vm("Voyager", "CartoDB Voyager (밝은 컬러)", () => carto("rastertiles/voyager")),
+  vm("Positron", "CartoDB Light", () => carto("light_all")),
+  vm("Esri Street", "Esri World Street", () => esri("World_Street_Map")),
+  vm("OSM", "OpenStreetMap Standard", () =>
+    tiles("https://tile.openstreetmap.org/{z}/{x}/{y}.png", "© OpenStreetMap contributors")),
+  vm("OpenTopo", "OpenTopoMap 지형", () =>
+    tiles("https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png", "© OpenTopoMap (CC-BY-SA) · © OSM", ["a", "b", "c"], 17)),
+];
 
 // ── 현재 상태 ─────────────────────────────────────────────────
 let centerEntity: Entity | undefined;
@@ -130,8 +145,8 @@ async function main() {
   const viewer = new Viewer("cesiumContainer", {
     terrain: Terrain.fromWorldTerrain(),
     baseLayerPicker: true,
-    imageryProviderViewModels: [alidadeDark, alidadeLight, satellite],
-    selectedImageryProviderViewModel: alidadeDark,
+    imageryProviderViewModels: BASEMAPS,
+    selectedImageryProviderViewModel: BASEMAPS[0],
     terrainProviderViewModels: [],
     animation: false,
     timeline: false,
