@@ -3,12 +3,12 @@
 3D 맵 위에서 소형 드론·풍선 침투를 가정하고, 스캐너·재머·대응책의 **최적 배치를 시뮬레이션**하는 Gray-zone C-UAS COP.
 (D4D 해커톤 · TEAM AEGIS · Track 1 #3)
 
-CesiumJS 3D 지구본 위에 실제 건물(Cesium OSM Buildings) + CartoDB Dark 베이스맵을 깔고,
+CesiumJS 3D 지구본 위에 실제 건물(Cesium OSM Buildings) + Cesium Ion 위성 베이스맵을 깔고,
 위협체(드론/풍선/조류)를 실시간 비행 시뮬레이션하며, 배치 알고리즘용 데이터를 SQLite에서 파생한다.
 
 ## 스택
 - **프론트**: Vite + TypeScript + CesiumJS (3D 지구본, 3D 건물, 지형)
-- **베이스맵**: CartoDB Dark Matter (키리스 · 배포 도메인 무관) + 위성(Cesium Ion)
+- **베이스맵**: Cesium Ion 위성(기본) + 다크/라이트/지형 등 키리스 대체 테마(피커 전환)
 - **데이터 파이프라인**: OSM(Overpass) → SQLite(better-sqlite3) → GeoJSON(WGS84 + EPSG:5179), proj4 재투영
 
 ## 실행
