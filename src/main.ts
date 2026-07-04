@@ -40,6 +40,7 @@ import {
   DEFAULT_BUDGET,
   type OptimResult,
 } from "./optim";
+import { setupDsoPanel } from "./llm/panel";
 import locationsCfg from "../locations.json";
 
 // ── 기준 위치 레지스트리 ───────────────────────────────────────
@@ -50,6 +51,11 @@ interface Loc {
   center: { lon: number; lat: number };
   radius_m: number;
   pop_density?: number; // 실시간 인구밀집 (부수피해 → 대응결심)
+  population?: {
+    congest_lvl?: string;
+    population_max?: number;
+    ppltn_time?: string;
+  };
 }
 const LOCS = locationsCfg.locations as Record<string, Loc>;
 const DEFAULT_LOC = locationsCfg.default as string;
@@ -267,6 +273,21 @@ async function main() {
       0
     )} m`;
   }
+
+  // AI 결심지원(DSO) 패널 — 매 질의 시 라이브 COP 스냅샷을 주입해 지휘관 보좌.
+  setupDsoPanel(() => {
+    const loc = LOCS[currentLocId];
+    return {
+      locName: loc.name,
+      popDensity: loc.pop_density ?? 0.5,
+      population: loc.population,
+      threatCondition:
+        document.getElementById("threat-cond-level")?.textContent?.trim() ??
+        "LOW",
+      tracks: currentSim?.getTracks() ?? [],
+      assets: assetLayer?.list() ?? [],
+    };
+  });
 
   await loadLocation(viewer, DEFAULT_LOC, true);
 }
