@@ -5,6 +5,10 @@
 FROM node:20-alpine AS builder
 WORKDIR /app
 
+# 네이티브 모듈(better-sqlite3 등 데이터 파이프라인 의존성) 컴파일용 빌드툴.
+# 프론트 빌드에는 불필요하나 npm install 시 컴파일되므로 필요.
+RUN apk add --no-cache python3 make g++
+
 COPY package.json package-lock.json* ./
 RUN npm install
 
