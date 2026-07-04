@@ -14,8 +14,8 @@ import {
   ColorMaterialProperty,
 } from "cesium";
 
-// ── 방어 자산 배치 (스캐너/재머/대응) + 커버리지 시각화 ──────────
-export type AssetKind = "scanner" | "jammer" | "counter";
+// ── 방어 자산 배치 (레이더/스캐너/재머/대응) + 커버리지 시각화 ──────────
+export type AssetKind = "radar" | "scanner" | "jammer" | "counter";
 
 export interface AssetKindSpec {
   kind: AssetKind;
@@ -28,12 +28,20 @@ export interface AssetKindSpec {
 
 export const ASSET_SPECS: AssetKindSpec[] = [
   {
+    kind: "radar",
+    label: "레이더",
+    short: "RDR",
+    color: "#39d98a",
+    rangeM: 1200,
+    role: "능동 탐지 (RADAR · RCS/위치)",
+  },
+  {
     kind: "scanner",
     label: "스캐너",
     short: "SCN",
     color: "#35e0e6",
     rangeM: 800,
-    role: "탐지 (RF·EO/IR·레이더)",
+    role: "수동 탐지 (RF·EO/IR)",
   },
   {
     kind: "jammer",
@@ -87,7 +95,7 @@ function distM(lon1: number, lat1: number, lon2: number, lat2: number): number {
 }
 
 const M_PER_DEG_LAT = 111320;
-const SEQ: Record<AssetKind, number> = { scanner: 0, jammer: 0, counter: 0 };
+const SEQ: Record<AssetKind, number> = { radar: 0, scanner: 0, jammer: 0, counter: 0 };
 
 function circleFlat(lon: number, lat: number, rM: number, seg = 72, close = false) {
   const out: number[] = [];
@@ -107,8 +115,8 @@ export function setupAssets(viewer: Viewer): AssetLayer {
   const assets: PlacedAsset[] = [];
   let mode: AssetKind | null = null;
   let changeCb: (() => void) | null = null;
-  // 스캐너는 상시, 재머·대응(효과기)은 활성/비활성 토글
-  const active: Record<AssetKind, boolean> = { scanner: true, jammer: true, counter: true };
+  // 레이더·스캐너(센서)는 상시, 재머·대응(효과기)은 활성/비활성 토글
+  const active: Record<AssetKind, boolean> = { radar: true, scanner: true, jammer: true, counter: true };
 
   function place(lon: number, lat: number, kind: AssetKind): PlacedAsset {
     const spec = SPEC[kind];
@@ -204,7 +212,7 @@ export function setupAssets(viewer: Viewer): AssetLayer {
     },
     list: () => assets,
     countByKind() {
-      const c: Record<AssetKind, number> = { scanner: 0, jammer: 0, counter: 0 };
+      const c: Record<AssetKind, number> = { radar: 0, scanner: 0, jammer: 0, counter: 0 };
       for (const a of assets) c[a.kind]++;
       return c;
     },

@@ -77,9 +77,13 @@
             <div class="mod-body">
               <div class="hint" id="asset-hint">유형 선택 후 지도 클릭 → 배치</div>
               <div class="palette">
+                <button class="ast-btn" id="asset-radar" data-kind="radar">
+                  <span class="ast-sw" style="--c: #39d98a"></span>
+                  <span class="ast-name">레이더</span><small>능동탐지</small>
+                </button>
                 <button class="ast-btn" id="asset-scanner" data-kind="scanner">
                   <span class="ast-sw" style="--c: #35e0e6"></span>
-                  <span class="ast-name">스캐너</span><small>탐지</small>
+                  <span class="ast-name">스캐너</span><small>RF·EO/IR</small>
                 </button>
                 <button class="ast-btn" id="asset-jammer" data-kind="jammer">
                   <span class="ast-sw" style="--c: #b06bff"></span>
@@ -112,7 +116,7 @@
               </div>
               <button id="optim-run" class="btn btn-run">최적 배치 실행</button>
               <div class="opt-result" id="optim-result">
-                예산 스캐너 3 · 재머 2 · 대응 2 (기본)
+                예산 레이더 2 · 스캐너 3 · 재머 2 · 대응 2 (기본)
               </div>
             </div>
           </section>
