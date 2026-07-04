@@ -23,7 +23,7 @@ export function listOptimizers() {
   return Object.keys(OPTIMIZERS);
 }
 
-export const DEFAULT_BUDGET: AssetBudget = { scanner: 3, jammer: 2, counter: 2 };
+export const DEFAULT_BUDGET: AssetBudget = { radar: 2, scanner: 3, jammer: 2, counter: 2 };
 
 export function assetMetaFromSpecs(): AssetMeta {
   return Object.fromEntries(

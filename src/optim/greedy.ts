@@ -11,8 +11,11 @@ import type {
 } from "./types";
 import type { AssetKind } from "../assets";
 
-const KINDS: AssetKind[] = ["scanner", "jammer", "counter"];
+const KINDS: AssetKind[] = ["radar", "scanner", "jammer", "counter"];
 const COST_SCALE = 20000; // install_cost 정규화
+
+// 효과기(재머·대응)만 부수피해 발생. 센서(레이더·스캐너)는 탐지 전용.
+const isEffector = (k: AssetKind) => k === "jammer" || k === "counter";
 
 function distM(aLon: number, aLat: number, bLon: number, bLat: number) {
   const kLat = 111320;
@@ -34,7 +37,7 @@ export const greedyOptimizer: Optimizer = {
     for (const kind of KINDS) {
       const n = input.budget[kind] ?? 0;
       const range = input.assetMeta[kind].rangeM;
-      const isSoftHard = kind !== "scanner"; // 재머·대응만 부수피해 발생
+      const isSoftHard = isEffector(kind); // 재머·대응만 부수피해 발생
 
       for (let k = 0; k < n; k++) {
         // 이 종류가 이미 덮은 양수 구역 (한계 이득 계산용)
@@ -107,7 +110,7 @@ function scoreConfig(placements: Placement[], input: OptimInput): OptimResult["s
   for (const z of input.zones) {
     if (z.weight >= 0) continue;
     const hit = placements.some(
-      (p) => p.kind !== "scanner" && covers(siteAt(input, p.siteId)!, z, p.rangeM)
+      (p) => isEffector(p.kind) && covers(siteAt(input, p.siteId)!, z, p.rangeM)
     );
     if (hit) collateral += Math.abs(z.weight);
   }

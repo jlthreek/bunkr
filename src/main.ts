@@ -27,7 +27,7 @@ import "@fontsource/ibm-plex-mono/600.css";
 import "./style.css";
 import { setupGrid } from "./grid";
 import { setupLayers, type Layers } from "./layers";
-import { startDroneSim, type DroneSim, type Track } from "./sim/drones";
+import { startDroneSim, type DroneSim, type Track, type SensorProvider } from "./sim/drones";
 import {
   setupAssets,
   ASSET_SPECS,
@@ -92,6 +92,15 @@ let current: Layers | undefined;
 let currentSim: DroneSim | undefined;
 let assetLayer: AssetLayer | undefined;
 let currentLocId = DEFAULT_LOC;
+// 최적배치가 만든 자산 id (재실행 시 이전 최적분만 제거 — 수동 배치는 유지).
+let optimIds: string[] = [];
+
+// 수동 배치와 최적 배치는 동일한 PlacedAsset 모델을 공유하므로, 킬체인 센서는
+// assetLayer 하나만 질의한다(활성 토글·커버리지 판정 모두 여기서 처리).
+const combinedSensors: SensorProvider = {
+  covers: (kind, lon, lat) => assetLayer?.covers(kind, lon, lat) ?? false,
+  isKindActive: (kind) => assetLayer?.isKindActive(kind) ?? true,
+};
 
 const KIND_SHORT: Record<string, string> = {
   drone: "DRN",
@@ -224,7 +233,7 @@ async function main() {
     }
   });
 
-  // 자동 최적 배치 (모듈형 옵티마이저)
+  // 자동 최적 배치 (모듈형 옵티마이저 — 수동과 동일 PlacedAsset 모델로 배치)
   document.getElementById("optim-name")!.textContent = getOptimizer().name;
   document.getElementById("optim-run")!.addEventListener("click", runOptimizer);
 
@@ -320,11 +329,12 @@ async function loadLocation(viewer: Viewer, id: string, initial: boolean) {
     document.getElementById("cnt-sites")!.textContent = "—";
   }
 
-  // 배치 자산 초기화 (AO가 바뀌면 무의미)
+  // 배치 자산 초기화 (AO가 바뀌면 무의미). 수동·최적 모두 assetLayer 하나로 관리.
   assetLayer?.clear();
+  optimIds = [];
   setPaletteMode(null);
   document.getElementById("optim-result")!.textContent =
-    "예산 스캐너 3 · 재머 2 · 대응 2 (기본)";
+    "최적배치 실행 → 보호커버·부수피해·비용 최적화";
 
   // 위협 시뮬 재시작 (새 AO 기준, cuas 엔진)
   currentSim?.destroy();
@@ -334,7 +344,7 @@ async function loadLocation(viewer: Viewer, id: string, initial: boolean) {
     center: loc.center,
     radiusM: loc.radius_m,
     popDensity: loc.pop_density ?? 0.5, // 실시간 인구밀집 → 대응결심 부수피해
-    sensors: assetLayer, // 스캐너 탐지 + 재머/대응 교전 연동
+    sensors: combinedSensors, // 수동·최적 배치(동일 모델) → 탐지·교전
   });
   currentSim.setVisible(
     (document.getElementById("lyr-drones") as HTMLInputElement).checked
@@ -416,37 +426,45 @@ function updateThreatCondition(sorted: Track[]) {
   label.textContent = text;
 }
 
-// 최적 배치 실행: 옵티마이저(교체 가능) → 결과를 자산 레이어에 렌더
+// 최적 배치 실행: 옵티마이저(교체 가능) → 결과를 수동과 동일한 PlacedAsset 으로 배치.
 async function runOptimizer() {
   const btn = document.getElementById("optim-run") as HTMLButtonElement;
   const out = document.getElementById("optim-result")!;
   setPaletteMode(null);
   btn.disabled = true;
-  out.textContent = "계산 중…";
+  out.textContent = "최적 배치 계산 중…";
   try {
     const input = await loadOptimInput(currentLocId, DEFAULT_BUDGET);
     const res = await getOptimizer().run(input);
-    assetLayer?.clear();
-    for (const p of res.placements) assetLayer?.placeAt(p.kind, p.lon, p.lat);
-    renderOptimResult(res);
+    // 이전 최적배치분만 제거(수동 배치는 유지) 후 재배치.
+    for (const id of optimIds) assetLayer?.remove(id);
+    optimIds = [];
+    for (const p of res.placements) {
+      const a = assetLayer?.placeAt(p.kind, p.lon, p.lat);
+      if (a) optimIds.push(a.id);
+    }
+    renderOptimKpis(res);
   } catch (e) {
-    console.error("[optim] 실패:", e);
+    console.error("[optim] 최적화 실패:", e);
     out.textContent = "최적화 실패 (콘솔 확인)";
   } finally {
     btn.disabled = false;
   }
 }
 
-function renderOptimResult(res: OptimResult) {
+function renderOptimKpis(res: OptimResult) {
   const s = res.score;
+  const byKind: Record<string, number> = {};
+  for (const p of res.placements) byKind[p.kind] = (byKind[p.kind] ?? 0) + 1;
+  const mix = Object.entries(byKind)
+    .map(([k, n]) => `${ASSET_BY_KIND[k as AssetKind].short} ${n}`)
+    .join(" · ");
   document.getElementById("optim-result")!.innerHTML =
-    `배치 <b>${res.placements.length}</b>기 · ${res.meta.optimizer} (${res.meta.ms.toFixed(
-      0
-    )}ms)<br>` +
-    `보호 커버 <b>${(s.protectedCoverage * 100).toFixed(0)}%</b> · ` +
-    `부수피해 <b>${s.collateralPenalty.toFixed(0)}</b> · ` +
-    `비용 <b>${(s.cost / 1000).toFixed(0)}k</b><br>` +
-    `종합점수 <b>${s.total.toFixed(1)}</b>`;
+    `배치 <b>${res.placements.length}</b>기 (${mix}) · ${res.meta.ms.toFixed(0)}ms<br>` +
+    `보호커버 <b>${(s.protectedCoverage * 100).toFixed(0)}%</b> · ` +
+    `부수피해 <b>${s.collateralPenalty.toFixed(1)}</b> · ` +
+    `비용 <b>${(s.cost / 1000).toFixed(0)}k</b> · ` +
+    `종합 <b>${s.total.toFixed(1)}</b>`;
 }
 
 // 자산 배치 모드 전환 + 팔레트 UI 반영

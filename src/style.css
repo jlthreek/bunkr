@@ -12,6 +12,7 @@
   --green: #37d67a;
   --amber: #f5a623;
   --red: #ff3b46;
+  --radar: #39d98a;
   --scanner: #35e0e6;
   --jammer: #b06bff;
   --counter: #ff8c42;
@@ -353,6 +354,9 @@ select,
   border-color: var(--c, var(--accent));
   background: color-mix(in srgb, var(--c) 14%, transparent);
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--c) 45%, transparent);
+}
+.ast-btn[data-kind="radar"] {
+  --c: var(--radar);
 }
 .ast-btn[data-kind="scanner"] {
   --c: var(--scanner);

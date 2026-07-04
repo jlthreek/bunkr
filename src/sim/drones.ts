@@ -31,16 +31,29 @@ import { RESPONSES, type Asset, type Response, type TrackType } from "../cuas/en
 // 트랙은 실제 제원(profiles)으로 생성 → 목표(자산)로 궤적 이동 → 매 스텝 관측 후
 // pipeline.judge 로 분류·위협도·대응을 산출한다. 좌표는 local km(frame) ↔ WGS84.
 
-// 킬체인 연동: 스캐너=탐지, 재머/대응=교전 (assets.ts AssetLayer 가 구현)
+// 킬체인 연동: 레이더·스캐너=탐지, 재머/대응=교전 (assets.ts AssetLayer 가 구현)
 export interface SensorProvider {
-  covers(kind: "scanner" | "jammer" | "counter", lon: number, lat: number): boolean;
-  isKindActive(kind: "scanner" | "jammer" | "counter"): boolean;
+  covers(kind: "radar" | "scanner" | "jammer" | "counter", lon: number, lat: number): boolean;
+  isKindActive(kind: "radar" | "scanner" | "jammer" | "counter"): boolean;
 }
 
 const DESPAWN_R = 7.0; // 이탈 판정 반경(km)
 const OBS_INTERVAL = 0.5; // 관측·판단 주기(s)
 const TRAIL_INTERVAL = 0.4;
 const HIST_CAP = 20;
+const GROUND_INTERVAL = 0.5; // 지형고도 샘플 주기(s)
+
+// 색상 캐시 — 매 프레임 Color.fromCssColorString 파싱 방지
+const COL = {
+  undet: Color.fromCssColorString("#8a949c"),
+  soft: Color.fromCssColorString("#b06bff"),
+  hard: Color.fromCssColorString("#ff8c42"),
+  balloon: Color.fromCssColorString("#5eb0ff"),
+  bird: Color.fromCssColorString("#9aa4ad"),
+  low: Color.fromCssColorString("#37d67a"),
+  med: Color.fromCssColorString("#f5a623"),
+  high: Color.fromCssColorString("#ff3b46"),
+};
 
 let SEQ = 0;
 
@@ -80,6 +93,8 @@ export class Track {
   lon = 0;
   lat = 0;
   groundH = 0;
+  groundAcc = 1; // 지형고도 샘플 스로틀(첫 프레임 즉시 샘플)
+  labelText = ""; // 라벨 캐시(상태 변화 시에만 갱신)
   entities: Entity[] = [];
 
   constructor(
@@ -118,12 +133,17 @@ export class Track {
       this.waypoints = null;
     }
     this.syncLonLat();
+    this.updateLabel();
   }
 
   private syncLonLat() {
     const ll = toLonLat(this.frame, this.km[0], this.km[1]);
     this.lon = ll.lon;
     this.lat = ll.lat;
+  }
+
+  updateLabel() {
+    this.labelText = trackLabel(this);
   }
 
   step(dt: number) {
@@ -163,13 +183,22 @@ export class Track {
       const j = judge(this.assets, this.hist, this.windDir, {
         popDensity: this.popDensity,
       });
-      if (j.confirmed) this.jud = j;
+      if (j.confirmed) {
+        this.jud = j;
+        if (this.detected) this.updateLabel(); // 확인된 트랙만 라벨 갱신
+      }
     }
 
-    // 킬체인: 스캐너 커버리지 진입 시 확인(latch) → 활성 재머/대응 커버리지 시 교전
+    // 킬체인: 레이더·스캐너 융합 커버리지 진입 시 확인(latch) → 활성 재머/대응 커버리지 시 교전
     if (this.sensors && !this.engaged) {
-      if (!this.detected && this.sensors.covers("scanner", this.lon, this.lat))
+      if (
+        !this.detected &&
+        (this.sensors.covers("radar", this.lon, this.lat) ||
+          this.sensors.covers("scanner", this.lon, this.lat))
+      ) {
         this.detected = true;
+        this.updateLabel();
+      }
       if (this.detected) {
         if (
           this.sensors.covers("counter", this.lon, this.lat) &&
@@ -177,9 +206,11 @@ export class Track {
         ) {
           this.engaged = "hard";
           this.engTimer = 1.6;
+          this.updateLabel();
         } else if (this.sensors.covers("jammer", this.lon, this.lat) && this.pred === "드론") {
           this.engaged = "soft";
           this.engTimer = 1.6;
+          this.updateLabel();
         }
       }
     }
@@ -227,18 +258,16 @@ export class Track {
     return this.prof.subtype === "고정익" ? "fixedwing" : "quad";
   }
   color(): Color {
-    if (!this.detected) return Color.fromCssColorString("#8a949c"); // 미확인 = 그레이
-    if (this.engaged === "soft") return Color.fromCssColorString("#b06bff"); // 재밍
-    if (this.engaged === "hard") return Color.fromCssColorString("#ff8c42"); // 하드킬
+    if (!this.detected) return COL.undet; // 미확인 = 그레이
+    if (this.engaged === "soft") return COL.soft; // 재밍
+    if (this.engaged === "hard") return COL.hard; // 하드킬
     const p = this.pred;
-    if (p === "풍선" || (p === "미상" && this.kind === "balloon"))
-      return Color.fromCssColorString("#5eb0ff");
-    if (p === "새/기타" || (p === "미상" && this.kind === "bird"))
-      return Color.fromCssColorString("#9aa4ad");
+    if (p === "풍선" || (p === "미상" && this.kind === "balloon")) return COL.balloon;
+    if (p === "새/기타" || (p === "미상" && this.kind === "bird")) return COL.bird;
     const t = this.T;
-    if (t < 45) return Color.fromCssColorString("#37d67a");
-    if (t < 70) return Color.fromCssColorString("#f5a623");
-    return Color.fromCssColorString("#ff3b46");
+    if (t < 45) return COL.low;
+    if (t < 70) return COL.med;
+    return COL.high;
   }
   threatBar(): string {
     const n = Math.round(Math.max(0, Math.min(100, this.T)) / 20);
@@ -265,7 +294,7 @@ function buildEntities(viewer: Viewer, t: Track) {
       scaleByDistance: new NearFarScalar(500, 1.1, 12000, 0.5),
     },
     label: {
-      text: new CallbackProperty(() => trackLabel(t), false) as any,
+      text: new CallbackProperty(() => t.labelText, false) as any,
       font: "600 11px 'IBM Plex Mono', monospace",
       fillColor: new CallbackProperty(() => t.color(), false) as any,
       style: LabelStyle.FILL_AND_OUTLINE,
@@ -509,10 +538,15 @@ export async function startDroneSim(
     for (let i = tracks.length - 1; i >= 0; i--) {
       const t = tracks[i];
       t.step(dt);
-      const h = viewer.scene.globe.getHeight(
-        viewer.scene.globe.ellipsoid.cartesianToCartographic(t.cart())
-      );
-      if (h != null) t.groundH = h;
+      // 지형고도 샘플은 스로틀(매 프레임 → ~2Hz)
+      t.groundAcc += dt;
+      if (t.groundAcc >= GROUND_INTERVAL) {
+        t.groundAcc = 0;
+        const h = viewer.scene.globe.getHeight(
+          viewer.scene.globe.ellipsoid.cartesianToCartographic(t.cart())
+        );
+        if (h != null) t.groundH = h;
+      }
       if (t.dead) {
         removeTrack(t);
         tracks.splice(i, 1);
