@@ -551,7 +551,7 @@ body {
   font-size: 12px;
   color: var(--ds-green);
 }
-.loc-capsule #loc-select {
+.loc-capsule select {
   height: 30px;
   min-width: 150px;
   padding: 0 30px 0 4px;
@@ -559,6 +559,9 @@ body {
   border: none;
   border-radius: var(--ds-r-pill);
   background-position: right 12px center;
+}
+.loc-capsule #basemap-select {
+  min-width: 120px;
 }
 
 /* 좌표 · 축척 HUD (맵 좌하단, 스케일바 위) */
@@ -668,7 +671,8 @@ select {
   font-family: var(--font-mono);
 }
 #loc-select,
-#plan-select {
+#plan-select,
+#basemap-select {
   width: 100%;
   padding: 0 16px;
   height: 40px;
@@ -690,7 +694,9 @@ select {
 #loc-select:hover,
 #loc-select:focus,
 #plan-select:hover,
-#plan-select:focus {
+#plan-select:focus,
+#basemap-select:hover,
+#basemap-select:focus {
   border-color: var(--ds-line-strong);
   outline: none;
 }

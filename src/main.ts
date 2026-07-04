@@ -5,6 +5,7 @@ import {
   Cartesian3,
   Math as CesiumMath,
   createOsmBuildingsAsync,
+  createWorldImageryAsync,
   ScreenSpaceEventHandler,
   ScreenSpaceEventType,
   Color,
@@ -12,9 +13,14 @@ import {
   LabelStyle,
   VerticalOrigin,
   Cartesian2,
-  UrlTemplateImageryProvider,
   Entity,
   ConstantProperty,
+  ImageryLayer,
+  UrlTemplateImageryProvider,
+  ClippingPolygon,
+  ClippingPolygonCollection,
+  type Cesium3DTileset,
+  type ImageryProvider,
 } from "cesium";
 import "cesium/Build/Cesium/Widgets/widgets.css";
 import "@fontsource/chakra-petch/400.css";
@@ -74,13 +80,52 @@ const ION_TOKEN = import.meta.env.VITE_CESIUM_ION_TOKEN as string | undefined;
 if (ION_TOKEN) Ion.defaultAccessToken = ION_TOKEN;
 else console.warn("[bunkr] VITE_CESIUM_ION_TOKEN 미설정");
 
-// ── Stadia Maps 베이스맵 (Alidade) ───────────────────────────
-function stadia(style: string) {
+// ── 베이스맵(이미저리) 스타일 ─────────────────────────────────
+// 위성(항공사진)은 타일당 메모리가 큼 → 다크/라이트 벡터맵은 경량. 상단 드롭다운으로 전환.
+function carto(style: string) {
   return new UrlTemplateImageryProvider({
-    url: `https://tiles.stadiamaps.com/tiles/${style}/{z}/{x}/{y}.png`,
-    credit: "© Stadia Maps · © OpenMapTiles · © OpenStreetMap",
+    url: `https://{s}.basemaps.cartocdn.com/${style}/{z}/{x}/{y}.png`,
+    subdomains: ["a", "b", "c", "d"],
+    credit: "© CARTO · © OpenStreetMap contributors",
     maximumLevel: 20,
   });
+}
+function esri(path: string) {
+  return new UrlTemplateImageryProvider({
+    url: `https://server.arcgisonline.com/ArcGIS/rest/services/${path}/MapServer/tile/{z}/{y}/{x}`,
+    credit: "© Esri",
+    maximumLevel: 19,
+  });
+}
+interface BasemapStyle {
+  id: string;
+  label: string;
+  make: () => Promise<ImageryProvider>;
+}
+const BASEMAP_STYLES: BasemapStyle[] = [
+  { id: "ion-sat", label: "Satellite (Ion)", make: () => createWorldImageryAsync() },
+  { id: "esri-sat", label: "Satellite (Esri)", make: async () => esri("World_Imagery") },
+  { id: "carto-dark", label: "Dark", make: async () => carto("dark_all") },
+  { id: "esri-dark", label: "Dark Gray", make: async () => esri("Canvas/World_Dark_Gray_Base") },
+  { id: "carto-light", label: "Light", make: async () => carto("light_all") },
+  {
+    id: "osm",
+    label: "OSM",
+    make: async () =>
+      new UrlTemplateImageryProvider({
+        url: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+        credit: "© OpenStreetMap contributors",
+        maximumLevel: 19,
+      }),
+  },
+];
+const DEFAULT_BASEMAP = "ion-sat";
+
+// 이미저리 레이어 교체(단일 베이스). async provider 는 fromProviderAsync 로 논블로킹.
+function applyBasemap(viewer: Viewer, id: string) {
+  const style = BASEMAP_STYLES.find((s) => s.id === id) ?? BASEMAP_STYLES[0];
+  viewer.imageryLayers.removeAll();
+  viewer.imageryLayers.add(ImageryLayer.fromProviderAsync(style.make()));
 }
 
 function buildLocationDescription(loc: Loc): string {
@@ -266,7 +311,37 @@ let current: Layers | undefined;
 let currentSim: DroneSim | undefined;
 let assetLayer: AssetLayer | undefined;
 let viewerRef: Viewer | undefined; // 배치 장비 행 클릭 시 지도 이동용
+let osmBuildings: Cesium3DTileset | undefined; // 3D 건물(AO로 클리핑)
 let currentLocId = DEFAULT_LOC;
+
+// AO(현재 위치 반경) 원형 클리핑 폴리곤 — 전역 건물 타일셋을 AO 밖은 로드/렌더하지
+// 않도록 제한(inverse:true = 폴리곤 외부 클립). 위치 전환 시 갱신.
+function aoClipping(loc: Loc): ClippingPolygonCollection {
+  const { lon, lat } = loc.center;
+  const r = loc.radius_m;
+  const latRad = (lat * Math.PI) / 180;
+  const N = 96;
+  const deg: number[] = [];
+  for (let i = 0; i < N; i++) {
+    const th = (2 * Math.PI * i) / N;
+    deg.push(
+      lon + (r * Math.cos(th)) / (111320 * Math.cos(latRad)),
+      lat + (r * Math.sin(th)) / 111320
+    );
+  }
+  return new ClippingPolygonCollection({
+    polygons: [new ClippingPolygon({ positions: Cartesian3.fromDegreesArray(deg) })],
+    inverse: true, // AO 내부만 유지, 외부 건물 클립
+  });
+}
+
+// 현재 AO로 건물 클리핑 갱신 (이전 컬렉션은 파기해 텍스처 메모리 회수)
+function clipBuildingsToAO(loc: Loc) {
+  if (!osmBuildings) return;
+  const prev = osmBuildings.clippingPolygons;
+  osmBuildings.clippingPolygons = aoClipping(loc);
+  if (prev && !prev.isDestroyed()) prev.destroy();
+}
 let optimIds: string[] = [];
 let lastOptimKpis: SavedPlanKpis | undefined; // 저장 시 플랜에 첨부
 let engageModalTrackId: string | null = null;
@@ -310,6 +385,8 @@ async function main() {
     selectionIndicator: true,
   });
   viewer.scene.globe.enableLighting = true;
+  // 지형·이미저리 타일 캐시 축소 (기본 100 → 48): 타일 로드 메모리 절감.
+  viewer.scene.globe.tileCacheSize = 48;
   viewerRef = viewer;
   // 터치 제스처: pinch 줌 · 두 손가락 회전/틸트 · 이동 (뷰포트 meta 로 페이지 줌 차단)
   const camCtrl = viewer.scene.screenSpaceCameraController;
@@ -320,16 +397,24 @@ async function main() {
   camCtrl.enableLook = true;
   // 지도 위 라벨 선명도 (레티나 full-res 렌더)
   viewer.useBrowserRecommendedResolution = false;
-  viewer.resolutionScale = Math.min(window.devicePixelRatio || 1, 2);
-  // 베이스맵: Stadia Alidade Smooth Dark (기본 Ion 이미저리 대체)
-  viewer.imageryLayers.removeAll();
-  viewer.imageryLayers.addImageryProvider(stadia("alidade_smooth_dark"));
+  // 렌더 해상도 상한 1.5 (기존 2) — 레티나 프레임버퍼·이미저리 타일 메모리 절감.
+  viewer.resolutionScale = Math.min(window.devicePixelRatio || 1, 1.5);
+  // 베이스맵: 상단 드롭다운으로 전환(기본 = Ion 위성). fromProviderAsync 논블로킹.
+  applyBasemap(viewer, DEFAULT_BASEMAP);
 
-  try {
-    viewer.scene.primitives.add(await createOsmBuildingsAsync());
-  } catch (e) {
-    console.error("[bunkr] OSM Buildings 로드 실패:", e);
-  }
+  // 3D 건물은 논블로킹 로드 — 타일셋 준비를 기다리지 않고 UI를 즉시 인터랙티브화.
+  createOsmBuildingsAsync()
+    .then((t) => {
+      // 타일 캐시 메모리 상한 (기본 512MB + overflow 512MB ≒ 최대 1GB → 대폭 축소)
+      t.cacheBytes = 256 * 1024 * 1024; // 256MB
+      t.maximumCacheOverflowBytes = 128 * 1024 * 1024; // 128MB
+      // 화면공간오차 상향 → 로드하는 타일 수 감소(디테일 소폭↓, 메모리·대역폭↓)
+      t.maximumScreenSpaceError = 24; // 기본 16
+      osmBuildings = t;
+      clipBuildingsToAO(LOCS[currentLocId]); // 현재 AO만 건물 로드/렌더
+      viewer.scene.primitives.add(t);
+    })
+    .catch((e) => console.error("[bunkr] OSM Buildings 로드 실패:", e));
 
   setupGrid(viewer, LOCS[DEFAULT_LOC].center, {
     scaleBarInner: $("scalebar-inner"),
@@ -353,6 +438,17 @@ async function main() {
   renderLocOptions();
   sel.value = DEFAULT_LOC;
   sel.addEventListener("change", () => loadLocation(viewer, sel.value, false));
+
+  // 베이스맵(지도 스타일) 드롭다운
+  const bmSel = $("basemap-select") as HTMLSelectElement;
+  for (const s of BASEMAP_STYLES) {
+    const o = document.createElement("option");
+    o.value = s.id;
+    o.textContent = s.label;
+    bmSel.appendChild(o);
+  }
+  bmSel.value = DEFAULT_BASEMAP;
+  bmSel.addEventListener("change", () => applyBasemap(viewer, bmSel.value));
 
   // 언어 전환 시 동적 UI 갱신 (정적 마크업은 i18n 모듈이 직접 갱신)
   onLangChange(() => {
@@ -532,9 +628,17 @@ async function main() {
 }
 
 // ── 카메라 프레이밍 ───────────────────────────────────────────
+// 축척 ~200m 목표로 진입 줌을 좁힘(고도↓ → 로드 타일 범위·메모리↓).
+// 스케일바가 200m가 아니면 CAM_ALT 만 미세조정.
+const CAM_ALT = 1000; // 진입 고도(m)
+const CAM_OFFSET = 0.007; // 남측 오프셋(deg) — 오블리크 프레이밍용
 function flyToLoc(viewer: Viewer, loc: Loc, duration: number) {
   viewer.camera.flyTo({
-    destination: Cartesian3.fromDegrees(loc.center.lon, loc.center.lat - 0.03, 4200),
+    destination: Cartesian3.fromDegrees(
+      loc.center.lon,
+      loc.center.lat - CAM_OFFSET,
+      CAM_ALT
+    ),
     orientation: { heading: 0, pitch: CesiumMath.toRadians(-42), roll: 0 },
     duration,
   });
@@ -545,6 +649,7 @@ async function loadLocation(viewer: Viewer, id: string, initial: boolean) {
   const loc = LOCS[id];
   if (!loc) return;
   currentLocId = id;
+  clipBuildingsToAO(loc); // 건물 클리핑을 새 AO로 이동
   const { lon, lat } = loc.center;
 
   $("hud-title").textContent = `bunkr · ${locName(loc)} COP`;
@@ -577,18 +682,10 @@ async function loadLocation(viewer: Viewer, id: string, initial: boolean) {
 
   current?.destroy();
   current = undefined;
-  try {
-    const layers = await setupLayers(viewer, id);
-    current = layers;
-    $("cnt-sites").textContent = String(layers.siteCount);
-    applyToggleState("lyr-zones", layers.zones);
-    applyToggleState("lyr-sites", layers.sites);
-    applyToggleState("lyr-ao", layers.ao);
-  } catch (e) {
-    console.error("[bunkr] 레이어 로드 실패:", e);
-    $("cnt-sites").textContent = "—";
-  }
+  currentSim?.destroy();
+  currentSim = undefined;
 
+  // 위치 전환 동기 UI 리셋 (async 결과와 무관 → 로드 시작 전에 처리)
   assetLayer?.clear();
   optimIds = [];
   lastOptimKpis = undefined;
@@ -598,15 +695,30 @@ async function loadLocation(viewer: Viewer, id: string, initial: boolean) {
   $("optim-result").textContent = tr("optim.result.default");
   resetKpiCards();
 
-  currentSim?.destroy();
-  currentSim = undefined;
-  currentSim = await startDroneSim(viewer, {
-    locId: id,
-    center: loc.center,
-    radiusM: loc.radius_m,
-    popDensity: loc.pop_density ?? 0.5,
-    sensors: combinedSensors,
-  });
+  // 레이어(geojson)와 위협 시뮬(assets geojson)은 상호 독립 → 병렬 로드로 대기 단축.
+  const [layers, sim] = await Promise.all([
+    setupLayers(viewer, id).catch((e) => {
+      console.error("[bunkr] 레이어 로드 실패:", e);
+      return null;
+    }),
+    startDroneSim(viewer, {
+      locId: id,
+      center: loc.center,
+      radiusM: loc.radius_m,
+      popDensity: loc.pop_density ?? 0.5,
+      sensors: combinedSensors,
+    }),
+  ]);
+  if (layers) {
+    current = layers;
+    $("cnt-sites").textContent = String(layers.siteCount);
+    applyToggleState("lyr-zones", layers.zones);
+    applyToggleState("lyr-sites", layers.sites);
+    applyToggleState("lyr-ao", layers.ao);
+  } else {
+    $("cnt-sites").textContent = "—";
+  }
+  currentSim = sim;
   wireSimEvents(currentSim);
   (window as any).__bunkr = currentSim; // 데모/디버그: window.__bunkr.spawnAt('drone', lon, lat)
   currentSim.setROE(
@@ -803,8 +915,7 @@ function startZuluClock() {
   const el = $("zclock");
   const tick = () =>
     (el.textContent = new Date().toLocaleTimeString("en-GB", { hour12: false }));
-  tick();
-  setInterval(tick, 1000);
+  tick(); // 갱신 중지: 로드 시점 시각에서 정지
 }
 
 // ══ 맵 컨트롤 (줌 / 재정렬) ══════════════════════════════════
