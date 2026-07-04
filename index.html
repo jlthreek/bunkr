@@ -21,10 +21,10 @@
 
         <nav class="mode-tabs" role="tablist">
           <button class="mode-tab active" data-mode-btn="deploy">
-            DEPLOY<small>설계</small>
+            DEPLOY<small data-i18n="mode.deploy.sub">설계</small>
           </button>
           <button class="mode-tab" data-mode-btn="operate">
-            OPERATE<small>작전</small>
+            OPERATE<small data-i18n="mode.operate.sub">작전</small>
           </button>
         </nav>
 
@@ -32,28 +32,34 @@
           <!-- 작전 모드: 교전규칙 + 위협조건 (상태 그룹) -->
           <div class="roe" data-show="operate">
             <span class="roe-label">
-              <span class="roe-key">교전규칙</span><button
+              <span class="roe-key" data-i18n="roe.label">교전규칙</span><button
                 class="help-btn roe-help"
                 id="roe-help"
                 aria-expanded="false"
                 aria-controls="roe-popover"
+                data-i18n-title="roe.help.title"
                 title="교전규칙 설명"
               >
                 ?
               </button>
             </span>
             <div class="roe-popover" id="roe-popover" hidden>
-              <div class="rp-title">교전규칙 (ROE)</div>
-              <p>AUTO는 조건 충족 시 시스템이 하드킬 교전을 자동 승인합니다.</p>
-              <p>MANUAL은 하드킬 직전 교전 승인 큐에서 지휘관 승인을 기다립니다.</p>
-              <p>소프트킬/재밍은 두 모드 모두 자동 대응합니다.</p>
+              <div class="rp-title" data-i18n="roe.popover.title">교전규칙 (ROE)</div>
+              <p data-i18n="roe.popover.p1">AUTO는 조건 충족 시 시스템이 하드킬 교전을 자동 승인합니다.</p>
+              <p data-i18n="roe.popover.p2">MANUAL은 하드킬 직전 교전 승인 큐에서 지휘관 승인을 기다립니다.</p>
+              <p data-i18n="roe.popover.p3">소프트킬/재밍은 두 모드 모두 자동 대응합니다.</p>
             </div>
             <button id="roe-toggle" class="roe-btn" data-roe="auto">AUTO</button>
           </div>
+          <!-- 언어 전환 (KO/EN) -->
+          <div class="lang-toggle" id="lang-toggle" data-i18n-title="lang.toggle.title" title="언어 전환 · Switch language">
+            <button class="lang-seg" data-lang-btn="ko">KO</button>
+            <button class="lang-seg" data-lang-btn="en">EN</button>
+          </div>
           <!-- 작전지역(AO) 캡슐 (시계 옆) -->
-          <div class="loc-capsule" title="작전지역 · Area of Operation">
+          <div class="loc-capsule" data-i18n-title="loc.capsule.title" title="작전지역 · Area of Operation">
             <span class="loc-pin">⊚</span>
-            <select id="loc-select" title="작전지역 (Area of Operation)"></select>
+            <select id="loc-select" data-i18n-title="loc.select.title" title="작전지역 (Area of Operation)"></select>
           </div>
           <span class="zclock" id="zclock">--:--:--Z</span>
         </div>
@@ -71,28 +77,28 @@
         <!-- 레이어 (공통) -->
         <section class="mod">
           <button class="mod-head" data-toggle>
-            <span class="mod-title">레이어</span><span class="mod-chev">▾</span>
+            <span class="mod-title" data-i18n="layers.title">레이어</span><span class="mod-chev">▾</span>
           </button>
           <div class="mod-body">
             <label class="chk"
-              ><input type="checkbox" id="lyr-zones" checked /> 우선구역</label
+              ><input type="checkbox" id="lyr-zones" checked /> <span data-i18n="layers.zones">우선구역</span></label
             >
             <label class="chk"
-              ><input type="checkbox" id="lyr-sites" checked /> 설치후보지
+              ><input type="checkbox" id="lyr-sites" checked /> <span data-i18n="layers.sites">설치후보지</span>
               <span id="cnt-sites" class="cnt">—</span></label
             >
-            <label class="chk" title="작전지역 · Area of Operation"
-              ><input type="checkbox" id="lyr-ao" checked /> 작전영역(AO)</label
+            <label class="chk" data-i18n-title="loc.capsule.title" title="작전지역 · Area of Operation"
+              ><input type="checkbox" id="lyr-ao" checked /> <span data-i18n="layers.ao">작전영역(AO)</span></label
             >
             <label class="chk" data-show="operate"
-              ><input type="checkbox" id="lyr-drones" checked /> 위협체
+              ><input type="checkbox" id="lyr-drones" checked /> <span data-i18n="layers.drones">위협체</span>
               <span id="cnt-drones" class="cnt">—</span></label
             >
             <div class="legend">
-              <span class="lg lg-p"></span>보호구역<span class="lg lg-s"></span>민감구역<span
+              <span class="lg lg-p"></span><span data-i18n="legend.protected">보호구역</span><span class="lg lg-s"></span><span data-i18n="legend.sensitive">민감구역</span><span
                 class="lg lg-site"
               ></span
-              >센서/대응 배치 후보지
+              ><span data-i18n="legend.sites">센서/대응 배치 후보지</span>
             </div>
           </div>
         </section>
@@ -100,37 +106,37 @@
         <!-- 위협 스폰 (OPERATE 전용) -->
         <section class="mod" data-show="operate">
           <button class="mod-head" data-toggle>
-            <span class="mod-title">위협 생성</span>
+            <span class="mod-title" data-i18n="spawn.title">위협 생성</span>
             <span class="sim-status" id="sim-status">● RUN</span>
             <span class="mod-chev">▾</span>
           </button>
           <div class="mod-body">
-            <div class="hint" id="spawn-hint">유형 선택 후 지도 클릭 → 생성</div>
+            <div class="hint" id="spawn-hint" data-i18n="spawn.hint">유형 선택 후 지도 클릭 → 생성</div>
             <div class="palette">
               <button class="ast-btn" id="spawn-drone" data-kind="drone">
                 <span class="ast-icon"><svg viewBox="0 0 102 102" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M24.0849 56.219C25.1059 55.8621 26.2247 55.908 27.2131 56.3472C28.2015 56.7865 28.9853 57.5861 29.4047 58.5831C29.8241 59.5801 29.8475 60.6995 29.4703 61.7132C29.0931 62.727 28.3435 63.5587 27.3744 64.039L26.9154 64.2345C25.587 64.7042 24.3961 65.4966 23.4497 66.5405C22.5034 67.5843 21.8312 68.847 21.4937 70.215C21.1561 71.5829 21.1637 73.0133 21.5159 74.3776C21.868 75.7419 22.5536 76.9973 23.511 78.0311C24.4684 79.0648 25.6677 79.8445 27.001 80.3C28.3344 80.7554 29.76 80.8725 31.1498 80.6406C32.5396 80.4088 33.85 79.8352 34.9632 78.9715C36.0765 78.1078 36.9577 76.9811 37.5276 75.6925L37.7699 75.0847C37.9439 74.5438 38.2247 74.0432 38.5955 73.6127C38.9664 73.1821 39.4199 72.8303 39.9291 72.578C40.4383 72.3258 40.9929 72.1782 41.5601 72.144C42.1274 72.1098 42.6957 72.1898 43.2315 72.3791C43.7673 72.5684 44.2597 72.8632 44.6796 73.2462C45.0994 73.6291 45.4383 74.0923 45.676 74.6085C45.9137 75.1246 46.0455 75.6832 46.0635 76.2512C46.0816 76.8192 45.9856 77.385 45.7811 77.9153C44.8244 80.6242 43.197 83.0466 41.0506 84.9563C38.9043 86.8661 36.3091 88.2009 33.5072 88.8361C30.7054 89.4713 27.7883 89.3863 25.0282 88.589C22.2681 87.7917 19.7551 86.308 17.7236 84.2765C15.6921 82.2451 14.2085 79.732 13.4111 76.9719C12.6138 74.2118 12.5288 71.2947 13.164 68.4929C13.7993 65.6911 15.1341 63.0959 17.0438 60.9495C18.9535 58.8032 21.3759 57.1757 24.0849 56.219ZM77.9154 56.219C80.6244 57.1757 83.0468 58.8032 84.9565 60.9495C86.8662 63.0959 88.201 65.6911 88.8362 68.4929C89.4715 71.2947 89.3865 74.2118 88.5891 76.9719C87.7918 79.732 86.3082 82.2451 84.2767 84.2765C82.2452 86.308 79.7321 87.7917 76.9721 88.589C74.212 89.3863 71.2949 89.4713 68.493 88.8361C65.6912 88.2009 63.096 86.8661 60.9497 84.9563C58.8033 83.0466 57.1758 80.6242 56.2191 77.9153C55.8623 76.8942 55.9081 75.7755 56.3474 74.787C56.7866 73.7986 57.5862 73.0149 58.5832 72.5955C59.5802 72.1761 60.6997 72.1526 61.7134 72.5298C62.7271 72.9071 63.5588 73.6566 64.0391 74.6258L64.2346 75.0847C64.7043 76.4132 65.4967 77.6041 66.5406 78.5504C67.5845 79.4968 68.8471 80.1689 70.2151 80.5065C71.5831 80.844 73.0135 80.8364 74.3778 80.4843C75.7421 80.1322 76.9975 79.4466 78.0312 78.4891C79.0649 77.5317 79.8446 76.3324 80.3001 74.9991C80.7556 73.6658 80.8727 72.2401 80.6408 70.8504C80.4089 69.4606 79.8353 68.1502 78.9717 67.0369C78.108 65.9237 76.9812 65.0425 75.6926 64.4725L75.0849 64.2345C74.5586 64.0486 74.074 63.7609 73.6589 63.3878C73.2438 63.0147 72.9062 62.5635 72.6655 62.0599C72.1793 61.0429 72.117 59.8744 72.4924 58.8115C72.8677 57.7486 73.65 56.8783 74.667 56.3921C75.684 55.9059 76.8525 55.8437 77.9154 56.219ZM34.0469 28.22L34.4846 28.5175L45.7811 37.3065C47.1753 38.3911 48.8728 39.0145 50.6376 39.0899C52.4023 39.1653 54.1468 38.689 55.6284 37.7273L56.2191 37.3065L67.5156 28.5218C68.2971 27.9131 69.2667 27.5966 70.2568 27.6268C71.2469 27.6571 72.1953 28.0322 72.9382 28.6874C73.6811 29.3426 74.1718 30.2367 74.3255 31.2153C74.4792 32.1938 74.2863 33.1953 73.7801 34.0468L73.4826 34.4845L64.6936 45.781C63.609 47.1752 62.9857 48.8726 62.9103 50.6374C62.8349 52.4022 63.3111 54.1466 64.2729 55.6282L64.6936 56.219L73.4784 67.5155C74.087 68.297 74.4036 69.2666 74.3733 70.2566C74.3431 71.2467 73.9679 72.1952 73.3127 72.9381C72.6575 73.681 71.7634 74.1717 70.7849 74.3254C69.8063 74.4791 68.8048 74.2862 67.9534 73.78L67.5156 73.4825L56.2191 64.6935C54.825 63.6089 53.1275 62.9855 51.3627 62.9101C49.5979 62.8347 47.8535 63.311 46.3719 64.2728L45.7811 64.6935L34.4846 73.4782C33.7031 74.0869 32.7336 74.4034 31.7435 74.3732C30.7534 74.3429 29.805 73.9678 29.0621 73.3126C28.3192 72.6574 27.8285 71.7633 27.6748 70.7847C27.521 69.8062 27.7139 68.8047 28.2201 67.9533L28.5176 67.5155L37.3066 56.219C38.3913 54.8248 39.0146 53.1274 39.09 51.3626C39.1654 49.5978 38.6891 47.8534 37.7274 46.3718L37.3066 45.781L28.5219 34.4845C27.9397 33.738 27.6233 32.8185 27.6231 31.8719C27.6228 30.9252 27.9387 30.0055 28.5205 29.2587C29.1023 28.5119 29.9168 27.9808 30.8348 27.7495C31.7528 27.5182 32.7217 27.6 33.5879 27.982L34.0469 28.22ZM72.2501 12.75C76.2619 12.7482 80.145 14.1651 83.2127 16.7503C86.2805 19.3355 88.3351 22.9222 89.0133 26.8762C89.6914 30.8302 88.9494 34.8967 86.9184 38.3563C84.8875 41.816 81.6985 44.4459 77.9154 45.781C76.8943 46.1379 75.7756 46.092 74.7872 45.6528C73.7988 45.2135 73.015 44.4139 72.5956 43.4169C72.1762 42.4199 72.1527 41.3005 72.53 40.2868C72.9072 39.2731 73.6567 38.4413 74.6259 37.961L75.0849 37.7655C76.4133 37.2958 77.6042 36.5034 78.5505 35.4595C79.4969 34.4157 80.1691 33.153 80.5066 31.785C80.8442 30.4171 80.8365 28.9867 80.4844 27.6224C80.1323 26.2581 79.4467 25.0027 78.4893 23.9689C77.5319 22.9352 76.3326 22.1556 74.9992 21.7001C73.6659 21.2446 72.2403 21.1275 70.8505 21.3594C69.4607 21.5912 68.1503 22.1648 67.0371 23.0285C65.9238 23.8922 65.0426 25.0189 64.4726 26.3075L64.2346 26.9153C63.8593 27.9782 63.0771 28.8485 62.0601 29.3346C61.0431 29.8208 59.8746 29.8831 58.8116 29.5078C57.7487 29.1324 56.8784 28.3502 56.3923 27.3332C55.9061 26.3162 55.8438 25.1477 56.2191 24.0848C57.3909 20.7695 59.5619 17.8992 62.4329 15.8692C65.304 13.8392 68.7339 12.7494 72.2501 12.75ZM29.7501 12.75C33.2664 12.7494 36.6963 13.8392 39.5673 15.8692C42.4384 17.8992 44.6094 20.7695 45.7811 24.0848C46.138 25.1058 46.0922 26.2245 45.6529 27.213C45.2137 28.2014 44.4141 28.9851 43.4171 29.4045C42.42 29.8239 41.3006 29.8474 40.2869 29.4702C39.2732 29.0929 38.4414 28.3434 37.9611 27.3743L37.7656 26.9153C37.296 25.5868 36.5036 24.3959 35.4597 23.4496C34.4158 22.5032 33.1531 21.8311 31.7852 21.4935C30.4172 21.156 28.9868 21.1636 27.6225 21.5157C26.2582 21.8678 25.0028 22.5534 23.9691 23.5109C22.9353 24.4683 22.1557 25.6676 21.7002 27.0009C21.2447 28.3342 21.1276 29.7599 21.3595 31.1497C21.5914 32.5394 22.1649 33.8498 23.0286 34.9631C23.8923 36.0763 25.0191 36.9575 26.3076 37.5275L26.9154 37.7698C27.9476 38.1677 28.784 38.9525 29.2468 39.9574C29.7095 40.9622 29.7622 42.1079 29.3937 43.151C29.0252 44.1941 28.2644 45.0524 27.2731 45.5435C26.2818 46.0346 25.138 46.1198 24.0849 45.781C20.3068 44.4415 17.1234 41.8104 15.0966 38.3521C13.0699 34.8937 12.33 30.8306 13.0076 26.8798C13.6852 22.929 15.7367 19.3446 18.8001 16.7593C21.8635 14.174 25.7417 12.754 29.7501 12.75Z"/></svg></span>
-                <span class="ast-name">드론</span><small>목표지향</small>
+                <span class="ast-name" data-i18n="spawn.drone.name">드론</span><small data-i18n="spawn.drone.sub">목표지향</small>
               </button>
               <button class="ast-btn" id="spawn-balloon" data-kind="balloon">
                 <span class="ast-icon"><svg viewBox="0 0 102 102" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M51 0C71.4 0 85 17 85 40.8C85 68 54.4 88.4 54.4 88.4C54.4 88.4 57.8 95.2 57.8 98.6C57.8 102 44.2 102 44.2 98.6C44.2 95.2 47.6 88.4 47.6 88.4C47.6 88.4 17 68 17 40.8C17 17 30.6 0 51 0ZM51 6.8C30.6 6.8 20.4 30.6 23.8 44.2C27.2 30.6 37.4 13.6 51 6.8Z"/></svg></span>
-                <span class="ast-name">풍선</span><small>표류</small>
+                <span class="ast-name" data-i18n="spawn.balloon.name">풍선</span><small data-i18n="spawn.balloon.sub">표류</small>
               </button>
               <button class="ast-btn" id="spawn-bird" data-kind="bird">
                 <span class="ast-icon"><svg viewBox="0 0 102 102" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M97.75 48.875L84.7875 44.0725C83.6825 39.185 80.92 36.38 80.92 36.38C79.2661 34.7236 77.3018 33.4095 75.1396 32.5129C72.9773 31.6163 70.6595 31.1549 68.3188 31.1549C65.978 31.1549 63.6602 31.6163 61.4979 32.5129C59.3357 33.4095 57.3714 34.7236 55.7175 36.38L49.4275 42.67L21.25 12.75C17 29.75 21.25 46.75 31.6625 60.435L8.5 82.875C8.5 82.875 46.2825 91.375 68.2975 74.1625C80.0275 64.9825 82.6625 59.6275 84.32 53.975L97.75 48.875ZM75.2675 49.81C73.61 51.4675 70.89 51.4675 69.2325 49.81C68.8385 49.4168 68.5259 48.9498 68.3127 48.4357C68.0994 47.9215 67.9896 47.3704 67.9896 46.8138C67.9896 46.2571 68.0994 45.706 68.3127 45.1918C68.5259 44.6777 68.8385 44.2107 69.2325 43.8175C70.89 42.16 73.61 42.16 75.2675 43.8175C76.925 45.475 76.925 48.1525 75.2675 49.81Z"/></svg></span>
-                <span class="ast-name">조류</span><small>표류</small>
+                <span class="ast-name" data-i18n="spawn.bird.name">조류</span><small data-i18n="spawn.bird.sub">표류</small>
               </button>
             </div>
             <div class="sim-controls">
-              <button id="sim-toggle" class="btn">⏸ 일시정지</button>
-              <button class="mini-btn" id="spawn-clear">전체 제거</button>
+              <button id="sim-toggle" class="btn" data-i18n="spawn.pause">⏸ 일시정지</button>
+              <button class="mini-btn" id="spawn-clear" data-i18n="spawn.clear">전체 제거</button>
             </div>
             <details class="advanced">
-              <summary>고급</summary>
+              <summary data-i18n="spawn.advanced">고급</summary>
               <label class="chk"
-                ><input type="checkbox" id="sim-trails" checked /> 궤적</label
+                ><input type="checkbox" id="sim-trails" checked /> <span data-i18n="spawn.trails">궤적</span></label
               >
               <label class="chk"
-                ><input type="checkbox" id="sim-altcompress" checked /> 고도압축</label
+                ><input type="checkbox" id="sim-altcompress" checked /> <span data-i18n="spawn.altcompress">고도압축</span></label
               >
             </details>
           </div>
@@ -143,55 +149,56 @@
         <div class="rail-scroll" data-show="operate">
           <section class="panel">
             <div class="panel-head">
-              센서·대응 배치 플랜
+              <span data-i18n="plan.panel.title">센서·대응 배치 플랜</span>
               <button
                 class="help-btn"
                 id="plan-help"
+                data-i18n-title="plan.help.title"
                 title="배치 흐름: 설계(DEPLOY)에서 센서·대응 장비를 배치·최적화 → 플랜으로 저장 → 작전(OPERATE)에서 불러와 사용. 장비를 배치하지 않으면 위협을 탐지할 수 없습니다. (클릭: 자세히)"
               >
                 ?
               </button>
             </div>
-            <div class="plan-hint" id="plan-hint" hidden>
+            <div class="plan-hint" id="plan-hint" hidden data-i18n="plan.hint">
               설계(DEPLOY)에서 센서·대응 장비를 배치·최적화해 플랜으로 저장하면,
               여기서 불러와 작전에 사용합니다. 장비를 배치하지 않으면 위협을 탐지할 수 없습니다.
             </div>
             <select id="plan-select" title="작전에 사용할 플랜">
-              <option value="">— 가져오지 못했습니다 (수동 배치 사용) —</option>
+              <option value="" data-i18n="plan.select.empty">— 가져오지 못했습니다 (수동 배치 사용) —</option>
             </select>
-            <button class="btn plan-goto" id="plan-goto">＋ 설계에서 새 플랜 만들기</button>
+            <button class="btn plan-goto" id="plan-goto" data-i18n="plan.goto">＋ 설계에서 새 플랜 만들기</button>
             <div class="cover-conf" id="cover-conf">
-              <div class="cc-row" title="RADAR · 능동 탐지 (RCS/위치)">
+              <div class="cc-row" data-i18n-title="cc.radar.title" title="RADAR · 능동 탐지 (RCS/위치)">
                 <span class="cc-icon" style="color:var(--ds-radar)"><svg viewBox="0 0 100 100" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M50.0005 41.6667C51.3899 41.6663 52.7574 42.0134 53.9785 42.6764C55.1996 43.3393 56.2356 44.2971 56.9921 45.4625L57.213 45.8333H87.5005L87.988 45.8625C89.0015 45.9819 89.936 46.4691 90.6142 47.2318C91.2923 47.9944 91.667 48.9794 91.6671 50C91.6671 73.0125 73.013 91.6667 50.0005 91.6667C48.8954 91.6667 47.8356 91.2277 47.0542 90.4463C46.2728 89.6649 45.8338 88.6051 45.8338 87.5V57.2125L45.463 56.9917C44.3853 56.2926 43.4838 55.3537 42.8289 54.2486C42.1741 53.1434 41.7836 51.9019 41.688 50.6208L41.6671 50C41.6671 47.7899 42.5451 45.6702 44.1079 44.1074C45.6707 42.5446 47.7903 41.6667 50.0005 41.6667ZM89.2838 36.1083C89.6115 37.1388 89.5257 38.2564 89.0446 39.2248C88.5634 40.1932 87.7247 40.9367 86.7055 41.2981C85.6863 41.6594 84.5665 41.6104 83.5828 41.1614C82.5991 40.7123 81.8285 39.8984 81.4338 38.8917C79.551 33.587 76.3555 28.8455 72.1453 25.1094C67.9352 21.3733 62.8474 18.7641 57.3565 17.5253C51.8657 16.2865 46.1505 16.4584 40.744 18.0249C35.3375 19.5914 30.4157 22.5015 26.4376 26.4838C22.4595 30.4662 19.5547 35.3911 17.994 40.7993C16.4334 46.2075 16.2677 51.9229 17.5124 57.4124C18.7571 62.9019 21.3717 67.9869 25.1124 72.193C28.8531 76.3992 33.598 79.5896 38.9046 81.4667C39.9337 81.8309 40.7772 82.5905 41.2468 83.5772C41.7164 84.5638 41.7737 85.6961 41.4063 86.725C41.0389 87.7538 40.2771 88.5949 39.2892 89.0618C38.3014 89.5288 37.169 89.583 36.1296 89.2125C29.4951 86.8674 23.5626 82.8803 18.8853 77.623C14.2081 72.3657 10.9384 66.0095 9.38143 59.1472C7.82442 52.2848 8.03072 45.14 9.9811 38.3789C11.9315 31.6178 15.5624 25.4608 20.5352 20.4822C25.508 15.5035 31.6607 11.8654 38.4195 9.90697C45.1783 7.94854 52.3229 7.73385 59.1871 9.2828C66.0512 10.8318 72.4113 14.0939 77.6741 18.765C82.9369 23.436 86.931 29.3641 89.2838 35.9958V36.1083ZM70.0005 35C70.6635 35.884 70.9482 36.9953 70.7919 38.0892C70.6357 39.1832 70.0512 40.1703 69.1671 40.8333C68.2831 41.4964 67.1718 41.7811 66.0779 41.6248C64.9839 41.4685 63.9968 40.884 63.3338 40C61.9011 38.0897 60.0746 36.5096 57.978 35.3666C55.8815 34.2236 53.5638 33.5445 51.182 33.3753C48.8001 33.206 46.4097 33.5505 44.1725 34.3855C41.9354 35.2205 39.9038 36.5264 38.2154 38.2149C36.5269 39.9034 35.2209 41.9349 34.386 44.1721C33.551 46.4092 33.2065 48.7996 33.3757 51.1815C33.545 53.5633 34.2241 55.881 35.3671 57.9776C36.5101 60.0741 38.0902 61.9006 40.0005 63.3333C40.8845 63.9964 41.469 64.9834 41.6253 66.0774C41.7815 67.1714 41.4968 68.2826 40.8338 69.1667C40.1708 70.0507 39.1837 70.6352 38.0897 70.7915C36.9958 70.9477 35.8845 70.663 35.0005 70C32.135 67.8509 29.7648 65.1112 28.0504 61.9664C26.3359 58.8215 25.3173 55.345 25.0634 51.7722C24.8095 48.1994 25.3262 44.6138 26.5787 41.2581C27.8312 37.9024 29.7901 34.855 32.3228 32.3223C34.8555 29.7896 37.9029 27.8307 41.2586 26.5782C44.6143 25.3258 48.1999 24.809 51.7727 25.0629C55.3455 25.3168 58.822 26.3355 61.9668 28.0499C65.1117 29.7644 67.8514 32.1345 70.0005 35Z"/></svg></span>
-                <span class="cc-label">레이더</span><span id="cc-radar" class="cc-v">--</span>
+                <span class="cc-label" data-i18n="cc.radar.label">레이더</span><span id="cc-radar" class="cc-v">--</span>
               </div>
-              <div class="cc-row" title="스캐너 · 수동 탐지 (RF·EO/IR)">
+              <div class="cc-row" data-i18n-title="cc.scanner.title" title="스캐너 · 수동 탐지 (RF·EO/IR)">
                 <span class="cc-icon" style="color:var(--ds-scanner)"><svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="6.87581" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M83.3337 16.6667V50M66.667 18.75V47.9167M50.0003 20.8333V87.5M33.3337 22.9167V43.75M16.667 25V41.6667M83.3337 33.3333H16.667"/></svg></span>
-                <span class="cc-label">스캐너</span><span id="cc-scanner" class="cc-v">--</span>
+                <span class="cc-label" data-i18n="cc.scanner.label">스캐너</span><span id="cc-scanner" class="cc-v">--</span>
               </div>
-              <div class="cc-row" title="소프트킬 · RF 재밍 (0.45km)">
+              <div class="cc-row" data-i18n-title="cc.jammer.title" title="소프트킬 · RF 재밍 (0.45km)">
                 <span class="cc-icon" style="color:var(--ds-jammer)"><svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="5.54473" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M50.001 60C55.5238 60 60.001 55.5228 60.001 50C60.001 44.4772 55.5238 40 50.001 40C44.4781 40 40.001 44.4772 40.001 50C40.001 55.5228 44.4781 60 50.001 60Z" fill="currentColor" stroke-width="3.69648"/><path d="M21.7152 78.2838C14.2141 70.7824 10 60.6085 10 50.0001C10 39.3917 14.2141 29.2177 21.7152 21.7163M78.2827 78.2838C85.7838 70.7824 89.9979 60.6085 89.9979 50.0001C89.9979 39.3917 85.7838 29.2177 78.2827 21.7163M32.3215 67.6776C27.6332 62.9892 24.9993 56.6304 24.9993 50.0001C24.9993 43.3697 27.6332 37.011 32.3215 32.3226M67.6765 67.6776C72.3648 62.9892 74.9986 56.6304 74.9986 50.0001C74.9986 43.3697 72.3648 37.011 67.6765 32.3226"/></svg></span>
-                <span class="cc-label">소프트킬</span><span id="cc-jammer" class="cc-v">--</span>
+                <span class="cc-label" data-i18n="cc.jammer.label">소프트킬</span><span id="cc-jammer" class="cc-v">--</span>
               </div>
-              <div class="cc-row" title="하드킬 · 물리 요격 (0.25km)">
+              <div class="cc-row" data-i18n-title="cc.counter.title" title="하드킬 · 물리 요격 (0.25km)">
                 <span class="cc-icon" style="color:var(--ds-counter)"><svg viewBox="0 0 100 100" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M36.043 94.9999C27.3624 94.9999 19.9846 91.9277 13.9096 85.7833C7.83464 79.6388 4.79575 72.2249 4.79297 63.5416C4.79019 54.8583 7.79436 47.5138 13.8055 41.5083C19.8166 35.5027 27.1596 32.4999 35.8346 32.4999H37.1888L40.0013 27.6041C40.8346 26.0763 42.0846 25.0874 43.7513 24.6374C45.418 24.1874 47.0152 24.4124 48.543 25.3124L51.668 27.0833L52.1888 26.2499C53.786 23.2638 56.286 21.3194 59.6888 20.4166C63.0916 19.5138 66.286 19.9305 69.2721 21.6666L72.918 23.7499L68.7513 30.9374L65.1055 28.8541C64.1333 28.2985 63.0735 28.1763 61.9263 28.4874C60.7791 28.7985 59.9291 29.4416 59.3763 30.4166L58.8555 31.2499L63.0221 33.6458C64.4805 34.4791 65.436 35.7291 65.8888 37.3958C66.3416 39.0624 66.1499 40.6249 65.3138 42.0833L62.5013 47.0833C64.0985 49.5833 65.2971 52.2402 66.0971 55.0541C66.8971 57.868 67.2958 60.7666 67.293 63.7499C67.293 72.4305 64.2555 79.8097 58.1805 85.8874C52.1055 91.9652 44.7263 95.0027 36.043 94.9999ZM83.3346 36.6666V28.3333H95.8346V36.6666H83.3346ZM60.418 13.7499V1.24994H68.7513V13.7499H60.418ZM80.7305 22.1874L74.8971 16.3541L83.7513 7.49994L89.5846 13.3333L80.7305 22.1874Z"/></svg></span>
-                <span class="cc-label">하드킬</span><span id="cc-counter" class="cc-v">--</span>
+                <span class="cc-label" data-i18n="cc.counter.label">하드킬</span><span id="cc-counter" class="cc-v">--</span>
               </div>
             </div>
           </section>
 
           <section class="panel">
             <div class="panel-head">
-              교전 승인 큐 <span class="cnt" id="auth-count">0</span>
+              <span data-i18n="auth.title">교전 승인 큐</span> <span class="cnt" id="auth-count">0</span>
             </div>
             <div class="auth-queue" id="auth-queue">
-              <div class="empty">대기 중인 교전 없음</div>
+              <div class="empty" data-i18n="auth.empty">대기 중인 교전 없음</div>
             </div>
           </section>
 
           <section class="panel">
             <div class="panel-head threat-panel-head">
-              <span>위협 강도 (60s)</span>
+              <span data-i18n="threat.intensity">위협 강도 (60s)</span>
               <div class="threat-cond" id="threat-cond" data-level="low">
                 <span class="tc-dot"></span>
                 <span class="tc-key">THREAT</span>
@@ -205,50 +212,53 @@
 
       <!-- ══ 하단 스트립: 리스트 / 로그 ══ -->
       <div id="bottom-strip">
+        <div class="bs-resize bs-resize-left" id="bs-resize-left" data-i18n-title="bs.resize.title" title="드래그해 폭 조절 (더블클릭: 기본값)"></div>
+        <div class="bs-resize bs-resize-right" id="bs-resize-right" data-i18n-title="bs.resize.title" title="드래그해 폭 조절 (더블클릭: 기본값)"></div>
+        <div class="bs-resize bs-resize-top" id="bs-resize-top" data-i18n-title="bs.resize.v.title" title="드래그해 높이 조절 (더블클릭: 기본값)"></div>
         <div class="bottom-head">
-          <span class="bh-title" data-show="deploy">배치 워크스페이스</span>
-          <span class="bh-title" data-show="operate">작전 콘솔</span>
-          <button class="bh-collapse" id="bottom-collapse" title="하단 패널 접기/펼치기">▾</button>
+          <span class="bh-title" data-show="deploy" data-i18n="bottom.deploy.title">배치 워크스페이스</span>
+          <span class="bh-title" data-show="operate" data-i18n="bottom.operate.title">작전 콘솔</span>
+          <button class="bh-collapse" id="bottom-collapse" data-i18n-title="bottom.collapse.title" title="하단 패널 접기/펼치기">▾</button>
         </div>
         <!-- DEPLOY: 방어 자산 배치 + 배치 자산 + 플랜 라이브러리 -->
         <div class="bottom-deck" data-show="deploy">
           <!-- 방어 자산 배치 -->
           <div class="bottom-panel" id="place-panel" data-place="auto">
-            <div class="panel-head">센서·대응 장비 배치</div>
+            <div class="panel-head" data-i18n="place.panel.title">센서·대응 장비 배치</div>
             <div class="deck-body">
               <div class="place-toggle">
-                <button class="pt-seg active" data-place-btn="auto">자동</button>
-                <button class="pt-seg" data-place-btn="manual">수동</button>
+                <button class="pt-seg active" data-place-btn="auto" data-i18n="place.auto">자동</button>
+                <button class="pt-seg" data-place-btn="manual" data-i18n="place.manual">수동</button>
               </div>
 
               <!-- 자동: 최적화 엔진 -->
               <div class="place-auto">
-                <div class="hint">최적화 엔진이 예산·제약 안에서 장비를 자동 배치합니다.</div>
-                <button id="optim-run" class="btn btn-run">최적 배치 실행</button>
-                <div class="opt-result" id="optim-result">
+                <div class="hint" data-i18n="place.auto.hint">최적화 엔진이 예산·제약 안에서 장비를 자동 배치합니다.</div>
+                <button id="optim-run" class="btn btn-run" data-i18n="optim.run">최적 배치 실행</button>
+                <div class="opt-result" id="optim-result" data-i18n="optim.result.default">
                   최적배치 실행 → 보호커버·부수피해·비용 최적화
                 </div>
               </div>
 
               <!-- 수동: 팔레트 클릭 배치 -->
               <div class="place-manual">
-                <div class="hint" id="asset-hint">유형 선택 후 지도 클릭 → 배치</div>
+                <div class="hint" id="asset-hint" data-i18n="asset.hint">유형 선택 후 지도 클릭 → 배치</div>
                 <div class="palette">
                   <button class="ast-btn" id="asset-radar" data-kind="radar">
                     <span class="ast-icon"><svg viewBox="0 0 100 100" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M50.0005 41.6667C51.3899 41.6663 52.7574 42.0134 53.9785 42.6764C55.1996 43.3393 56.2356 44.2971 56.9921 45.4625L57.213 45.8333H87.5005L87.988 45.8625C89.0015 45.9819 89.936 46.4691 90.6142 47.2318C91.2923 47.9944 91.667 48.9794 91.6671 50C91.6671 73.0125 73.013 91.6667 50.0005 91.6667C48.8954 91.6667 47.8356 91.2277 47.0542 90.4463C46.2728 89.6649 45.8338 88.6051 45.8338 87.5V57.2125L45.463 56.9917C44.3853 56.2926 43.4838 55.3537 42.8289 54.2486C42.1741 53.1434 41.7836 51.9019 41.688 50.6208L41.6671 50C41.6671 47.7899 42.5451 45.6702 44.1079 44.1074C45.6707 42.5446 47.7903 41.6667 50.0005 41.6667ZM89.2838 36.1083C89.6115 37.1388 89.5257 38.2564 89.0446 39.2248C88.5634 40.1932 87.7247 40.9367 86.7055 41.2981C85.6863 41.6594 84.5665 41.6104 83.5828 41.1614C82.5991 40.7123 81.8285 39.8984 81.4338 38.8917C79.551 33.587 76.3555 28.8455 72.1453 25.1094C67.9352 21.3733 62.8474 18.7641 57.3565 17.5253C51.8657 16.2865 46.1505 16.4584 40.744 18.0249C35.3375 19.5914 30.4157 22.5015 26.4376 26.4838C22.4595 30.4662 19.5547 35.3911 17.994 40.7993C16.4334 46.2075 16.2677 51.9229 17.5124 57.4124C18.7571 62.9019 21.3717 67.9869 25.1124 72.193C28.8531 76.3992 33.598 79.5896 38.9046 81.4667C39.9337 81.8309 40.7772 82.5905 41.2468 83.5772C41.7164 84.5638 41.7737 85.6961 41.4063 86.725C41.0389 87.7538 40.2771 88.5949 39.2892 89.0618C38.3014 89.5288 37.169 89.583 36.1296 89.2125C29.4951 86.8674 23.5626 82.8803 18.8853 77.623C14.2081 72.3657 10.9384 66.0095 9.38143 59.1472C7.82442 52.2848 8.03072 45.14 9.9811 38.3789C11.9315 31.6178 15.5624 25.4608 20.5352 20.4822C25.508 15.5035 31.6607 11.8654 38.4195 9.90697C45.1783 7.94854 52.3229 7.73385 59.1871 9.2828C66.0512 10.8318 72.4113 14.0939 77.6741 18.765C82.9369 23.436 86.931 29.3641 89.2838 35.9958V36.1083ZM70.0005 35C70.6635 35.884 70.9482 36.9953 70.7919 38.0892C70.6357 39.1832 70.0512 40.1703 69.1671 40.8333C68.2831 41.4964 67.1718 41.7811 66.0779 41.6248C64.9839 41.4685 63.9968 40.884 63.3338 40C61.9011 38.0897 60.0746 36.5096 57.978 35.3666C55.8815 34.2236 53.5638 33.5445 51.182 33.3753C48.8001 33.206 46.4097 33.5505 44.1725 34.3855C41.9354 35.2205 39.9038 36.5264 38.2154 38.2149C36.5269 39.9034 35.2209 41.9349 34.386 44.1721C33.551 46.4092 33.2065 48.7996 33.3757 51.1815C33.545 53.5633 34.2241 55.881 35.3671 57.9776C36.5101 60.0741 38.0902 61.9006 40.0005 63.3333C40.8845 63.9964 41.469 64.9834 41.6253 66.0774C41.7815 67.1714 41.4968 68.2826 40.8338 69.1667C40.1708 70.0507 39.1837 70.6352 38.0897 70.7915C36.9958 70.9477 35.8845 70.663 35.0005 70C32.135 67.8509 29.7648 65.1112 28.0504 61.9664C26.3359 58.8215 25.3173 55.345 25.0634 51.7722C24.8095 48.1994 25.3262 44.6138 26.5787 41.2581C27.8312 37.9024 29.7901 34.855 32.3228 32.3223C34.8555 29.7896 37.9029 27.8307 41.2586 26.5782C44.6143 25.3258 48.1999 24.809 51.7727 25.0629C55.3455 25.3168 58.822 26.3355 61.9668 28.0499C65.1117 29.7644 67.8514 32.1345 70.0005 35Z"/></svg></span>
-                    <span class="ast-name">레이더</span><small>능동탐지</small>
+                    <span class="ast-name" data-i18n="asset.radar.name">레이더</span><small data-i18n="asset.radar.sub">능동탐지</small>
                   </button>
                   <button class="ast-btn" id="asset-scanner" data-kind="scanner">
                     <span class="ast-icon"><svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="6.87581" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M83.3337 16.6667V50M66.667 18.75V47.9167M50.0003 20.8333V87.5M33.3337 22.9167V43.75M16.667 25V41.6667M83.3337 33.3333H16.667"/></svg></span>
-                    <span class="ast-name">스캐너</span><small>RF·EO/IR</small>
+                    <span class="ast-name" data-i18n="asset.scanner.name">스캐너</span><small data-i18n="asset.scanner.sub">RF·EO/IR</small>
                   </button>
                   <button class="ast-btn" id="asset-jammer" data-kind="jammer">
                     <span class="ast-icon"><svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="5.54473" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M50.001 60C55.5238 60 60.001 55.5228 60.001 50C60.001 44.4772 55.5238 40 50.001 40C44.4781 40 40.001 44.4772 40.001 50C40.001 55.5228 44.4781 60 50.001 60Z" fill="currentColor" stroke-width="3.69648"/><path d="M21.7152 78.2838C14.2141 70.7824 10 60.6085 10 50.0001C10 39.3917 14.2141 29.2177 21.7152 21.7163M78.2827 78.2838C85.7838 70.7824 89.9979 60.6085 89.9979 50.0001C89.9979 39.3917 85.7838 29.2177 78.2827 21.7163M32.3215 67.6776C27.6332 62.9892 24.9993 56.6304 24.9993 50.0001C24.9993 43.3697 27.6332 37.011 32.3215 32.3226M67.6765 67.6776C72.3648 62.9892 74.9986 56.6304 74.9986 50.0001C74.9986 43.3697 72.3648 37.011 67.6765 32.3226"/></svg></span>
-                    <span class="ast-name">소프트킬</span><small>RF 재밍</small>
+                    <span class="ast-name" data-i18n="asset.jammer.name">소프트킬</span><small data-i18n="asset.jammer.sub">RF 재밍</small>
                   </button>
                   <button class="ast-btn" id="asset-counter" data-kind="counter">
                     <span class="ast-icon"><svg viewBox="0 0 100 100" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M36.043 94.9999C27.3624 94.9999 19.9846 91.9277 13.9096 85.7833C7.83464 79.6388 4.79575 72.2249 4.79297 63.5416C4.79019 54.8583 7.79436 47.5138 13.8055 41.5083C19.8166 35.5027 27.1596 32.4999 35.8346 32.4999H37.1888L40.0013 27.6041C40.8346 26.0763 42.0846 25.0874 43.7513 24.6374C45.418 24.1874 47.0152 24.4124 48.543 25.3124L51.668 27.0833L52.1888 26.2499C53.786 23.2638 56.286 21.3194 59.6888 20.4166C63.0916 19.5138 66.286 19.9305 69.2721 21.6666L72.918 23.7499L68.7513 30.9374L65.1055 28.8541C64.1333 28.2985 63.0735 28.1763 61.9263 28.4874C60.7791 28.7985 59.9291 29.4416 59.3763 30.4166L58.8555 31.2499L63.0221 33.6458C64.4805 34.4791 65.436 35.7291 65.8888 37.3958C66.3416 39.0624 66.1499 40.6249 65.3138 42.0833L62.5013 47.0833C64.0985 49.5833 65.2971 52.2402 66.0971 55.0541C66.8971 57.868 67.2958 60.7666 67.293 63.7499C67.293 72.4305 64.2555 79.8097 58.1805 85.8874C52.1055 91.9652 44.7263 95.0027 36.043 94.9999ZM83.3346 36.6666V28.3333H95.8346V36.6666H83.3346ZM60.418 13.7499V1.24994H68.7513V13.7499H60.418ZM80.7305 22.1874L74.8971 16.3541L83.7513 7.49994L89.5846 13.3333L80.7305 22.1874Z"/></svg></span>
-                    <span class="ast-name">하드킬</span><small>물리 요격</small>
+                    <span class="ast-name" data-i18n="asset.counter.name">하드킬</span><small data-i18n="asset.counter.sub">물리 요격</small>
                   </button>
                 </div>
               </div>
@@ -256,10 +266,10 @@
               <!-- 공통: 효과기 무장 -->
               <div class="effector-toggles">
                 <label class="chk"
-                  ><input type="checkbox" id="eff-jammer" checked /> 소프트킬 무장</label
+                  ><input type="checkbox" id="eff-jammer" checked /> <span data-i18n="eff.jammer">소프트킬 무장</span></label
                 >
                 <label class="chk"
-                  ><input type="checkbox" id="eff-counter" checked /> 하드킬 무장</label
+                  ><input type="checkbox" id="eff-counter" checked /> <span data-i18n="eff.counter">하드킬 무장</span></label
                 >
               </div>
             </div>
@@ -268,37 +278,37 @@
           <!-- 배치 장비 -->
           <div class="bottom-panel">
             <div class="panel-head">
-              배치 장비 <span class="head-count" id="asset-total">(0)</span>
-              <button class="mini-btn" id="asset-clear">전체 삭제</button>
+              <span data-i18n="asset.deployed.title">배치 장비</span> <span class="head-count" id="asset-total">(0)</span>
+              <button class="mini-btn" id="asset-clear" data-i18n="asset.clear">전체 삭제</button>
             </div>
             <div class="asset-list" id="asset-list">
-              <div class="empty">배치된 장비 없음</div>
+              <div class="empty" data-i18n="asset.empty">배치된 장비 없음</div>
             </div>
           </div>
 
           <!-- 배치 플랜 저장소 -->
           <div class="bottom-panel">
-            <div class="panel-head">배치 플랜 저장소</div>
+            <div class="panel-head" data-i18n="plan.library.title">배치 플랜 저장소</div>
             <div class="deck-body">
               <div class="plan-save">
-                <input id="plan-name" type="text" placeholder="플랜 이름 (예: 광화문 표준망)" />
-                <button id="plan-save" class="btn">저장</button>
+                <input id="plan-name" type="text" data-i18n-placeholder="plan.name.placeholder" placeholder="플랜 이름 (예: 광화문 표준망)" />
+                <button id="plan-save" class="btn" data-i18n="plan.save">저장</button>
               </div>
               <div class="plan-list" id="plan-list">
-                <div class="empty">저장된 플랜 없음</div>
+                <div class="empty" data-i18n="plan.empty">저장된 플랜 없음</div>
               </div>
             </div>
           </div>
 
           <!-- 배치 커버리지 (구매 근거 · KPI) -->
           <div class="bottom-panel">
-            <div class="panel-head">배치 커버리지</div>
+            <div class="panel-head" data-i18n="coverage.title">배치 커버리지</div>
             <div class="deck-body">
               <div class="kpi-grid">
-                <div class="kpi"><span class="kpi-v" id="kpi-cover">--</span><span class="kpi-k">보호커버</span></div>
-                <div class="kpi"><span class="kpi-v" id="kpi-collat">--</span><span class="kpi-k">부수피해</span></div>
-                <div class="kpi"><span class="kpi-v" id="kpi-cost">--</span><span class="kpi-k">비용</span></div>
-                <div class="kpi"><span class="kpi-v" id="kpi-total">--</span><span class="kpi-k">종합점수</span></div>
+                <div class="kpi"><span class="kpi-v" id="kpi-cover">--</span><span class="kpi-k" data-i18n="kpi.cover">보호커버</span></div>
+                <div class="kpi"><span class="kpi-v" id="kpi-collat">--</span><span class="kpi-k" data-i18n="kpi.collat">부수피해</span></div>
+                <div class="kpi"><span class="kpi-v" id="kpi-cost">--</span><span class="kpi-k" data-i18n="kpi.cost">비용</span></div>
+                <div class="kpi"><span class="kpi-v" id="kpi-total">--</span><span class="kpi-k" data-i18n="kpi.total">종합점수</span></div>
               </div>
               <div class="badges" id="kpi-badges"></div>
             </div>
@@ -309,14 +319,14 @@
         <div class="bottom-split" data-show="operate">
           <div class="bottom-panel">
             <div class="panel-head">
-              실시간 트랙 <span class="cnt" id="cnt-drones-b">—</span>
+              <span data-i18n="track.title">실시간 트랙</span> <span class="cnt" id="cnt-drones-b">—</span>
             </div>
             <div class="track-table-wrap">
               <table id="track-table">
                 <thead>
                   <tr>
-                    <th>ID</th><th>분류</th><th>SPD</th><th>ALT</th>
-                    <th>T</th><th>대응</th><th>THREAT</th>
+                    <th data-i18n="track.th.id">ID</th><th data-i18n="track.th.class">분류</th><th data-i18n="track.th.spd">SPD</th><th data-i18n="track.th.alt">ALT</th>
+                    <th data-i18n="track.th.t">T</th><th data-i18n="track.th.response">대응</th><th data-i18n="track.th.threat">THREAT</th>
                   </tr>
                 </thead>
                 <tbody id="track-rows"></tbody>
@@ -324,9 +334,9 @@
             </div>
           </div>
           <div class="bottom-panel">
-            <div class="panel-head">이벤트 로그</div>
+            <div class="panel-head" data-i18n="eventlog.title">이벤트 로그</div>
             <div class="event-log" id="event-log">
-              <div class="log-empty">NO EVENTS</div>
+              <div class="log-empty" data-i18n="eventlog.empty">NO EVENTS</div>
             </div>
           </div>
         </div>
@@ -339,10 +349,10 @@
           <div id="scalebar-label">—</div>
         </div>
         <div class="mapc-zoom">
-          <button class="mapc-btn" id="zoom-in" title="확대">+</button>
-          <button class="mapc-btn" id="zoom-out" title="축소">−</button>
+          <button class="mapc-btn" id="zoom-in" data-i18n-title="map.zoomin.title" title="확대">+</button>
+          <button class="mapc-btn" id="zoom-out" data-i18n-title="map.zoomout.title" title="축소">−</button>
         </div>
-        <button class="mapc-compass" id="compass" title="정북 정렬 · AO 재정렬">
+        <button class="mapc-compass" id="compass" data-i18n-title="map.compass.title" title="정북 정렬 · AO 재정렬">
           <span class="compass-dial" id="compass-dial">
             <span class="compass-needle"></span>
           </span>
@@ -361,14 +371,14 @@
         <div class="so-scrim"></div>
         <div class="so-card">
           <div class="so-icon">▲</div>
-          <div class="so-title">탐지 장비가 배치되지 않았습니다</div>
-          <div class="so-msg">
+          <div class="so-title" data-i18n="setup.title">탐지 장비가 배치되지 않았습니다</div>
+          <div class="so-msg" data-i18n="setup.msg">
             배치된 센서(레이더·스캐너)가 없어 위협을 탐지할 수 없습니다.
             설계(DEPLOY)에서 센서·대응 장비를 배치·최적화하거나, 저장된 플랜을 불러오세요.
           </div>
           <div class="so-actions">
-            <button class="cta-pill" id="so-dismiss">그대로 진행</button>
-            <button class="cta-pill so-go" id="so-goto">설계로 이동 →</button>
+            <button class="cta-pill" id="so-dismiss" data-i18n="setup.dismiss">그대로 진행</button>
+            <button class="cta-pill so-go" id="so-goto" data-i18n="setup.goto">설계로 이동 →</button>
           </div>
         </div>
       </div>
@@ -381,12 +391,12 @@
             <span class="em-icon">▲</span> ENGAGEMENT AUTHORIZATION
           </div>
           <div class="em-kv">
-            <div><span>대상</span><b id="em-target">—</b></div>
-            <div><span>분류</span><b id="em-class">—</b></div>
-            <div><span>위협도</span><b id="em-threat">—</b></div>
-            <div><span>방식</span><b id="em-method">HARD-KILL</b></div>
-            <div><span>부수피해</span><b id="em-collat">—</b></div>
-            <div><span>승인자</span><b>OPS-07</b></div>
+            <div><span data-i18n="engage.target">대상</span><b id="em-target">—</b></div>
+            <div><span data-i18n="engage.class">분류</span><b id="em-class">—</b></div>
+            <div><span data-i18n="engage.threat">위협도</span><b id="em-threat">—</b></div>
+            <div><span data-i18n="engage.method">방식</span><b id="em-method">HARD-KILL</b></div>
+            <div><span data-i18n="engage.collat">부수피해</span><b id="em-collat">—</b></div>
+            <div><span data-i18n="engage.approver">승인자</span><b>OPS-07</b></div>
           </div>
           <div class="em-actions">
             <button class="cta-pill" id="em-abort">Abort</button>

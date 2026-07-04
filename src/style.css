@@ -499,6 +499,38 @@ body {
   transform: rotate(180deg);
 }
 
+/* 언어 전환 (KO/EN) — 상단바, AO 캡슐 왼쪽 */
+.lang-toggle {
+  display: flex;
+  gap: 2px;
+  height: 32px;
+  padding: 3px;
+  background: var(--ds-surface);
+  border: 1px solid var(--ds-line);
+  border-radius: var(--ds-r-pill);
+}
+.lang-seg {
+  padding: 0 10px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  border: none;
+  border-radius: var(--ds-r-pill);
+  background: transparent;
+  color: var(--ds-text-2);
+  cursor: pointer;
+  transition: background var(--ds-t-fast) var(--ds-ease),
+    color var(--ds-t-fast) var(--ds-ease);
+}
+.lang-seg.active {
+  background: var(--ds-green);
+  color: var(--ds-on-primary);
+}
+.lang-seg:not(.active):hover {
+  color: var(--ds-text);
+}
+
 /* 위치 · AO — 상단바 캡슐 버튼 */
 .loc-capsule {
   display: flex;
@@ -1279,6 +1311,62 @@ select {
   overflow: hidden;
   backdrop-filter: blur(var(--ds-card-blur));
   -webkit-backdrop-filter: blur(var(--ds-card-blur));
+}
+/* 하단 패널 좌·우 폭 조절 핸들 */
+.bs-resize {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 10px;
+  z-index: 12;
+  cursor: ew-resize;
+}
+.bs-resize::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 3px;
+  height: 28px;
+  transform: translate(-50%, -50%);
+  border-radius: 2px;
+  background: var(--ds-line-strong);
+  opacity: 0;
+  transition: opacity var(--ds-t-fast) var(--ds-ease);
+}
+.bs-resize:hover::after,
+.bs-resize.dragging::after {
+  opacity: 1;
+}
+.bs-resize-left {
+  left: -5px;
+}
+.bs-resize-right {
+  right: -5px;
+}
+/* 상단 핸들: 가로 전체 · 세로(ns) 리사이즈 */
+.bs-resize-top {
+  top: -5px;
+  bottom: auto;
+  left: 8px;
+  right: 8px;
+  width: auto;
+  height: 10px;
+  cursor: ns-resize;
+}
+.bs-resize-top::after {
+  width: 28px;
+  height: 3px;
+}
+#bottom-strip.resizing {
+  transition: none;
+}
+/* 접힌 상태에서는 사용자 지정 높이(inline style)보다 우선 */
+#app[data-bottom="collapsed"] #bottom-strip {
+  height: 36px !important;
+}
+#app[data-bottom="collapsed"] .bs-resize-top {
+  display: none;
 }
 .bottom-head {
   flex: none;

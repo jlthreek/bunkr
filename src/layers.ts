@@ -14,6 +14,7 @@ import {
   VerticalOrigin,
   ConstantProperty,
 } from "cesium";
+import { tr, getLang } from "./i18n";
 
 // 인구 배지: 채워진(fill) 사람 아이콘 + 인구수를 하나의 캔버스 텍스처로 합성 (색상별 캐시)
 const popBadgeCache = new Map<string, string>();
@@ -71,30 +72,13 @@ const ZONE_STYLE: Record<string, { fill: string; line: string }> = {
 // 설치 후보지: 의미 미확정 → neutral candidate dot (DESIGN candidate-dot)
 const SITE_COLOR = "#9aa0a6";
 
-const ZONE_TYPE_LABEL: Record<string, string> = {
-  protected: "보호구역",
-  approach: "접근회랑",
-  sensitive: "민감구역",
-};
-
-const ZONE_FIELD_LABEL: Record<string, string> = {
-  zone_id: "구역 ID",
-  zone_type: "구역 분류",
-  weight: "위험 가중치",
-  asset: "보호 자산",
-  value: "중요도",
-  poi: "POI 코드",
-  population_max: "최대 인구",
-  congest_lvl: "혼잡도",
-  resnt_rate: "거주 비율",
-  ppltn_time: "집계 시각",
-  source: "출처",
-};
-
-const AREA_FIELD_LABEL: Record<string, string> = {
-  area_id: "작전영역 ID",
-  name: "작전영역 이름",
-};
+// 라벨은 i18n 사전(zone.* / area.field.*)에서 현재 언어로 조회
+const zoneTypeLabel = (type: string) =>
+  ["protected", "approach", "sensitive"].includes(type)
+    ? tr(`zone.${type}`)
+    : tr("info.default.zone");
+const zoneFieldLabel = (key: string) => tr(`zone.field.${key}`);
+const areaFieldLabel = (key: string) => tr(`area.field.${key}`);
 
 export interface Layers {
   zones: GeoJsonDataSource;
@@ -151,7 +135,7 @@ async function loadZones(viewer: Viewer, base: string): Promise<GeoJsonDataSourc
     if (c) {
       e.position = new ConstantPositionProperty(c);
       e.label = new LabelGraphics({
-        text: `${name}\n위험도 ${weight > 0 ? "+" : ""}${weight}`,
+        text: `${name}\n${tr("risk.label")} ${weight > 0 ? "+" : ""}${weight}`,
         font: "600 11px 'IBM Plex Mono', monospace",
         fillColor: Color.fromCssColorString(s.line),
         style: LabelStyle.FILL,
@@ -244,10 +228,10 @@ function buildZoneDescription(
 ): string {
   const props = e.properties;
   const get = (key: string) => props?.[key]?.getValue?.();
-  const name = String(get("name") ?? "우선구역");
+  const name = String(get("name") ?? tr("info.default.zone"));
   const population = get("population_max");
   const congest = get("congest_lvl");
-  const typeLabel = ZONE_TYPE_LABEL[type] ?? "우선구역";
+  const typeLabel = zoneTypeLabel(type);
   const tone = weight < 0 ? "hostile" : weight > 0 ? "friendly" : "neutral";
   const rows = [
     "zone_id",
@@ -266,7 +250,7 @@ function buildZoneDescription(
       const value = get(key);
       if (value == null || value === "") return "";
       return `<div class="bi-row">
-        <div class="bi-key">${escapeHtml(ZONE_FIELD_LABEL[key] ?? key)}</div>
+        <div class="bi-key">${escapeHtml(zoneFieldLabel(key))}</div>
         <div class="bi-val">${formatZoneValue(key, value, typeLabel)}</div>
       </div>`;
     })
@@ -418,13 +402,13 @@ function buildZoneDescription(
         <div class="bi-kicker">${escapeHtml(typeLabel)}</div>
         <div class="bi-title">${escapeHtml(name)}</div>
       </div>
-      <div class="bi-score"><b>${formatSigned(weight)}</b><span>위험도</span></div>
+      <div class="bi-score"><b>${formatSigned(weight)}</b><span>${escapeHtml(tr("risk.label"))}</span></div>
     </div>
     <div class="bi-summary">
-      <div class="bi-metric"><span>구역 분류</span><b>${escapeHtml(typeLabel)}</b></div>
-      <div class="bi-metric"><span>혼잡 상태</span><b>${escapeHtml(congest ? String(congest) : "정보 없음")}</b></div>
-      <div class="bi-metric"><span>최대 인구</span><b>${formatPopulation(population)}</b></div>
-      <div class="bi-metric"><span>데이터 상태</span><b>LIVE</b></div>
+      <div class="bi-metric"><span>${escapeHtml(tr("info.zone.class"))}</span><b>${escapeHtml(typeLabel)}</b></div>
+      <div class="bi-metric"><span>${escapeHtml(tr("info.congest"))}</span><b>${escapeHtml(congest ? String(congest) : tr("info.congest.none"))}</b></div>
+      <div class="bi-metric"><span>${escapeHtml(tr("info.popmax"))}</span><b>${formatPopulation(population)}</b></div>
+      <div class="bi-metric"><span>${escapeHtml(tr("info.data.status"))}</span><b>LIVE</b></div>
     </div>
     <div class="bi-schema">${rows}</div>
   </section>`;
@@ -433,13 +417,13 @@ function buildZoneDescription(
 function buildAreaDescription(e: any): string {
   const props = e.properties;
   const get = (key: string) => props?.[key]?.getValue?.();
-  const name = String(get("name") ?? "작전영역");
+  const name = String(get("name") ?? tr("info.default.ao"));
   const rows = ["area_id", "name"]
     .map((key) => {
       const value = get(key);
       if (value == null || value === "") return "";
       return `<div class="bi-row">
-        <div class="bi-key">${escapeHtml(AREA_FIELD_LABEL[key] ?? key)}</div>
+        <div class="bi-key">${escapeHtml(areaFieldLabel(key))}</div>
         <div class="bi-val">${escapeHtml(String(value).replace(/_/g, " "))}</div>
       </div>`;
     })
@@ -576,11 +560,11 @@ function buildAreaDescription(e: any): string {
         <div class="bi-kicker">AREA OF OPERATION</div>
         <div class="bi-title">${escapeHtml(name)}</div>
       </div>
-      <div class="bi-score"><b>AO</b><span>범위</span></div>
+      <div class="bi-score"><b>AO</b><span>${escapeHtml(tr("info.ao.score"))}</span></div>
     </div>
     <div class="bi-summary">
-      <div class="bi-metric"><span>분류</span><b>작전영역</b></div>
-      <div class="bi-metric"><span>표시 상태</span><b>활성</b></div>
+      <div class="bi-metric"><span>${escapeHtml(tr("info.ao.class"))}</span><b>${escapeHtml(tr("info.default.ao"))}</b></div>
+      <div class="bi-metric"><span>${escapeHtml(tr("info.ao.show"))}</span><b>${escapeHtml(tr("info.ao.show.active"))}</b></div>
     </div>
     <div class="bi-schema">${rows}</div>
   </section>`;
@@ -601,8 +585,8 @@ function formatSigned(value: number): string {
 
 function formatPopulation(value: unknown): string {
   const n = Number(value);
-  if (!Number.isFinite(n) || n <= 0) return "정보 없음";
-  return `${n.toLocaleString("ko-KR")}명`;
+  if (!Number.isFinite(n) || n <= 0) return tr("info.congest.none");
+  return tr("pop.count", { n: n.toLocaleString(getLang() === "ko" ? "ko-KR" : "en-US") });
 }
 
 function escapeHtml(value: string | undefined | null): string {

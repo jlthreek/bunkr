@@ -26,6 +26,7 @@ import { planPath, advanceAlongPath, type Pt, type Obstacle } from "../cuas/path
 import { makeObservation, type Observation } from "../cuas/observation";
 import { judge, type Judgement } from "../cuas/pipeline";
 import { RESPONSES, type Asset, type Response, type TrackType } from "../cuas/engine";
+import { tr } from "../i18n";
 
 // ── cuas 엔진 기반 위협 시뮬레이션 ─────────────────────────────
 // 트랙은 실제 제원(profiles)으로 생성 → 목표(자산)로 궤적 이동 → 매 스텝 관측 후
@@ -410,11 +411,12 @@ function fmtAlt(m: number): string {
 
 // 라벨: 미확인은 정보 없이 "?", 교전 중은 상태, 확인되면 전체 텔레메트리
 function trackLabel(t: Track): string {
+  const pred = tr(`pred.${t.pred}`);
   if (!t.detected) return `${t.id}\n? UNKNOWN`;
-  if (t.engaged === "soft") return `${t.id} · ${t.pred}\nJAMMED (soft-kill)`;
-  if (t.engaged === "hard") return `${t.id} · ${t.pred}\nNEUTRALIZED (hard-kill)`;
+  if (t.engaged === "soft") return `${t.id} · ${pred}\nJAMMED (soft-kill)`;
+  if (t.engaged === "hard") return `${t.id} · ${pred}\nNEUTRALIZED (hard-kill)`;
   return (
-    `${t.id} · ${t.pred}(${t.subtype})\n` +
+    `${t.id} · ${pred}(${t.subtype})\n` +
     `SPD ${t.speed.toFixed(0)}m/s  ALT ${fmtAlt(t.altM)}\n` +
     `T ${t.T.toFixed(0)}  ${t.response.label}\n` +
     `THREAT ${t.threatBar()}`

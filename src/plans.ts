@@ -3,6 +3,7 @@
 // 작전(OPERATE) 모드에서 로드해 배포된 센서망으로 재구성한다.
 // PlacedAsset 에서 Cesium entities 를 제외한 {kind,lon,lat} 만 직렬화한다.
 import type { AssetKind } from "./assets";
+import { tr } from "./i18n";
 
 export interface SavedPlanAsset {
   kind: AssetKind;
@@ -68,7 +69,7 @@ export function savePlan(input: {
 }): SavedPlan {
   const plan: SavedPlan = {
     id: `PLAN-${Date.now().toString(36).toUpperCase()}`,
-    name: input.name.trim() || "무제 플랜",
+    name: input.name.trim() || tr("plan.untitled"),
     locId: input.locId,
     createdAt: Date.now(),
     assets: input.assets,

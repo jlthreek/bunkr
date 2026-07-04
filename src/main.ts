@@ -54,6 +54,7 @@ import {
   type SavedPlanKpis,
 } from "./plans";
 import { logEvent, renderEventLog, onLog } from "./ops/eventlog";
+import { tr, getLang, setLang, onLangChange, initI18n } from "./i18n";
 import locationsCfg from "../locations.json";
 
 // ── 기준 위치 레지스트리 ───────────────────────────────────────
@@ -83,13 +84,14 @@ function stadia(style: string) {
 }
 
 function buildLocationDescription(loc: Loc): string {
+  const nf = getLang() === "ko" ? "ko-KR" : "en-US";
   const rows = [
-    ["작전영역 ID", loc.area_id],
-    ["작전영역 이름", loc.name],
-    ["영문 이름", loc.name_en],
-    ["중심 좌표", `${loc.center.lat.toFixed(5)}, ${loc.center.lon.toFixed(5)}`],
-    ["반경", `${loc.radius_m.toLocaleString("ko-KR")} m`],
-    ["인구밀도", loc.pop_density ? `${loc.pop_density.toLocaleString("ko-KR")} / km²` : undefined],
+    [tr("area.field.area_id"), loc.area_id],
+    [tr("area.field.name"), loc.name],
+    [tr("area.field.name_en"), loc.name_en],
+    [tr("area.field.center"), `${loc.center.lat.toFixed(5)}, ${loc.center.lon.toFixed(5)}`],
+    [tr("area.field.radius"), `${loc.radius_m.toLocaleString(nf)} m`],
+    [tr("area.field.pop_density"), loc.pop_density ? `${loc.pop_density.toLocaleString(nf)} / km²` : undefined],
   ]
     .filter(([, value]) => value != null && value !== "")
     .map(
@@ -229,13 +231,13 @@ function buildLocationDescription(loc: Loc): string {
     <div class="bi-hero">
       <div>
         <div class="bi-kicker">AREA OF OPERATION</div>
-        <div class="bi-title">${escapeInfoHtml(loc.name)}</div>
+        <div class="bi-title">${escapeInfoHtml(locName(loc))}</div>
       </div>
-      <div class="bi-score"><b>AO</b><span>작전영역</span></div>
+      <div class="bi-score"><b>AO</b><span>${escapeInfoHtml(tr("info.default.ao"))}</span></div>
     </div>
     <div class="bi-summary">
-      <div class="bi-metric"><span>기준 위치</span><b>${escapeInfoHtml(loc.name_en ?? loc.area_id)}</b></div>
-      <div class="bi-metric"><span>데이터 상태</span><b>ACTIVE</b></div>
+      <div class="bi-metric"><span>${escapeInfoHtml(tr("info.baseloc"))}</span><b>${escapeInfoHtml(loc.name_en ?? loc.area_id)}</b></div>
+      <div class="bi-metric"><span>${escapeInfoHtml(tr("info.data.status"))}</span><b>ACTIVE</b></div>
     </div>
     <div class="bi-schema">${rows}</div>
   </section>`;
@@ -291,6 +293,9 @@ const ASSET_BY_KIND = Object.fromEntries(
 const $ = (id: string) => document.getElementById(id)!;
 
 async function main() {
+  initI18n();
+  wireLangToggle();
+
   const viewer = new Viewer("cesiumContainer", {
     terrain: Terrain.fromWorldTerrain(),
     baseLayerPicker: false, // 크롬 정리 (기본 베이스맵 직접 지정)
@@ -334,14 +339,46 @@ async function main() {
 
   // 위치 스위처
   const sel = $("loc-select") as HTMLSelectElement;
-  for (const [id, loc] of Object.entries(LOCS)) {
-    const opt = document.createElement("option");
-    opt.value = id;
-    opt.textContent = loc.name;
-    sel.appendChild(opt);
-  }
+  const renderLocOptions = () => {
+    const cur = sel.value;
+    sel.innerHTML = "";
+    for (const [id, loc] of Object.entries(LOCS)) {
+      const opt = document.createElement("option");
+      opt.value = id;
+      opt.textContent = locName(loc);
+      sel.appendChild(opt);
+    }
+    sel.value = cur || DEFAULT_LOC;
+  };
+  renderLocOptions();
   sel.value = DEFAULT_LOC;
   sel.addEventListener("change", () => loadLocation(viewer, sel.value, false));
+
+  // 언어 전환 시 동적 UI 갱신 (정적 마크업은 i18n 모듈이 직접 갱신)
+  onLangChange(() => {
+    updateLangButtons();
+    renderLocOptions();
+    const loc = LOCS[currentLocId];
+    if (loc) $("hud-title").textContent = `bunkr · ${locName(loc)} COP`;
+    const running = currentSim?.running() ?? true;
+    ($("sim-toggle") as HTMLButtonElement).textContent = running
+      ? tr("spawn.pause")
+      : tr("spawn.resume");
+    $("sim-status").textContent = running ? tr("sim.run") : tr("sim.pause");
+    // 힌트는 현재 모드 유지한 채 문구만 갱신
+    const paletteKind = assetLayer?.getMode() ?? null;
+    $("asset-hint").textContent = paletteKind
+      ? tr("asset.hint.active", { label: tr(`asset.${paletteKind}.name`) })
+      : tr("asset.hint");
+    const spawnKind = currentSim?.getSpawnMode() ?? null;
+    $("spawn-hint").textContent = spawnKind
+      ? tr("spawn.hint.active", { label: tr(`spawn.${spawnKind}.name`) })
+      : tr("spawn.hint");
+    if (!lastOptimKpis) $("optim-result").textContent = tr("optim.result.default");
+    renderAssetList();
+    renderPlanList();
+    renderPlanSelect();
+  });
 
   // 레이어 토글
   wireToggle("lyr-zones", () => current?.zones);
@@ -356,8 +393,8 @@ async function main() {
   const status = $("sim-status");
   btnToggle.addEventListener("click", () => {
     const run = currentSim?.toggle() ?? false;
-    btnToggle.textContent = run ? "⏸ 일시정지" : "▶ 재생";
-    status.textContent = run ? "● RUN" : "● PAUSE";
+    btnToggle.textContent = run ? tr("spawn.pause") : tr("spawn.resume");
+    status.textContent = run ? tr("sim.run") : tr("sim.pause");
     status.classList.toggle("paused", !run);
   });
   $("sim-trails").addEventListener("change", (e) =>
@@ -426,6 +463,7 @@ async function main() {
     const app = $("app") as HTMLElement;
     app.dataset.bottom = app.dataset.bottom === "collapsed" ? "open" : "collapsed";
   });
+  wireBottomResize();
   // 자산 배치: 자동/수동 토글
   document.querySelectorAll<HTMLElement>("[data-place-btn]").forEach((b) =>
     b.addEventListener("click", () => {
@@ -509,11 +547,11 @@ async function loadLocation(viewer: Viewer, id: string, initial: boolean) {
   currentLocId = id;
   const { lon, lat } = loc.center;
 
-  $("hud-title").textContent = `bunkr · ${loc.name} COP`;
+  $("hud-title").textContent = `bunkr · ${locName(loc)} COP`;
 
   if (centerEntity) viewer.entities.remove(centerEntity);
   centerEntity = viewer.entities.add({
-    name: loc.name,
+    name: locName(loc),
     description: new ConstantProperty(buildLocationDescription(loc)),
     position: Cartesian3.fromDegrees(lon, lat, 30),
     point: {
@@ -523,7 +561,7 @@ async function loadLocation(viewer: Viewer, id: string, initial: boolean) {
       outlineWidth: 2,
     },
     label: {
-      text: loc.name,
+      text: locName(loc),
       font: "600 12px 'IBM Plex Mono', monospace",
       fillColor: Color.fromCssColorString("#ffffff"),
       style: LabelStyle.FILL,
@@ -557,7 +595,7 @@ async function loadLocation(viewer: Viewer, id: string, initial: boolean) {
   setupDismissed = false;
   $("setup-overlay").setAttribute("hidden", "");
   setPaletteMode(null);
-  $("optim-result").textContent = "최적배치 실행 → 보호커버·부수피해·비용 최적화";
+  $("optim-result").textContent = tr("optim.result.default");
   resetKpiCards();
 
   currentSim?.destroy();
@@ -605,6 +643,23 @@ function wireModeTabs() {
   );
 }
 
+// ══ 언어 전환 (KO/EN) ════════════════════════════════════════
+function locName(loc: Loc): string {
+  return getLang() === "ko" ? loc.name : loc.name_en ?? loc.name;
+}
+function updateLangButtons() {
+  const lang = getLang();
+  document
+    .querySelectorAll<HTMLElement>("[data-lang-btn]")
+    .forEach((b) => b.classList.toggle("active", b.dataset.langBtn === lang));
+}
+function wireLangToggle() {
+  updateLangButtons();
+  document.querySelectorAll<HTMLElement>("[data-lang-btn]").forEach((b) =>
+    b.addEventListener("click", () => setLang(b.dataset.langBtn as "ko" | "en"))
+  );
+}
+
 // ══ 패널 접기/펼치기 (좌·우·하단 — 상단바 아이콘 버튼) ══════════
 function wireRailToggles() {
   const app = $("app") as HTMLElement;
@@ -616,6 +671,94 @@ function wireRailToggles() {
       app.dataset[rail] = collapsed ? "collapsed" : "open";
       btn.classList.toggle("is-collapsed", collapsed);
     });
+  });
+}
+
+// ══ 하단 패널 크기 조절 (좌·우 핸들: 폭 / 상단 핸들: 높이) ══════
+function wireBottomResize() {
+  const strip = $("bottom-strip") as HTMLElement;
+  const MIN_W = 460;
+  const MIN_H = 140;
+
+  function maxWidthPx(): number {
+    const cs = getComputedStyle(strip);
+    const leftW = parseFloat(cs.getPropertyValue("--left-w")) || 0;
+    const rightW = parseFloat(cs.getPropertyValue("--right-w")) || 0;
+    const rail = Math.max(leftW, rightW);
+    return window.innerWidth - 2 * rail - 32;
+  }
+  function maxHeightPx(): number {
+    const cs = getComputedStyle(strip);
+    const topbarH = parseFloat(cs.getPropertyValue("--topbar-h")) || 52;
+    // 상단바 아래 여백(80px)까지는 지도를 남겨둔다
+    return window.innerHeight - topbarH - 80;
+  }
+
+  function trackDrag(
+    downEvent: MouseEvent,
+    cursor: string,
+    onMove: (e: MouseEvent) => void
+  ) {
+    downEvent.preventDefault();
+    strip.classList.add("resizing");
+    document.body.style.cursor = cursor;
+    function onUp() {
+      strip.classList.remove("resizing");
+      document.body.style.cursor = "";
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseup", onUp);
+    }
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mouseup", onUp);
+  }
+
+  function startHDrag(side: "left" | "right", downEvent: MouseEvent) {
+    const startX = downEvent.clientX;
+    const startWidth = strip.getBoundingClientRect().width;
+    trackDrag(downEvent, "ew-resize", (e) => {
+      const dx = e.clientX - startX;
+      const delta = side === "right" ? dx : -dx;
+      // 중앙 정렬을 유지하는 요소이므로 한쪽을 당기면 양쪽이 함께 늘어난다.
+      const raw = startWidth + delta * 2;
+      const clamped = Math.min(Math.max(raw, MIN_W), maxWidthPx());
+      strip.style.width = `${clamped}px`;
+    });
+  }
+
+  function startVDrag(downEvent: MouseEvent) {
+    const startY = downEvent.clientY;
+    const startHeight = strip.getBoundingClientRect().height;
+    trackDrag(downEvent, "ns-resize", (e) => {
+      const raw = startHeight + (startY - e.clientY); // 위로 당기면 커진다
+      const clamped = Math.min(Math.max(raw, MIN_H), maxHeightPx());
+      strip.style.height = `${clamped}px`;
+    });
+  }
+
+  const left = $("bs-resize-left");
+  const right = $("bs-resize-right");
+  const top = $("bs-resize-top");
+  left.addEventListener("mousedown", (e) => startHDrag("left", e as MouseEvent));
+  right.addEventListener("mousedown", (e) => startHDrag("right", e as MouseEvent));
+  top.addEventListener("mousedown", (e) => startVDrag(e as MouseEvent));
+  const resetWidth = () => (strip.style.width = "");
+  const resetHeight = () => (strip.style.height = "");
+  left.addEventListener("dblclick", resetWidth);
+  right.addEventListener("dblclick", resetWidth);
+  top.addEventListener("dblclick", resetHeight);
+
+  // 창 크기 변경으로 레일·상단바와 겹치게 되면 재클램프
+  window.addEventListener("resize", () => {
+    if (strip.style.width) {
+      const max = maxWidthPx();
+      const current = parseFloat(strip.style.width);
+      if (current > max) strip.style.width = `${Math.max(MIN_W, max)}px`;
+    }
+    if (strip.style.height) {
+      const max = maxHeightPx();
+      const current = parseFloat(strip.style.height);
+      if (current > max) strip.style.height = `${Math.max(MIN_H, max)}px`;
+    }
   });
 }
 
@@ -649,7 +792,7 @@ function wireRoe() {
     currentSim?.setROE(next);
     logEvent({
       type: "system",
-      msg: `교전규칙 → ${next.toUpperCase()}`,
+      msg: tr("log.roe", { mode: next.toUpperCase() }),
       tone: next === "manual" ? "caution" : "neutral",
     });
   });
@@ -692,7 +835,10 @@ function wireSimEvents(sim: DroneSim) {
     logEvent({
       type: "detect",
       trackId: t.id,
-      msg: `${PRED_SHORT[t.pred] ?? "UNK"} 확인 · RNG ${distFromCenter(t)}KM`,
+      msg: tr("log.detect", {
+        cls: PRED_SHORT[t.pred] ?? "UNK",
+        rng: distFromCenter(t),
+      }),
       tone: "caution",
     })
   );
@@ -700,7 +846,7 @@ function wireSimEvents(sim: DroneSim) {
     logEvent({
       type: "engage",
       trackId: t.id,
-      msg: t.engaged === "hard" ? "HARD-KILL 교전" : "RF JAM 교전",
+      msg: t.engaged === "hard" ? tr("log.engage.hard") : tr("log.engage.soft"),
       tone: t.engaged === "hard" ? "hostile" : "caution",
     })
   );
@@ -708,7 +854,7 @@ function wireSimEvents(sim: DroneSim) {
     logEvent({
       type: "authreq",
       trackId: t.id,
-      msg: `하드킬 승인 요청 · T ${t.T.toFixed(0)}`,
+      msg: tr("log.authreq", { t: t.T.toFixed(0) }),
       tone: "hostile",
     })
   );
@@ -733,7 +879,7 @@ function renderAuthQueue() {
   $("auth-count").textContent = String(pending.length);
   const el = $("auth-queue");
   if (!pending.length) {
-    el.innerHTML = '<div class="empty">대기 중인 교전 없음</div>';
+    el.innerHTML = `<div class="empty">${tr("auth.empty")}</div>`;
   } else {
     el.innerHTML = pending
       .map(
@@ -741,8 +887,8 @@ function renderAuthQueue() {
           `<div class="auth-item"><div class="ai-line">${t.id} · ${
             PRED_SHORT[t.pred] ?? "UNK"
           } · T <b>${t.T.toFixed(0)}</b></div>` +
-          `<div class="ai-actions"><button class="ai-ok" data-id="${t.id}">교전</button>` +
-          `<button class="ai-no" data-id="${t.id}">보류</button></div></div>`
+          `<div class="ai-actions"><button class="ai-ok" data-id="${t.id}">${tr("auth.engage")}</button>` +
+          `<button class="ai-no" data-id="${t.id}">${tr("auth.hold")}</button></div></div>`
       )
       .join("");
     el.querySelectorAll<HTMLElement>(".ai-ok").forEach((b) =>
@@ -776,7 +922,7 @@ function resolveAuth(id: string, approve: boolean) {
   logEvent({
     type: approve ? "authorize" : "deny",
     trackId: id,
-    msg: approve ? "교전 승인 (OPS-07)" : "교전 보류 (OPS-07)",
+    msg: approve ? tr("log.authorize") : tr("log.deny"),
     tone: approve ? "hostile" : "neutral",
   });
   renderAuthQueue();
@@ -804,9 +950,12 @@ function updateAlertStrip() {
   }
   if (alertSince === null) alertSince = Date.now();
   const top = hostile.sort((a, b) => b.T - a.T)[0];
-  $("alert-msg").textContent = `미해결 적대 트랙 ${hostile.length} · ${top.id} T ${top.T.toFixed(
-    0
-  )} · RNG ${distFromCenter(top)}KM`;
+  $("alert-msg").textContent = tr("alert.hostile", {
+    count: hostile.length,
+    id: top.id,
+    t: top.T.toFixed(0),
+    rng: distFromCenter(top),
+  });
   const s = Math.floor((Date.now() - alertSince) / 1000);
   $("alert-elapsed").textContent = `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(
     s % 60
@@ -840,12 +989,16 @@ function wirePlanLibrary(viewer: Viewer) {
       lat: a.lat,
     }));
     if (!assets.length) {
-      nameEl.placeholder = "먼저 장비를 배치하세요";
+      nameEl.placeholder = tr("asset.name.placeholder");
       return;
     }
     savePlan({ name: nameEl.value, locId: currentLocId, assets, kpis: lastOptimKpis });
     nameEl.value = "";
-    logEvent({ type: "system", msg: `플랜 저장 (${assets.length}기)`, tone: "friendly" });
+    logEvent({
+      type: "system",
+      msg: tr("log.plan.save", { count: assets.length }),
+      tone: "friendly",
+    });
     renderPlanList();
     renderPlanSelect();
   });
@@ -863,7 +1016,7 @@ function loadPlanById(_viewer: Viewer, id: string) {
   assetLayer.clear();
   optimIds = [];
   for (const a of plan.assets) assetLayer.placeAt(a.kind, a.lon, a.lat);
-  logEvent({ type: "system", msg: `플랜 로드: ${plan.name}`, tone: "friendly" });
+  logEvent({ type: "system", msg: tr("log.plan.load", { name: plan.name }), tone: "friendly" });
   updateCoverConf();
 }
 
@@ -871,7 +1024,7 @@ function renderPlanList() {
   const el = $("plan-list");
   const plans = listPlans(currentLocId);
   if (!plans.length) {
-    el.innerHTML = '<div class="empty">저장된 플랜 없음</div>';
+    el.innerHTML = `<div class="empty">${tr("plan.empty")}</div>`;
     return;
   }
   el.innerHTML = plans
@@ -881,8 +1034,8 @@ function renderPlanList() {
       return (
         `<div class="plan-item"><div class="pi-main">` +
         `<span class="pi-name">${p.name}</span>` +
-        `<span class="pi-meta">${p.assets.length}기 · ${mix}</span></div>` +
-        `<button class="pi-load" data-id="${p.id}">적용</button>` +
+        `<span class="pi-meta">${tr("units.count", { n: p.assets.length })} · ${mix}</span></div>` +
+        `<button class="pi-load" data-id="${p.id}">${tr("plan.apply")}</button>` +
         `<button class="pi-del" data-id="${p.id}">✕</button></div>`
       );
     })
@@ -904,8 +1057,10 @@ function renderPlanSelect() {
   const cur = sel.value;
   const plans = listPlans(currentLocId);
   sel.innerHTML =
-    '<option value="">— 가져오지 못했습니다 (수동 배치 사용) —</option>' +
-    plans.map((p) => `<option value="${p.id}">${p.name} (${p.assets.length}기)</option>`).join("");
+    `<option value="">${tr("plan.select.empty")}</option>` +
+    plans
+      .map((p) => `<option value="${p.id}">${p.name} (${tr("units.count", { n: p.assets.length })})</option>`)
+      .join("");
   if (plans.some((p) => p.id === cur)) sel.value = cur;
 }
 
@@ -935,7 +1090,7 @@ function fmtAltShort(m: number): string {
   return m >= 1000 ? `${(m / 1000).toFixed(1)}k` : m.toFixed(0);
 }
 function killShort(kill: string): string {
-  return kill === "hard" ? "하드" : kill === "soft" ? "소프트" : "감시";
+  return kill === "hard" ? tr("kill.hard") : kill === "soft" ? tr("kill.soft") : tr("kill.watch");
 }
 
 function renderTrackTable(rows: HTMLElement, cnt: HTMLElement) {
@@ -995,7 +1150,7 @@ async function runOptimizer() {
   const out = $("optim-result");
   setPaletteMode(null);
   btn.disabled = true;
-  out.textContent = "최적 배치 계산 중…";
+  out.textContent = tr("optim.result.running");
   try {
     const input = await loadOptimInput(currentLocId, DEFAULT_BUDGET);
     const res = await getOptimizer().run(input);
@@ -1006,10 +1161,14 @@ async function runOptimizer() {
       if (a) optimIds.push(a.id);
     }
     renderOptimKpis(res);
-    logEvent({ type: "system", msg: `최적배치 ${res.placements.length}기 산출`, tone: "friendly" });
+    logEvent({
+      type: "system",
+      msg: tr("log.optim.result", { count: res.placements.length }),
+      tone: "friendly",
+    });
   } catch (e) {
     console.error("[optim] 최적화 실패:", e);
-    out.textContent = "최적화 실패 (콘솔 확인)";
+    out.textContent = tr("optim.result.failed");
   } finally {
     btn.disabled = false;
   }
@@ -1022,11 +1181,15 @@ function renderOptimKpis(res: OptimResult) {
   const mix = Object.entries(byKind)
     .map(([k, n]) => `${ASSET_BY_KIND[k as AssetKind].short} ${n}`)
     .join(" · ");
-  $("optim-result").innerHTML =
-    `배치 <b>${res.placements.length}</b>기 (${mix}) · ${res.meta.ms.toFixed(0)}ms<br>` +
-    `보호커버 <b>${(s.protectedCoverage * 100).toFixed(0)}%</b> · ` +
-    `부수피해 <b>${s.collateralPenalty.toFixed(1)}</b> · ` +
-    `비용 <b>${(s.cost / 1000).toFixed(0)}k</b> · 종합 <b>${s.total.toFixed(1)}</b>`;
+  $("optim-result").innerHTML = tr("optim.result.summary", {
+    count: res.placements.length,
+    mix,
+    ms: res.meta.ms.toFixed(0),
+    cover: (s.protectedCoverage * 100).toFixed(0),
+    collat: s.collateralPenalty.toFixed(1),
+    cost: (s.cost / 1000).toFixed(0),
+    total: s.total.toFixed(1),
+  });
 
   // 우측 레일 KPI 카드 + 배지
   lastOptimKpis = {
@@ -1040,9 +1203,9 @@ function renderOptimKpis(res: OptimResult) {
   $("kpi-cost").textContent = `${(s.cost / 1000).toFixed(0)}k`;
   $("kpi-total").textContent = s.total.toFixed(1);
   const badges: Array<[string, boolean]> = [
-    [`보호커버 ${(s.protectedCoverage * 100).toFixed(0)}%`, s.protectedCoverage >= 0.8],
-    [`부수피해 ${s.collateralPenalty.toFixed(1)}`, s.collateralPenalty <= 10],
-    [`장비 ${res.placements.length}기`, res.placements.length <= 12],
+    [tr("optim.badge.cover", { cover: (s.protectedCoverage * 100).toFixed(0) }), s.protectedCoverage >= 0.8],
+    [tr("optim.badge.collat", { collat: s.collateralPenalty.toFixed(1) }), s.collateralPenalty <= 10],
+    [tr("optim.badge.assets", { n: res.placements.length }), res.placements.length <= 12],
   ];
   $("kpi-badges").innerHTML = badges
     .map(([t, ok]) => `<span class="badge" data-pass="${ok}">${t}</span>`)
@@ -1069,11 +1232,9 @@ function setPaletteMode(kind: AssetKind | null) {
     $(`asset-${spec.kind}`).classList.toggle("active", kind === spec.kind);
   }
   $("asset-hint").textContent = kind
-    ? `${ASSET_BY_KIND[kind].label} 배치 중 — 지도 클릭 (Esc 취소)`
-    : "유형 선택 후 지도 클릭 → 배치";
+    ? tr("asset.hint.active", { label: tr(`asset.${kind}.name`) })
+    : tr("asset.hint");
 }
-
-const KIND_LABEL: Record<string, string> = { drone: "드론", balloon: "풍선", bird: "조류" };
 
 function setSpawnMode(kind: "drone" | "balloon" | "bird" | null) {
   if (kind) setPaletteMode(null);
@@ -1082,8 +1243,8 @@ function setSpawnMode(kind: "drone" | "balloon" | "bird" | null) {
   const hint = document.getElementById("spawn-hint");
   if (hint)
     hint.textContent = kind
-      ? `${KIND_LABEL[kind]} 생성 중 — 지도 클릭 (Esc 취소)`
-      : "유형 선택 후 지도 클릭 → 생성";
+      ? tr("spawn.hint.active", { label: tr(`spawn.${kind}.name`) })
+      : tr("spawn.hint");
 }
 function syncSpawnPalette() {
   const cur = currentSim?.getSpawnMode() ?? null;
@@ -1099,15 +1260,15 @@ function renderAssetList() {
   if (total) total.textContent = `(${list.length})`;
   const el = $("asset-list");
   if (!list.length) {
-    el.innerHTML = '<div class="empty">배치된 장비 없음</div>';
+    el.innerHTML = `<div class="empty">${tr("asset.empty")}</div>`;
     return;
   }
   el.innerHTML = list
     .map((a) => {
       const s = ASSET_BY_KIND[a.kind];
       return (
-        `<div class="asset-row" data-id="${a.id}" title="지도에서 위치 보기"><span class="dot" style="background:${s.color}"></span>` +
-        `<span class="aid">${a.id}</span><span class="arole">${s.role}</span>` +
+        `<div class="asset-row" data-id="${a.id}" title="${tr("asset.row.title")}"><span class="dot" style="background:${s.color}"></span>` +
+        `<span class="aid">${a.id}</span><span class="arole">${tr(`asset.role.${a.kind}`)}</span>` +
         `<span class="rm" data-id="${a.id}">✕</span></div>`
       );
     })
