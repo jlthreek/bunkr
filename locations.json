@@ -6,14 +6,23 @@
       "name": "광화문광장 AO",
       "name_en": "Gwanghwamun Sq. AO",
       "center": { "lon": 126.97690, "lat": 37.57260 },
-      "radius_m": 1000
+      "radius_m": 1000,
+      "pop_density": 0.3,
+      "population": {
+        "poi": "POI009",
+        "congest_lvl": "여유",
+        "population_max": 18000,
+        "ppltn_time": "2026-07-04 21:05",
+        "source": "seoul_live citydata_ppltn"
+      }
     },
     "yangjae": {
       "area_id": "AR_YANGJAE",
       "name": "양재역 AO",
       "name_en": "Yangjae Station AO",
       "center": { "lon": 127.03454, "lat": 37.48378 },
-      "radius_m": 1000
+      "radius_m": 1000,
+      "pop_density": 0.5
     }
   }
 }

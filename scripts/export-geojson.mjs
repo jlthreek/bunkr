@@ -99,11 +99,17 @@ layers.install_sites = db
   );
 
 layers.priority_zones = db
-  .prepare("SELECT zone_id,name,zone_type,weight,geom FROM priority_zones")
+  .prepare("SELECT zone_id,name,zone_type,weight,geom,meta FROM priority_zones")
   .all()
   .map((r) =>
     feature(
-      { zone_id: r.zone_id, name: r.name, zone_type: r.zone_type, weight: r.weight },
+      {
+        zone_id: r.zone_id,
+        name: r.name,
+        zone_type: r.zone_type,
+        weight: r.weight,
+        ...(r.meta ? JSON.parse(r.meta) : {}), // 인구밀집·자산 태그 등 부가 속성
+      },
       JSON.parse(r.geom)
     )
   );
