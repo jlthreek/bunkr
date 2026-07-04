@@ -1,0 +1,28 @@
+{
+  "name": "yangjae3dmap",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "양재역 3D 맵 기반 Gray-zone C-UAS 시뮬레이션 (드론·풍선 침투 / 스캐너·재머 최적배치)",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "data:backfill": "node scripts/backfill.mjs",
+    "data:zones": "node scripts/seed-zones.mjs",
+    "data:export": "node scripts/export-geojson.mjs",
+    "data:all": "npm run data:backfill && npm run data:zones && npm run data:export",
+    "data:gwanghwamun": "LOCATION=gwanghwamun npm run data:all",
+    "data:yangjae": "LOCATION=yangjae npm run data:all"
+  },
+  "dependencies": {
+    "better-sqlite3": "^12.11.1",
+    "cesium": "^1.123.0",
+    "proj4": "^2.20.9"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3",
+    "vite": "^5.4.11",
+    "vite-plugin-cesium": "^1.2.23"
+  }
+}

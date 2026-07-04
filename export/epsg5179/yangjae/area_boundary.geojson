@@ -1,0 +1,1 @@
+{"type":"FeatureCollection","crs":{"type":"name","properties":{"name":"urn:ogc:def:crs:EPSG::5179"}},"features":[{"type":"Feature","properties":{"area_id":"AR_YANGJAE","name":"Yangjae Station AO"},"geometry":{"type":"Polygon","coordinates":[[[957843.048,1941836.946],[959844.978,1941827.051],[959854.593,1943820.283],[957853.142,1943830.179],[957843.048,1941836.946]]]}}]}
