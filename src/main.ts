@@ -18,10 +18,28 @@ import {
   Entity,
 } from "cesium";
 import "cesium/Build/Cesium/Widgets/widgets.css";
+import "@fontsource/chakra-petch/400.css";
+import "@fontsource/chakra-petch/600.css";
+import "@fontsource/chakra-petch/700.css";
+import "@fontsource/ibm-plex-mono/400.css";
+import "@fontsource/ibm-plex-mono/500.css";
+import "@fontsource/ibm-plex-mono/600.css";
 import "./style.css";
 import { setupGrid } from "./grid";
 import { setupLayers, type Layers } from "./layers";
 import { startDroneSim, type DroneSim, type Track } from "./sim/drones";
+import {
+  setupAssets,
+  ASSET_SPECS,
+  type AssetLayer,
+  type AssetKind,
+} from "./assets";
+import {
+  getOptimizer,
+  loadOptimInput,
+  DEFAULT_BUDGET,
+  type OptimResult,
+} from "./optim";
 import locationsCfg from "../locations.json";
 
 // ── 기준 위치 레지스트리 ───────────────────────────────────────
@@ -31,6 +49,7 @@ interface Loc {
   name_en?: string;
   center: { lon: number; lat: number };
   radius_m: number;
+  pop_density?: number; // 실시간 인구밀집 (부수피해 → 대응결심)
 }
 const LOCS = locationsCfg.locations as Record<string, Loc>;
 const DEFAULT_LOC = locationsCfg.default as string;
@@ -71,13 +90,23 @@ const satellite = new ProviderViewModel({
 let centerEntity: Entity | undefined;
 let current: Layers | undefined;
 let currentSim: DroneSim | undefined;
+let assetLayer: AssetLayer | undefined;
+let currentLocId = DEFAULT_LOC;
 
-const TYPE_SHORT: Record<string, string> = {
-  quad: "QUAD",
-  fixedwing: "FWNG",
+const KIND_SHORT: Record<string, string> = {
+  drone: "DRN",
   balloon: "BLN",
   bird: "BIRD",
 };
+const PRED_SHORT: Record<string, string> = {
+  드론: "UAV",
+  풍선: "BLN",
+  "새/기타": "BIRD",
+  미상: "UNK",
+};
+const ASSET_BY_KIND = Object.fromEntries(
+  ASSET_SPECS.map((s) => [s.kind, s])
+) as Record<AssetKind, (typeof ASSET_SPECS)[number]>;
 
 async function main() {
   const viewer = new Viewer("cesiumContainer", {
@@ -142,15 +171,69 @@ async function main() {
     status.classList.toggle("paused", !run);
   });
   document
-    .getElementById("sim-burst")!
-    .addEventListener("click", () => currentSim?.spawnBurst(5));
-  document
     .getElementById("sim-trails")!
     .addEventListener("change", (e) =>
       currentSim?.setTrailsVisible((e.target as HTMLInputElement).checked)
     );
+  // 위협 스폰 팔레트 (지도 클릭으로 직접 스폰 — 자동생성 없음)
+  for (const kind of ["drone", "balloon", "bird"] as const) {
+    document
+      .getElementById(`spawn-${kind}`)!
+      .addEventListener("click", () =>
+        setSpawnMode(currentSim?.getSpawnMode() === kind ? null : kind)
+      );
+  }
+  document
+    .getElementById("spawn-clear")!
+    .addEventListener("click", () => currentSim?.clearTracks());
+  document
+    .getElementById("sim-altcompress")!
+    .addEventListener("change", (e) =>
+      currentSim?.setAltCompress((e.target as HTMLInputElement).checked)
+    );
 
-  // 실시간 트랙 테이블 (4Hz)
+  // 방어 자산 배치
+  assetLayer = setupAssets(viewer);
+  assetLayer.onChange(renderAssetList);
+  renderAssetList();
+  for (const spec of ASSET_SPECS) {
+    document
+      .getElementById(`asset-${spec.kind}`)!
+      .addEventListener("click", () =>
+        setPaletteMode(assetLayer!.getMode() === spec.kind ? null : spec.kind)
+      );
+  }
+  document
+    .getElementById("asset-clear")!
+    .addEventListener("click", () => assetLayer!.clear());
+  // 효과기 활성/비활성 (재머·하드킬)
+  document
+    .getElementById("eff-jammer")!
+    .addEventListener("change", (e) =>
+      assetLayer!.setKindActive("jammer", (e.target as HTMLInputElement).checked)
+    );
+  document
+    .getElementById("eff-counter")!
+    .addEventListener("change", (e) =>
+      assetLayer!.setKindActive("counter", (e.target as HTMLInputElement).checked)
+    );
+  window.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      setPaletteMode(null);
+      setSpawnMode(null);
+    }
+  });
+
+  // 자동 최적 배치 (모듈형 옵티마이저)
+  document.getElementById("optim-name")!.textContent = getOptimizer().name;
+  document.getElementById("optim-run")!.addEventListener("click", runOptimizer);
+
+  // 모듈 접기/펼치기
+  document.querySelectorAll<HTMLElement>(".mod-head[data-toggle]").forEach((h) =>
+    h.addEventListener("click", () => h.closest(".mod")!.classList.toggle("collapsed"))
+  );
+
+  // 실시간 트랙 테이블 + THREAT CONDITION (4Hz)
   const rows = document.getElementById("track-rows")!;
   const cntDrones = document.getElementById("cnt-drones")!;
   setInterval(() => renderTrackTable(rows, cntDrones), 250);
@@ -183,6 +266,7 @@ async function main() {
 async function loadLocation(viewer: Viewer, id: string, initial: boolean) {
   const loc = LOCS[id];
   if (!loc) return;
+  currentLocId = id;
   const { lon, lat } = loc.center;
 
   document.getElementById("hud-title")!.textContent = `AEGIS · ${loc.name} COP`;
@@ -210,12 +294,12 @@ async function loadLocation(viewer: Viewer, id: string, initial: boolean) {
     },
   });
 
-  // 카메라 진입
+  // 카메라 진입 (위협 스폰 반경 ~5km + 압축된 고고도 트랙까지 담도록 넓게 프레이밍)
   viewer.camera.flyTo({
-    destination: Cartesian3.fromDegrees(lon, lat - 0.012, 1600),
+    destination: Cartesian3.fromDegrees(lon, lat - 0.03, 4200),
     orientation: {
       heading: 0,
-      pitch: CesiumMath.toRadians(-35),
+      pitch: CesiumMath.toRadians(-42),
       roll: 0,
     },
     duration: initial ? 2.5 : 1.5,
@@ -236,19 +320,32 @@ async function loadLocation(viewer: Viewer, id: string, initial: boolean) {
     document.getElementById("cnt-sites")!.textContent = "—";
   }
 
-  // 위협 시뮬 재시작 (새 AO 기준)
+  // 배치 자산 초기화 (AO가 바뀌면 무의미)
+  assetLayer?.clear();
+  setPaletteMode(null);
+  document.getElementById("optim-result")!.textContent =
+    "예산 스캐너 3 · 재머 2 · 대응 2 (기본)";
+
+  // 위협 시뮬 재시작 (새 AO 기준, cuas 엔진)
   currentSim?.destroy();
-  currentSim = startDroneSim(
-    viewer,
-    { center: loc.center, radiusM: loc.radius_m },
-    { targetCount: 7 }
-  );
+  currentSim = undefined;
+  currentSim = await startDroneSim(viewer, {
+    locId: id,
+    center: loc.center,
+    radiusM: loc.radius_m,
+    popDensity: loc.pop_density ?? 0.5, // 실시간 인구밀집 → 대응결심 부수피해
+    sensors: assetLayer, // 스캐너 탐지 + 재머/대응 교전 연동
+  });
   currentSim.setVisible(
     (document.getElementById("lyr-drones") as HTMLInputElement).checked
   );
   currentSim.setTrailsVisible(
     (document.getElementById("sim-trails") as HTMLInputElement).checked
   );
+  currentSim.setAltCompress(
+    (document.getElementById("sim-altcompress") as HTMLInputElement).checked
+  );
+  syncSpawnPalette(); // 새 sim: 스폰 모드 초기화 반영
   // 컨트롤 상태 초기화
   const btnToggle = document.getElementById("sim-toggle") as HTMLButtonElement;
   const status = document.getElementById("sim-status")!;
@@ -259,28 +356,159 @@ async function loadLocation(viewer: Viewer, id: string, initial: boolean) {
 
 // 실시간 트랙 테이블 렌더
 function threatCss(t: Track): string {
-  if (t.type === "bird") return "#9aa4ad";
-  if (t.type === "balloon") return "#5eb0ff";
-  if (t.threat < 0.4) return "#37d67a";
-  if (t.threat < 0.7) return "#f5a623";
+  if (t.pred === "풍선" || (t.pred === "미상" && t.kind === "balloon")) return "#5eb0ff";
+  if (t.pred === "새/기타" || (t.pred === "미상" && t.kind === "bird")) return "#9aa4ad";
+  if (t.T < 45) return "#37d67a";
+  if (t.T < 70) return "#f5a623";
   return "#ff3b46";
 }
+function fmtAltShort(m: number): string {
+  return m >= 1000 ? `${(m / 1000).toFixed(1)}k` : m.toFixed(0);
+}
+function killShort(kill: string): string {
+  return kill === "hard" ? "하드" : kill === "soft" ? "소프트" : "감시";
+}
+
 function renderTrackTable(rows: HTMLElement, cnt: HTMLElement) {
   const tracks = currentSim?.getTracks() ?? [];
   cnt.textContent = String(tracks.length);
-  const sorted = [...tracks].sort((a, b) => b.threat - a.threat);
+  const sorted = [...tracks].sort((a, b) => b.T - a.T);
   rows.innerHTML = sorted
     .map((t) => {
-      const hdg = (((t.heading * 180) / Math.PI + 360) % 360) | 0;
+      // 미확인 트랙: 상세 없이 "?"만
+      if (!t.detected) {
+        return (
+          `<tr class="undet"><td>${t.id}</td><td>?</td>` +
+          `<td>—</td><td>—</td><td>—</td><td>—</td>` +
+          `<td class="thr">□□□□□</td></tr>`
+        );
+      }
       const col = threatCss(t);
+      const eng =
+        t.engaged === "hard" ? " KILL" : t.engaged === "soft" ? " JAM" : "";
       return (
-        `<tr><td>${t.id}</td><td>${TYPE_SHORT[t.type]}</td>` +
-        `<td>${t.speed.toFixed(0)}</td><td>${t.altM.toFixed(0)}</td>` +
-        `<td>${hdg}°</td><td>${t.state[0].toUpperCase()}</td>` +
+        `<tr><td>${t.id}</td><td>${PRED_SHORT[t.pred] ?? "UNK"}` +
+        `<span class="truth">${KIND_SHORT[t.kind]}</span></td>` +
+        `<td>${t.speed.toFixed(0)}</td><td>${fmtAltShort(t.altM)}</td>` +
+        `<td>${t.T.toFixed(0)}</td><td>${killShort(t.response.kill)}${eng}</td>` +
         `<td class="thr" style="color:${col}">${t.threatBar()}</td></tr>`
       );
     })
     .join("");
+  updateThreatCondition(sorted);
+}
+
+// THREAT CONDITION — 라이브 최고 위협도(조류 판정 제외)로 결정. T 는 0~100.
+function updateThreatCondition(sorted: Track[]) {
+  const box = document.getElementById("threat-cond")!;
+  const label = document.getElementById("threat-cond-level")!;
+  // 확인(detected)되고 조류가 아닌 트랙만 위협 조건에 반영
+  const max = sorted.reduce(
+    (m, t) => (!t.detected || t.pred === "새/기타" ? m : Math.max(m, t.T)),
+    0
+  );
+  let level: string, text: string;
+  if (max < 45) [level, text] = ["low", "LOW"];
+  else if (max < 70) [level, text] = ["elevated", "ELEVATED"];
+  else if (max < 90) [level, text] = ["high", "HIGH"];
+  else [level, text] = ["critical", "CRITICAL"];
+  box.dataset.level = level;
+  label.textContent = text;
+}
+
+// 최적 배치 실행: 옵티마이저(교체 가능) → 결과를 자산 레이어에 렌더
+async function runOptimizer() {
+  const btn = document.getElementById("optim-run") as HTMLButtonElement;
+  const out = document.getElementById("optim-result")!;
+  setPaletteMode(null);
+  btn.disabled = true;
+  out.textContent = "계산 중…";
+  try {
+    const input = await loadOptimInput(currentLocId, DEFAULT_BUDGET);
+    const res = await getOptimizer().run(input);
+    assetLayer?.clear();
+    for (const p of res.placements) assetLayer?.placeAt(p.kind, p.lon, p.lat);
+    renderOptimResult(res);
+  } catch (e) {
+    console.error("[optim] 실패:", e);
+    out.textContent = "최적화 실패 (콘솔 확인)";
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+function renderOptimResult(res: OptimResult) {
+  const s = res.score;
+  document.getElementById("optim-result")!.innerHTML =
+    `배치 <b>${res.placements.length}</b>기 · ${res.meta.optimizer} (${res.meta.ms.toFixed(
+      0
+    )}ms)<br>` +
+    `보호 커버 <b>${(s.protectedCoverage * 100).toFixed(0)}%</b> · ` +
+    `부수피해 <b>${s.collateralPenalty.toFixed(0)}</b> · ` +
+    `비용 <b>${(s.cost / 1000).toFixed(0)}k</b><br>` +
+    `종합점수 <b>${s.total.toFixed(1)}</b>`;
+}
+
+// 자산 배치 모드 전환 + 팔레트 UI 반영
+function setPaletteMode(kind: AssetKind | null) {
+  if (kind) {
+    // 위협 스폰과 상호배타
+    currentSim?.setSpawnMode(null);
+    syncSpawnPalette();
+  }
+  assetLayer?.setMode(kind);
+  for (const spec of ASSET_SPECS) {
+    document
+      .getElementById(`asset-${spec.kind}`)!
+      .classList.toggle("active", kind === spec.kind);
+  }
+  const hint = document.getElementById("asset-hint")!;
+  hint.textContent = kind
+    ? `${ASSET_BY_KIND[kind].label} 배치 중 — 지도 클릭 (Esc 취소)`
+    : "유형 선택 후 지도 클릭 → 배치";
+}
+
+const KIND_LABEL: Record<string, string> = { drone: "드론", balloon: "풍선", bird: "조류" };
+
+// 위협 스폰 모드 전환 + 팔레트 UI 반영
+function setSpawnMode(kind: "drone" | "balloon" | "bird" | null) {
+  if (kind) setPaletteMode(null); // 자산 배치와 상호배타
+  currentSim?.setSpawnMode(kind);
+  syncSpawnPalette();
+  const hint = document.getElementById("spawn-hint")!;
+  hint.textContent = kind
+    ? `${KIND_LABEL[kind]} 스폰 중 — 지도 클릭 (Esc 취소)`
+    : "유형 선택 후 지도 클릭 → 스폰";
+}
+function syncSpawnPalette() {
+  const cur = currentSim?.getSpawnMode() ?? null;
+  for (const k of ["drone", "balloon", "bird"]) {
+    document.getElementById(`spawn-${k}`)?.classList.toggle("active", cur === k);
+  }
+}
+
+// 배치 자산 목록 렌더
+function renderAssetList() {
+  const list = assetLayer?.list() ?? [];
+  document.getElementById("asset-total")!.textContent = String(list.length);
+  const el = document.getElementById("asset-list")!;
+  if (!list.length) {
+    el.innerHTML = '<div class="empty">배치된 자산 없음</div>';
+    return;
+  }
+  el.innerHTML = list
+    .map((a) => {
+      const s = ASSET_BY_KIND[a.kind];
+      return (
+        `<div class="asset-row"><span class="dot" style="background:${s.color}"></span>` +
+        `<span class="aid">${a.id}</span><span class="arole">${s.role}</span>` +
+        `<span class="rm" data-id="${a.id}">✕</span></div>`
+      );
+    })
+    .join("");
+  el.querySelectorAll<HTMLElement>(".rm").forEach((x) =>
+    x.addEventListener("click", () => assetLayer?.remove(x.dataset.id!))
+  );
 }
 
 function wireToggle(id: string, get: () => { show: boolean } | undefined) {

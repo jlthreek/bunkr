@@ -3,65 +3,181 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>양재역 3D · Gray-zone C-UAS</title>
+    <title>AEGIS · Gray-zone C-UAS COP</title>
   </head>
   <body>
-    <div id="cesiumContainer"></div>
-    <div id="hud">
-      <div class="hud-title" id="hud-title">AEGIS · COP</div>
-      <select id="loc-select" title="기준 위치"></select>
-      <div class="hud-line" id="hud-coord">—</div>
-      <div class="hud-line" id="hud-scale">—</div>
-    </div>
-    <div id="scalebar">
-      <div id="scalebar-track"><div id="scalebar-inner"></div></div>
-      <div id="scalebar-label">—</div>
-    </div>
-    <div id="layers">
-      <div class="panel-title">LAYERS</div>
-      <label><input type="checkbox" id="lyr-zones" checked /> 우선구역</label>
-      <label
-        ><input type="checkbox" id="lyr-sites" checked /> 설치후보지
-        <span id="cnt-sites" class="cnt">—</span></label
-      >
-      <label><input type="checkbox" id="lyr-ao" checked /> 분석영역(AO)</label>
-      <label
-        ><input type="checkbox" id="lyr-drones" checked /> 위협체(드론)
-        <span id="cnt-drones" class="cnt">—</span></label
-      >
-      <div class="legend">
-        <span class="lg lg-p"></span>보호<span class="lg lg-a"></span>접근<span
-          class="lg lg-s"
-        ></span
-        >민감<span class="lg lg-site"></span>후보지
-      </div>
-    </div>
-    <div id="sim">
-      <div class="panel-title">
-        THREAT SIM <span id="sim-status" class="sim-status">● RUN</span>
-      </div>
-      <div class="sim-controls">
-        <button id="sim-toggle" class="btn">⏸ 일시정지</button>
-        <button id="sim-burst" class="btn btn-alert">섞어쏘기 +5</button>
-        <label class="chk"
-          ><input type="checkbox" id="sim-trails" checked /> 궤적</label
-        >
-      </div>
-      <div class="track-table-wrap">
-        <table id="track-table">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>TYPE</th>
-              <th>SPD</th>
-              <th>ALT</th>
-              <th>HDG</th>
-              <th>ST</th>
-              <th>THREAT</th>
-            </tr>
-          </thead>
-          <tbody id="track-rows"></tbody>
-        </table>
+    <div id="app">
+      <div id="cesiumContainer"></div>
+
+      <!-- 좌측 커맨드 레일 -->
+      <aside id="rail">
+        <header class="rail-head">
+          <div class="brand">
+            <span class="brand-mark">◈</span>
+            <span class="brand-name">AEGIS</span>
+            <span class="brand-sub">C-UAS · COP</span>
+          </div>
+          <div class="threat-cond" id="threat-cond" data-level="low">
+            <span class="tc-dot"></span>
+            <span class="tc-key">THREAT CONDITION</span>
+            <span class="tc-level" id="threat-cond-level">LOW</span>
+          </div>
+        </header>
+
+        <div class="rail-body">
+          <!-- 위치 -->
+          <section class="mod">
+            <button class="mod-head" data-toggle>
+              <span class="mod-title">위치</span><span class="mod-chev">▾</span>
+            </button>
+            <div class="mod-body">
+              <select id="loc-select" title="기준 위치"></select>
+              <div class="readout" id="hud-title">AEGIS · COP</div>
+              <div class="readout mono dim" id="hud-coord">—</div>
+              <div class="readout mono dim" id="hud-scale">—</div>
+            </div>
+          </section>
+
+          <!-- 레이어 -->
+          <section class="mod">
+            <button class="mod-head" data-toggle>
+              <span class="mod-title">레이어</span><span class="mod-chev">▾</span>
+            </button>
+            <div class="mod-body">
+              <label class="chk"
+                ><input type="checkbox" id="lyr-zones" checked /> 우선구역</label
+              >
+              <label class="chk"
+                ><input type="checkbox" id="lyr-sites" checked /> 설치후보지
+                <span id="cnt-sites" class="cnt">—</span></label
+              >
+              <label class="chk"
+                ><input type="checkbox" id="lyr-ao" checked /> 분석영역(AO)</label
+              >
+              <label class="chk"
+                ><input type="checkbox" id="lyr-drones" checked /> 위협체
+                <span id="cnt-drones" class="cnt">—</span></label
+              >
+              <div class="legend">
+                <span class="lg lg-p"></span>보호<span class="lg lg-a"></span>접근<span
+                  class="lg lg-s"
+                ></span
+                >민감<span class="lg lg-site"></span>후보지
+              </div>
+            </div>
+          </section>
+
+          <!-- 방어 자산 -->
+          <section class="mod">
+            <button class="mod-head" data-toggle>
+              <span class="mod-title">방어 자산</span>
+              <span class="cnt" id="asset-total">0</span>
+              <span class="mod-chev">▾</span>
+            </button>
+            <div class="mod-body">
+              <div class="hint" id="asset-hint">유형 선택 후 지도 클릭 → 배치</div>
+              <div class="palette">
+                <button class="ast-btn" id="asset-scanner" data-kind="scanner">
+                  <span class="ast-sw" style="--c: #35e0e6"></span>
+                  <span class="ast-name">스캐너</span><small>탐지</small>
+                </button>
+                <button class="ast-btn" id="asset-jammer" data-kind="jammer">
+                  <span class="ast-sw" style="--c: #b06bff"></span>
+                  <span class="ast-name">재머</span><small>소프트킬</small>
+                </button>
+                <button class="ast-btn" id="asset-counter" data-kind="counter">
+                  <span class="ast-sw" style="--c: #ff8c42"></span>
+                  <span class="ast-name">대응</span><small>하드킬</small>
+                </button>
+              </div>
+              <div class="effector-toggles">
+                <label class="chk"
+                  ><input type="checkbox" id="eff-jammer" checked /> 재머 활성</label
+                >
+                <label class="chk"
+                  ><input type="checkbox" id="eff-counter" checked /> 하드킬 활성</label
+                >
+              </div>
+              <div class="list-head">
+                <span>배치 목록</span>
+                <button class="mini-btn" id="asset-clear">전체 삭제</button>
+              </div>
+              <div class="asset-list" id="asset-list">
+                <div class="empty">배치된 자산 없음</div>
+              </div>
+
+              <div class="list-head auto-head">
+                <span>자동 배치</span>
+                <span class="opt-name" id="optim-name">greedy</span>
+              </div>
+              <button id="optim-run" class="btn btn-run">최적 배치 실행</button>
+              <div class="opt-result" id="optim-result">
+                예산 스캐너 3 · 재머 2 · 대응 2 (기본)
+              </div>
+            </div>
+          </section>
+
+          <!-- 위협 시뮬 -->
+          <section class="mod">
+            <button class="mod-head" data-toggle>
+              <span class="mod-title">위협 시뮬</span>
+              <span class="sim-status" id="sim-status">● RUN</span>
+              <span class="mod-chev">▾</span>
+            </button>
+            <div class="mod-body">
+              <div class="sim-controls">
+                <button id="sim-toggle" class="btn">⏸ 일시정지</button>
+                <label class="chk"
+                  ><input type="checkbox" id="sim-trails" checked /> 궤적</label
+                >
+                <label class="chk"
+                  ><input type="checkbox" id="sim-altcompress" checked /> 고도압축</label
+                >
+              </div>
+              <div class="hint" id="spawn-hint">유형 선택 후 지도 클릭 → 스폰</div>
+              <div class="palette">
+                <button class="ast-btn" id="spawn-drone" data-kind="drone">
+                  <span class="ast-sw"></span>
+                  <span class="ast-name">드론</span><small>목표지향</small>
+                </button>
+                <button class="ast-btn" id="spawn-balloon" data-kind="balloon">
+                  <span class="ast-sw"></span>
+                  <span class="ast-name">풍선</span><small>표류</small>
+                </button>
+                <button class="ast-btn" id="spawn-bird" data-kind="bird">
+                  <span class="ast-sw"></span>
+                  <span class="ast-name">조류</span><small>표류</small>
+                </button>
+              </div>
+              <div class="list-head">
+                <span>배치된 위협</span>
+                <button class="mini-btn" id="spawn-clear">전체 제거</button>
+              </div>
+              <div class="track-table-wrap">
+                <table id="track-table">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>분류</th>
+                      <th>SPD</th>
+                      <th>ALT</th>
+                      <th>T</th>
+                      <th>대응</th>
+                      <th>THREAT</th>
+                    </tr>
+                  </thead>
+                  <tbody id="track-rows"></tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+        </div>
+      </aside>
+
+      <!-- 스케일바 (맵 크롬) -->
+      <div id="scalebar">
+        <div id="scalebar-track"><div id="scalebar-inner"></div></div>
+        <div id="scalebar-label">—</div>
       </div>
     </div>
     <script type="module" src="/src/main.ts"></script>
