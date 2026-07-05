@@ -31,7 +31,7 @@ export const ASSET_SPECS: AssetKindSpec[] = [
     kind: "radar",
     label: "레이더",
     short: "RDR",
-    color: "#39d98a",
+    color: "#88f298", // friendly · 능동탐지
     rangeM: 1200,
     role: "능동 탐지 (RADAR · RCS/위치)",
   },
@@ -39,23 +39,23 @@ export const ASSET_SPECS: AssetKindSpec[] = [
     kind: "scanner",
     label: "스캐너",
     short: "SCN",
-    color: "#35e0e6",
+    color: "#8afaa2", // friendly · 수동탐지
     rangeM: 800,
     role: "수동 탐지 (RF·EO/IR)",
   },
   {
     kind: "jammer",
-    label: "재머",
+    label: "소프트킬",
     short: "JAM",
-    color: "#b06bff",
+    color: "#d9b54a", // effector · 소프트킬
     rangeM: 450,
     role: "소프트킬 (RF 차단)",
   },
   {
     kind: "counter",
-    label: "대응",
+    label: "하드킬",
     short: "EFF",
-    color: "#ff8c42",
+    color: "#b89a35", // effector · 하드킬
     rangeM: 250,
     role: "하드킬 (교전)",
   },
@@ -154,18 +154,16 @@ export function setupAssets(viewer: Viewer): AssetLayer {
       },
       label: {
         text: `${id}\n${spec.label} · ${(spec.rangeM / 1000).toFixed(1)}km`,
-        font: "600 11px 'IBM Plex Mono', monospace",
+        font: "500 11px 'IBM Plex Mono', monospace",
         fillColor: color,
-        style: LabelStyle.FILL_AND_OUTLINE,
-        outlineColor: Color.BLACK,
-        outlineWidth: 3,
+        style: LabelStyle.FILL,
         verticalOrigin: VerticalOrigin.BOTTOM,
         pixelOffset: new Cartesian2(0, -14),
         heightReference: HeightReference.CLAMP_TO_GROUND,
         disableDepthTestDistance: Number.POSITIVE_INFINITY,
         showBackground: true,
-        backgroundColor: Color.fromCssColorString("#060e14").withAlpha(0.7),
-        backgroundPadding: new Cartesian2(6, 4),
+        backgroundColor: Color.fromCssColorString("#0a0a0a").withAlpha(0.72),
+        backgroundPadding: new Cartesian2(7, 4),
       },
     });
 

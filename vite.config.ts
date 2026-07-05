@@ -26,7 +26,7 @@ export default defineConfig(({ mode }) => {
     plugins: [cesium(), llmProxy(env.ANTHROPIC_API_KEY)],
     server: {
       host: true,
-      port: 5174,
+      port: Number(process.env.PORT) || 5174,
     },
   };
 });
