@@ -290,6 +290,18 @@ const DICT: Record<Lang, Record<string, string>> = {
     "pred.새/기타": "새/기타",
     "pred.미상": "미상",
     "pop.count": "{n}명",
+    // 결심지원(DSO) AI 패널
+    "dso.launch.title": "결심지원 AI 열기",
+    "dso.launch.txt": "결심지원 AI",
+    "dso.name": "결심지원",
+    "dso.min.title": "접기",
+    "dso.chip.brief": "상황 브리핑",
+    "dso.chip.threat": "최우선 위협",
+    "dso.chip.roe": "대응 권고",
+    "dso.placeholder": "지휘관 질의…  (예: TRK-003 요격?)",
+    "dso.send.title": "전송",
+    "dso.greeting":
+      "AEGIS 결심지원 대기 중. 실시간 COP 참조.\n예: \"최우선 위협?\", \"TRK-003 요격 가능?\"",
   },
   en: {
     "mode.deploy.sub": "Design",
@@ -491,5 +503,17 @@ const DICT: Record<Lang, Record<string, string>> = {
     "pred.새/기타": "Bird/Other",
     "pred.미상": "Unknown",
     "pop.count": "{n}",
+    // Decision Support (DSO) AI panel
+    "dso.launch.title": "Open Decision Support AI",
+    "dso.launch.txt": "Decision Support",
+    "dso.name": "Decision Support",
+    "dso.min.title": "Collapse",
+    "dso.chip.brief": "Situation brief",
+    "dso.chip.threat": "Top threat",
+    "dso.chip.roe": "Response rec.",
+    "dso.placeholder": "Commander query…  (e.g. Intercept TRK-003?)",
+    "dso.send.title": "Send",
+    "dso.greeting":
+      "AEGIS Decision Support standing by. Referencing live COP.\ne.g. \"Top threat?\", \"Can we intercept TRK-003?\"",
   },
 };

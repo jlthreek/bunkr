@@ -2,7 +2,7 @@
 // 매 질의 시 buildSnapshot 으로 현재 통합상황도를 사용자 메시지에 주입하고,
 // /api/llm/chat(서버 프록시 → Haiku)로 SSE 스트리밍한다.
 import { buildSnapshot, type CopState } from "./context";
-import { GREETING } from "./prompt";
+import { tr, applyStaticTranslations, onLangChange } from "../i18n";
 
 type Msg = { role: "user" | "assistant"; content: string };
 
@@ -60,31 +60,32 @@ export function setupDsoPanel(getState: () => CopState): DsoPanel {
   root.id = "dso";
   root.className = "collapsed";
   root.innerHTML = `
-    <button id="dso-launch" title="AI 결심지원 열기">
+    <button id="dso-launch" data-i18n-title="dso.launch.title" title="AI 결심지원 열기">
       <span class="dso-star">✦</span>
-      <span class="dso-launch-txt">결심지원 AI</span>
+      <span class="dso-launch-txt" data-i18n="dso.launch.txt">결심지원 AI</span>
     </button>
     <div id="dso-panel" role="dialog" aria-label="AI 결심지원">
       <header class="dso-head">
         <span class="dso-badge">DSO</span>
         <div class="dso-title">
-          <div class="dso-name">결심지원 <b>AI</b></div>
+          <div class="dso-name"><span data-i18n="dso.name">결심지원</span> <b>AI</b><span class="dso-beta">BETA</span></div>
           <div class="dso-sub">DECISION SUPPORT · Haiku</div>
         </div>
-        <button id="dso-min" title="접기">—</button>
+        <button id="dso-min" data-i18n-title="dso.min.title" title="접기">—</button>
       </header>
       <div class="dso-log" id="dso-log"></div>
       <div class="dso-chips" id="dso-chips">
-        <button data-q="현 상황을 브리핑해줘.">상황 브리핑</button>
-        <button data-q="지금 가장 위협적인 트랙과 그 이유는?">최우선 위협</button>
-        <button data-q="현재 표적들에 대한 대응 옵션을 부수피해까지 고려해 권고해줘.">대응 권고</button>
+        <button data-q="현 상황을 브리핑해줘." data-i18n="dso.chip.brief">상황 브리핑</button>
+        <button data-q="지금 가장 위협적인 트랙과 그 이유는?" data-i18n="dso.chip.threat">최우선 위협</button>
+        <button data-q="현재 표적들에 대한 대응 옵션을 부수피해까지 고려해 권고해줘." data-i18n="dso.chip.roe">대응 권고</button>
       </div>
       <form class="dso-input" id="dso-form">
-        <textarea id="dso-text" rows="1" placeholder="지휘관 질의 입력…  (예: TRK-003 요격 가능한가?)"></textarea>
-        <button type="submit" id="dso-send" title="전송">➤</button>
+        <textarea id="dso-text" rows="1" data-i18n-placeholder="dso.placeholder" placeholder="지휘관 질의…  (예: TRK-003 요격?)"></textarea>
+        <button type="submit" id="dso-send" data-i18n-title="dso.send.title" title="전송">➤</button>
       </form>
     </div>`;
   document.body.appendChild(root);
+  applyStaticTranslations(root); // 초기 렌더를 현재 언어로 정렬
 
   const logEl = root.querySelector<HTMLElement>("#dso-log")!;
   const textEl = root.querySelector<HTMLTextAreaElement>("#dso-text")!;
@@ -92,7 +93,16 @@ export function setupDsoPanel(getState: () => CopState): DsoPanel {
   const sendBtn = root.querySelector<HTMLButtonElement>("#dso-send")!;
 
   // 초기 어시스턴트 인사(히스토리에는 넣지 않음 — 컨텍스트 절약)
-  appendBubble("assistant", GREETING);
+  appendBubble("assistant", tr("dso.greeting"));
+
+  // 언어 전환: 정적 라벨은 applyStaticTranslations 가 자동 갱신하고,
+  // 대화 시작 전(히스토리 없음)이면 인사말 버블만 현재 언어로 다시 그린다.
+  onLangChange(() => {
+    if (history.length === 0) {
+      logEl.innerHTML = "";
+      appendBubble("assistant", tr("dso.greeting"));
+    }
+  });
 
   function scrollDown() {
     logEl.scrollTop = logEl.scrollHeight;
