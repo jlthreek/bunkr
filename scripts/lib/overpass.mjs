@@ -70,7 +70,7 @@ async function request(url, q) {
         "-m",
         "120",
         "-A",
-        "yangjae3dmap/0.1 (D4D hackathon; contact mhbot@mz.co.kr)",
+        "yangjae3dmap/0.1 (D4D hackathon; contact wsx1341@gmail.com)",
         "-H",
         "Accept: application/json",
         "-X",
